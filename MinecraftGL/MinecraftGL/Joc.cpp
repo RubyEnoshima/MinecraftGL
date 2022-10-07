@@ -1,35 +1,72 @@
 #include "Joc.h"
 
-void Joc::canviaShaders() {
-	// vertex shader
+int Joc::carregaShaders() {
+	// Vertex Shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+
+	ifstream vertexShaderStream(vertexShaderSource); // Obrim l'arxiu
+
+	if (!vertexShaderStream.is_open()) return -1; // Si no es pot obrir, sortim de la funció
+
+	// Llegim el codi en un sol string
+	string vertexShaderCodi;
+	stringstream sstr;
+	sstr << vertexShaderStream.rdbuf();
+	vertexShaderCodi = sstr.str();
+
+	vertexShaderStream.close(); // Tanquem l'arxiu
+
+	// Compilem el Vertex Shader
+	cout << "Compilant Vertex Shader..." << endl;
+	char const* vertexShaderPunter = vertexShaderCodi.c_str(); // Per compilar no es permeten strings
+	glShaderSource(vertexShader, 1, &vertexShaderPunter, NULL);
 	glCompileShader(vertexShader);
 
-	// check for shader compile errors
+	// Comprovem si hi ha errors
 	int success;
 	char infoLog[512];
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		cout << "ERROR: No s'ha pogut compilar el Vertex Shader\n" << infoLog << endl;
+		return -1;
 	}
 
-	// fragment shader
+	cout << "Vertex Shader compilat" << endl << endl;
+
+	// Fragment Shader
 	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+
+	ifstream fragmentShaderStream(fragmentShaderSource); // Obrim l'arxiu
+
+	if (!fragmentShaderStream.is_open()) return -1; // Si no es pot obrir, sortim de la funció
+
+	// Llegim el codi en un sol string
+	string fragmentShaderCodi;
+	sstr.str(""); // Netejem l'stream perquè no es concateni amb l'anterior vertex shader
+	sstr << fragmentShaderStream.rdbuf();
+	fragmentShaderCodi = sstr.str();
+
+	fragmentShaderStream.close(); // Tanquem l'arxiu
+
+	// Compilem el Fragment Shader
+	cout << "Compilant Fragment Shader..." << endl;
+	char const* fragmentShaderPunter = fragmentShaderCodi.c_str();
+	glShaderSource(fragmentShader, 1, &fragmentShaderPunter, NULL);
 	glCompileShader(fragmentShader);
 
-	// check for shader compile errors
+	// Comprovem si hi ha errors
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+		cout << "ERROR: No s'ha pogut compilar el Fragment Shader\n" << infoLog << endl;
+		return -1;
 	}
 
-	// link shaders
+	// Connectem els shaders amb el programa
+	cout << "Fent link dels shaders..." << endl;
 	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
@@ -39,43 +76,16 @@ void Joc::canviaShaders() {
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+		cout << "ERROR: No s'ha pogut crear el link entre el programa y els shaders\n" << infoLog << endl;
+		return -1;
 	}
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-}
 
-void Joc::prepararDibuix(Triangle t) {
-
-	// set up vertex data (and buffer(s)) and configure vertex attributes
-	// ------------------------------------------------------------------
-	
-	unsigned int VBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(t._vertices), t._vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-	glBindVertexArray(0);
-
-}
-
-void Joc::dibuixarObjecte(int modo, int n) {
 	glUseProgram(shaderProgram);
-	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-	glDrawArrays(modo, 0, n);
+
+	return 0;
 }
 
 // Si es redimensiona la finestra, actualitzar el viewport
@@ -88,10 +98,17 @@ void Joc::processInput() {
 	// Si es pressiona ESC, es tanca la finestra
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-	else if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
 
+	// Amb F1 es canvia entre mode normal i wireframe
+	else if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) {
+		if (!mode) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		mode = !mode;
 	}
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 int Joc::crearFinestra() {
@@ -105,7 +122,7 @@ int Joc::crearFinestra() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Creem una nova finestra amb unes dimensions i un nom i que comenci en Windowed mode
-	window = glfwCreateWindow(800, 600, "MinecraftGL", NULL, NULL);
+	window = glfwCreateWindow(width, height, "MinecraftGL", NULL, NULL);
 
 	// Si no aconseguim crear-la, terminem el programa
 	if (window == NULL)
@@ -125,43 +142,21 @@ int Joc::crearFinestra() {
 	}
 
 	// Li diem la mida al viewport, i des d'on comença
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, width, height);
 
 	// Assignem una funció per quan es redimensioni la finestra creada
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
 	return 1;
 }
 
-void Joc::gameLoop() {
-	cout << "Joc start" << endl;
-
-	float vertices[] = {
-		// first triangle
-		0.5f, 0.5f, 0.0f, // top right
-		0.5f, -0.5f, 0.0f, // bottom right
-		-0.5f, 0.5f, 0.0f, // top left
-		// second triangle
-		0.5f, -0.5f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f, // bottom left
-		-0.5f, 0.5f, 0.0f
-	};
-	unsigned int indices[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
-
-	Triangle t1(vertices);
-	canviaShaders();
-	prepararDibuix(t1);
-
-	loop();
-
-	// Terminar el programa
-	glfwTerminate();
-}
-
 void Joc::loop() {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	Chunk c;
+
 	int fps = 0;
 	auto start = chrono::system_clock::now();
 	// El loop del joc, mentre no es tanqui la finestra...
@@ -170,10 +165,10 @@ void Joc::loop() {
 		processInput();
 
 		// Canvia el color del background
-		glClearColor(0.4, 0.2, 0.7, 1.0);
+		glClearColor(0.4f, 0.2f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		dibuixarObjecte(GL_TRIANGLES,6);
+		c.render();
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra
 		glfwPollEvents(); // Processar events
@@ -188,3 +183,18 @@ void Joc::loop() {
 		fps++;
 	}
 }
+
+void Joc::gameLoop() {
+	cout << "Joc start" << endl;
+
+	if (carregaShaders() == 0) {
+
+		// El loop de veritat
+		loop();
+
+	}
+
+	// Terminar el programa
+	glfwTerminate();
+}
+

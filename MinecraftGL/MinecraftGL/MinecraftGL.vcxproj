@@ -143,13 +143,27 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GLFW\lib\glad.c" />
+    <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="Joc.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Chunk.h" />
     <ClInclude Include="Joc.h" />
     <ClInclude Include="Triangle.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="VertexShader.vert">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FragmentShader.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
