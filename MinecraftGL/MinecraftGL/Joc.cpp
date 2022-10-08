@@ -40,7 +40,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 	}
 
-	cout << "Tecla: " << key << endl;
+	// cout << "Tecla: " << key << endl;
 }
 
 int Joc::crearFinestra() {
@@ -55,11 +55,25 @@ int Joc::crearFinestra() {
 	return success;
 }
 
+void Joc::moureCamera() {
+	if (glfwGetKey(window, GLFW_KEY_W)) {
+		camera.moureDavant();
+	}  
+	if (glfwGetKey(window, GLFW_KEY_S)) {
+		camera.moureDarrera();
+	} 
+	if (glfwGetKey(window, GLFW_KEY_A)) {
+		camera.moureEsquerra();
+	} 
+	if (glfwGetKey(window, GLFW_KEY_D)) {
+		camera.moureDreta();
+	}
+}
+
 void Joc::loop() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	Chunk c;
-	Camera camera;
 
 	int fps = 0;
 	float ant = 0.0f;
@@ -69,8 +83,12 @@ void Joc::loop() {
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
+		moureCamera();
+
 		i += 10;
 		j = sin(glfwGetTime());
+
+
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -80,15 +98,16 @@ void Joc::loop() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		c.render(); // Nomes renderitzem un quadrat
+		
 
 		// ---- camera ----
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(j,j,j));
+		//model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
+		//model = glm::scale(model, glm::vec3(j,j,j));
 
 		glm::mat4 view = glm::mat4(1.0f);
 		// note that we’re translating the scene in the reverse direction
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		view = camera.moure(0,0);
 
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(1600.0f), 800.0f / 600.0f, 0.1f, 100.0f);

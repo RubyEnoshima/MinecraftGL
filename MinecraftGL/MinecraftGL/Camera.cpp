@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	pos = glm::vec3(0.0f, 0.0f, 3.0f);
+	pos = glm::vec3(0.0f, 1.7f, 3.0f);
 
 	objectiu = glm::vec3(0.0, 0.0f, 0.0f);
 
@@ -13,7 +13,27 @@ Camera::Camera()
 	cameraUp = glm::cross(direccio, right);
 }
 
-void Camera::moure(float x, float z)
+glm::mat4 Camera::moure(float x, float z)
 {
-	glm::mat4 view = glm::lookAt(glm::vec3(x, 0.0f, z), objectiu, cameraUp);
+	return glm::lookAt(pos, objectiu, cameraUp);
+}
+
+void Camera::moureDreta()
+{
+	pos += glm::normalize(glm::cross(direccio, cameraUp)) * velocitat;
+}
+
+void Camera::moureEsquerra()
+{
+	pos -= glm::normalize(glm::cross(direccio, cameraUp)) * velocitat;
+}
+
+void Camera::moureDavant()
+{
+	pos += velocitat * direccio;
+}
+
+void Camera::moureDarrera()
+{
+	pos -= velocitat * direccio;
 }

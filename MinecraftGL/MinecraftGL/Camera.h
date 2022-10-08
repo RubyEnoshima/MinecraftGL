@@ -12,8 +12,15 @@ class Camera
 public:
 	Camera(); // Constructor
 
-	void moure(float x, float z);
+	glm::mat4 moure(float x, float z);
+
+	void moureDreta();
+	void moureEsquerra();
+	void moureDavant();
+	void moureDarrera();
 private:
+	const float velocitat = 0.05f;
+
 	glm::vec3 pos;
 	glm::vec3 objectiu;
 	glm::vec3 direccio; // El vector apunta cap a la càmera
