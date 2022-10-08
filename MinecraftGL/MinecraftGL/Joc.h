@@ -1,39 +1,29 @@
 #pragma once
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <chrono>
 
 #include "Chunk.h"
+#include "Renderer.h"
 
 using namespace std;
 
-class Joc
+static class Joc
 {
 public:
-	void gameLoop();
+	void gameLoop(); // Fa que comenci el joc i executa el loop
 
-	int crearFinestra();
+	int crearFinestra(); // Retorna 1 si s'ha pogut crear la finestra
 	
 private:
-	void processInput();
-
-	int carregaShaders();
+	void canviarModeMouse(int mode);
 
 	void loop();
 
-	const string vertexShaderSource = "VertexShader.vert";
-
-	const string fragmentShaderSource = "FragmentShader.frag"; 
-
-	unsigned int VAO, shaderProgram;
-	bool mode = 0; // 0 normal, 1 wireframe
+	Renderer renderer;
 	GLFWwindow* window;
+	
 
-	const int width = 800;
-	const int height = 600;
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
+
+	
 };
 

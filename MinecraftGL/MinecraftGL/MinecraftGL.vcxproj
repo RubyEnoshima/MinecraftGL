@@ -143,14 +143,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GLFW\lib\glad.c" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="Joc.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Chunk.h" />
     <ClInclude Include="Joc.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>

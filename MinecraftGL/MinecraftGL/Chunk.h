@@ -4,10 +4,13 @@
 
 #include <string.h>
 #include <iostream>
+
 using namespace std;
+
 #define X 16
 #define Y 16
 #define Z 16
+
 class Chunk
 {
 public:
@@ -20,7 +23,7 @@ public:
 	void render();
 
 private:
-	unsigned int VBO, VAO;
+	unsigned int VBO;
 	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
 
 	unsigned int elements = 0;
