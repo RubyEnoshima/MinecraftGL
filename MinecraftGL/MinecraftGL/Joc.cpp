@@ -55,24 +55,12 @@ int Joc::crearFinestra() {
 	return success;
 }
 
-void Joc::moureCamera() {
-	if (glfwGetKey(window, GLFW_KEY_W)) {
-		camera.moureDavant();
-	}  
-	if (glfwGetKey(window, GLFW_KEY_S)) {
-		camera.moureDarrera();
-	} 
-	if (glfwGetKey(window, GLFW_KEY_A)) {
-		camera.moureEsquerra();
-	} 
-	if (glfwGetKey(window, GLFW_KEY_D)) {
-		camera.moureDreta();
-	}
-}
-
 void Joc::loop() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	// Treure el cursor
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	
 	Chunk c;
 
 	int fps = 0;
@@ -83,7 +71,8 @@ void Joc::loop() {
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
-		moureCamera();
+		camera.moure(deltaTime, window);
+		camera.girar(window);
 
 		i += 10;
 		j = sin(glfwGetTime());
@@ -101,16 +90,17 @@ void Joc::loop() {
 		
 
 		// ---- camera ----
+
 		glm::mat4 model = glm::mat4(1.0f);
 		//model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
 		//model = glm::scale(model, glm::vec3(j,j,j));
 
 		glm::mat4 view = glm::mat4(1.0f);
 		// note that we’re translating the scene in the reverse direction
-		view = camera.moure(0,0);
+		view = camera.lookAt();
 
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(1600.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(1600.0f), renderer.aspectRatio(), 0.1f, 100.0f);
 
 		renderer.colocarMat4("model", model);
 		renderer.colocarMat4("view", view);
@@ -132,7 +122,7 @@ void Joc::loop() {
 }
 
 void Joc::gameLoop() {
-	cout << "Joc start" << endl;
+	cout << "Joc start" << endl << endl;
 
 	if (renderer.carregaShaders()) {
 		// El loop de veritat

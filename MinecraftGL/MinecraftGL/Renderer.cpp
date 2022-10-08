@@ -128,6 +128,8 @@ int Renderer::carregaShaders() {
 		return -1;
 	}
 
+	cout << "Fragment Shader compilat" << endl << endl;
+
 	// Connectem els shaders amb el programa
 	cout << "Fent link dels shaders..." << endl;
 	shaderProgram = glCreateProgram();
@@ -148,6 +150,8 @@ int Renderer::carregaShaders() {
 
 	glUseProgram(shaderProgram);
 
+	cout << "Shaders compilats." << endl << endl;
+
 	return 1;
 }
 
@@ -159,4 +163,18 @@ unsigned int Renderer::obtenirUniform(const char* uniform) const
 void Renderer::colocarMat4(const string uniform, const glm::mat4 matriu)
 {
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, uniform.c_str()), 1, GL_FALSE, &matriu[0][0]);
+}
+
+float Renderer::aspectRatio() const
+{
+	int w, h;
+	glfwGetWindowSize(window, &w, &h);
+	return (float)w/(float)h;
+}
+
+pair<int, int> Renderer::obtenirTamany() const
+{
+	int w, h;
+	glfwGetWindowSize(window, &w, &h);
+	return pair<int, int>(w, h);
 }

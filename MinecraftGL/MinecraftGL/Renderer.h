@@ -15,15 +15,19 @@ using namespace std;
 class Renderer
 {
 public:
+	// Finestra
 	int crearFinestra(); // Inicia OpenGL i crea una finestra. Retorna 1 si tot ha anat bé.
 	void centrarFinestra(); // Centra la finestra
 	GLFWwindow* finestra(); // Retorna la finestra principal
 
+	// Shaders
 	int carregaShaders(); // Carrega els shaders. Retorna 1 si tot ha anat bé.
 	unsigned int obtenirUniform(const char* uniform) const;
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
 
-
+	// Monitor
+	float aspectRatio() const;
+	pair<int, int> obtenirTamany() const;
 private:
 	// Arxius pels shaders
 	const string vertexShaderSource = "VertexShader.vert";

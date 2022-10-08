@@ -20,12 +20,11 @@ private:
 
 	void loop();
 
-	void moureCamera();
+	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 	Renderer renderer;
 	GLFWwindow* window;
 	Camera camera;
-	
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
