@@ -23,6 +23,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 	}
 
+	// Amb F5 es canvia la posició de la camera
+	else if (key == GLFW_KEY_F5 and action == GLFW_PRESS) {
+		cout << "Cambiar camara" << endl;
+	}
+
 	cout << "Tecla: " << key << endl;
 }
 
@@ -42,13 +47,17 @@ void Joc::loop() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	Chunk c;
+	Camera camera;
 
 	int fps = 0;
 	float ant = 0.0f;
 
+	float i = 0.0f;
+
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
+		i += 10;
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -57,8 +66,24 @@ void Joc::loop() {
 		glClearColor(0.4f, 0.2f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		c.render();
-		
+		c.render(); // Nomes renderitzem un quadrat
+
+		// ---- camera ----
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 0.0f));
+
+		glm::mat4 view = glm::mat4(1.0f);
+		// note that we’re translating the scene in the reverse direction
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+		glm::mat4 projection;
+		projection = glm::perspective(glm::radians(1500.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+		renderer.colocarMat4("model", model);
+		renderer.colocarMat4("view", view);
+		renderer.colocarMat4("projection", projection);
+
+		// -----------------
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra
 		glfwPollEvents(); // Processar events
@@ -77,7 +102,6 @@ void Joc::gameLoop() {
 	cout << "Joc start" << endl;
 
 	if (renderer.carregaShaders()) {
-
 		// El loop de veritat
 		loop();
 

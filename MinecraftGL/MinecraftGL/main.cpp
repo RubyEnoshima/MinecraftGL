@@ -7,7 +7,5 @@ int main() {
 		joc.gameLoop();
 	}
 
-	
-
 	return 0;
 }

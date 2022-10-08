@@ -2,6 +2,7 @@
 
 #include "Chunk.h"
 #include "Renderer.h"
+#include "Camera.h"
 
 using namespace std;
 
