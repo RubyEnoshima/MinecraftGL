@@ -28,6 +28,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		cout << "Cambiar camara" << endl;
 	}
 
+	else if (key == GLFW_KEY_F2 and action == GLFW_PRESS) {
+		int mode;
+		glGetIntegerv(GL_CULL_FACE, &mode);
+		cout << mode << endl;
+		if (mode == 1) {
+			glDisable(GL_CULL_FACE);
+		}
+		else {
+			glEnable(GL_CULL_FACE);
+		}
+	}
+
 	cout << "Tecla: " << key << endl;
 }
 
@@ -52,12 +64,13 @@ void Joc::loop() {
 	int fps = 0;
 	float ant = 0.0f;
 
-	float i = 0.0f;
+	float i = 0.0f; float j = 1.0f;
 
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
 		i += 10;
+		j = sin(glfwGetTime());
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -71,6 +84,7 @@ void Joc::loop() {
 		// ---- camera ----
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(j,j,j));
 
 		glm::mat4 view = glm::mat4(1.0f);
 		// note that we’re translating the scene in the reverse direction

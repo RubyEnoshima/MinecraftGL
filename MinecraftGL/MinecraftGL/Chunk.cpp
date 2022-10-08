@@ -77,8 +77,6 @@ void Chunk::render()
 {
 	if (canviat) update();
 
-	glEnable(GL_CULL_FACE); // victima o verdugo
-
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
