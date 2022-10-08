@@ -23,7 +23,7 @@ public:
 	void render();
 
 private:
-	unsigned int VBO;
+	unsigned int VBO, EBO;
 	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
 
 	unsigned int elements = 0;

@@ -70,14 +70,14 @@ void Joc::loop() {
 
 		// ---- camera ----
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
 
 		glm::mat4 view = glm::mat4(1.0f);
 		// note that we’re translating the scene in the reverse direction
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(1500.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(1600.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
 		renderer.colocarMat4("model", model);
 		renderer.colocarMat4("view", view);
