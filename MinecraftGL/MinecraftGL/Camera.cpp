@@ -1,5 +1,16 @@
 #include "Camera.h"
 
+Camera::Camera(float w,float h)
+{
+	pos = glm::vec3(0.0f, altura, 3.0f);
+	objectiu = glm::vec3(0.0, 0.0f, 0.0f);
+	direccio = glm::normalize(pos - objectiu);
+	right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), direccio));
+	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	mirar();
+}
+
 void Camera::mirar() {
 	glm::vec3 nouFront;
 	nouFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -37,16 +48,6 @@ void Camera::girar(GLFWwindow* window) {
 	mirar();
 }
 
-Camera::Camera(float w,float h)
-{
-	pos = glm::vec3(0.0f, 0.0f, 3.0f);
-	objectiu = glm::vec3(0.0, 0.0f, 0.0f);
-	direccio = glm::normalize(pos - objectiu);
-	right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), direccio));
-	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-	mirar();
-}
 
 glm::mat4 Camera::lookAt()
 {
@@ -82,12 +83,12 @@ void Camera::moureEsquerra(float deltaTime)
 void Camera::moureDavant(float deltaTime)
 {
 	pos += velocitat * deltaTime * front;
-	pos.y = 0.0f;
+	pos.y = altura;
 }
 
 void Camera::moureDarrera(float deltaTime)
 {
 	pos -= velocitat * deltaTime * front;
-	pos.y = 0.0f;
+	pos.y = altura;
 
 }

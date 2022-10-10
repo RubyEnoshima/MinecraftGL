@@ -19,6 +19,7 @@ public:
 	int crearFinestra(); // Inicia OpenGL i crea una finestra. Retorna 1 si tot ha anat bé.
 	void centrarFinestra(); // Centra la finestra
 	GLFWwindow* finestra(); // Retorna la finestra principal
+	pair<int, int> obtenirTamany() const;
 
 	// Shaders
 	int carregaShaders(); // Carrega els shaders. Retorna 1 si tot ha anat bé.
@@ -27,7 +28,6 @@ public:
 
 	// Monitor
 	float aspectRatio() const;
-	pair<int, int> obtenirTamany() const;
 private:
 	// Arxius pels shaders
 	const string vertexShaderSource = "VertexShader.vert";

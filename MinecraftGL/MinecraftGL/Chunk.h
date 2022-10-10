@@ -2,13 +2,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Cub.h"
+
 #include <string.h>
 #include <iostream>
 
 using namespace std;
 
 #define X 16
-#define Y 16
+#define Y 15 // No se puede subir de 16 ?
 #define Z 16
 
 class Chunk
@@ -22,9 +24,11 @@ public:
 	void update();
 	void render();
 
+	int nCubs() const;
+
 private:
-	unsigned int VBO, EBO;
-	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
+	Cub chunk[X][Y][Z];
+	//uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
 
 	unsigned int elements = 0;
 

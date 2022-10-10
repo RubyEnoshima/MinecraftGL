@@ -29,10 +29,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 	else if (key == GLFW_KEY_F2 and action == GLFW_PRESS) {
-		int mode;
-		glGetIntegerv(GL_CULL_FACE, &mode);
-		cout << mode << endl;
-		if (mode == 1) {
+		if (glIsEnabled(GL_CULL_FACE)) {
 			glDisable(GL_CULL_FACE);
 		}
 		else {
@@ -56,6 +53,7 @@ int Joc::crearFinestra() {
 }
 
 void Joc::loop() {
+	glEnable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	// Treure el cursor
@@ -87,7 +85,6 @@ void Joc::loop() {
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		c.render(); // Nomes renderitzem un quadrat
-		
 
 		// ---- camera ----
 
@@ -116,6 +113,8 @@ void Joc::loop() {
 			ant = currentFrame;
 			cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
 			fps = 0; // Resetejem el comptador
+			cout << "Triangles: " << c.nCubs() * 12 << endl;
+
 		}
 		fps++;
 	}

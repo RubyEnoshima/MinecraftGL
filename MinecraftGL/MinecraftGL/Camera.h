@@ -35,6 +35,8 @@ private:
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 
+	float altura = 2.0f;
+
 	bool primerCop = true;
 
 	glm::vec3 pos;
