@@ -22,8 +22,6 @@ void Camera::girar(GLFWwindow* window) {
 
 	if (nouYaw == 0 and nouPitch == 0) return; // Estalviem temps en mirar què canvia si no hi ha res a fer
 
-	cout << "Yaw: " << yaw << endl;
-
 	lastX = xpos; lastY = ypos;
 
 	nouYaw *= sensibilitat;
