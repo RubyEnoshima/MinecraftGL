@@ -13,7 +13,7 @@
 using namespace std;
 
 #define X 16
-#define Y 32
+#define Y 127
 #define Z 16
 
 class Chunk2
@@ -32,7 +32,7 @@ public:
 
 private:
 	static void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
-	static void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
+	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
 
 	unsigned int VBO;
 

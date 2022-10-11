@@ -2,7 +2,7 @@
 
 Chunk2::Chunk2()
 {
-	memset(chunk, 2, sizeof(chunk));
+	memset(chunk, 1, sizeof(chunk));
 	glGenBuffers(1, &VBO);
 }
 
@@ -31,52 +31,70 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	// Cara esq
-	afegirVertex(vertices, x, y, z);
-	afegirVertex(vertices, x, y, z+1);
-	afegirVertex(vertices, x, y+1, z);
-	afegirVertex(vertices, x, y+1, z);
-	afegirVertex(vertices, x, y, z+1);
-	afegirVertex(vertices, x, y+1, z+1);
+	if (x==0 or !chunk[x - 1][y][z]) {
+		afegirVertex(vertices, x, y, z);
+		afegirVertex(vertices, x, y, z+1);
+		afegirVertex(vertices, x, y+1, z);
+		afegirVertex(vertices, x, y+1, z);
+		afegirVertex(vertices, x, y, z+1);
+		afegirVertex(vertices, x, y+1, z+1);
+
+	}
 
 	// Cara dre
-	afegirVertex(vertices, x + 1, y, z);
-	afegirVertex(vertices, x + 1, y + 1, z);
-	afegirVertex(vertices, x + 1, y, z + 1);
-	afegirVertex(vertices, x + 1, y + 1, z);
-	afegirVertex(vertices, x + 1, y + 1, z + 1);
-	afegirVertex(vertices, x + 1, y, z + 1);
+	if (x == X - 1 or !chunk[x + 1][y][z]) {
+		afegirVertex(vertices, x + 1, y, z);
+		afegirVertex(vertices, x + 1, y + 1, z);
+		afegirVertex(vertices, x + 1, y, z + 1);
+		afegirVertex(vertices, x + 1, y + 1, z);
+		afegirVertex(vertices, x + 1, y + 1, z + 1);
+		afegirVertex(vertices, x + 1, y, z + 1);
+
+	}
 
 	// Cara frontal
-	afegirVertex(vertices, x, y, z + 1);
-	afegirVertex(vertices, x + 1, y, z + 1);
-	afegirVertex(vertices, x, y + 1, z + 1);
-	afegirVertex(vertices, x, y + 1, z + 1);
-	afegirVertex(vertices, x + 1, y, z + 1);
-	afegirVertex(vertices, x + 1, y + 1, z + 1);
+	if (z == Z - 1 or !chunk[x][y][z + 1]) {
+		afegirVertex(vertices, x, y, z + 1);
+		afegirVertex(vertices, x + 1, y, z + 1);
+		afegirVertex(vertices, x, y + 1, z + 1);
+		afegirVertex(vertices, x, y + 1, z + 1);
+		afegirVertex(vertices, x + 1, y, z + 1);
+		afegirVertex(vertices, x + 1, y + 1, z + 1);
+
+	}
 
 	// Cara darrera
-	afegirVertex(vertices, x, y, z);
-	afegirVertex(vertices, x, y + 1, z);
-	afegirVertex(vertices, x + 1, y, z);
-	afegirVertex(vertices, x, y + 1, z);
-	afegirVertex(vertices, x + 1, y + 1, z);
-	afegirVertex(vertices, x + 1, y, z);
+	if (z == 0 or !chunk[x][y][z - 1]) {
+		afegirVertex(vertices, x, y, z);
+		afegirVertex(vertices, x, y + 1, z);
+		afegirVertex(vertices, x + 1, y, z);
+		afegirVertex(vertices, x, y + 1, z);
+		afegirVertex(vertices, x + 1, y + 1, z);
+		afegirVertex(vertices, x + 1, y, z);
+
+	}
 
 	// Cara adalt
-	afegirVertex(vertices, x, y + 1, z);
-	afegirVertex(vertices, x, y + 1, z + 1);
-	afegirVertex(vertices, x + 1, y + 1, z);
-	afegirVertex(vertices, x + 1, y + 1, z);
-	afegirVertex(vertices, x, y + 1, z + 1);
-	afegirVertex(vertices, x + 1, y + 1, z + 1);
+	if (y==Y-1 or !chunk[x][y + 1][z]) {
+		afegirVertex(vertices, x, y + 1, z);
+		afegirVertex(vertices, x, y + 1, z + 1);
+		afegirVertex(vertices, x + 1, y + 1, z);
+		afegirVertex(vertices, x + 1, y + 1, z);
+		afegirVertex(vertices, x, y + 1, z + 1);
+		afegirVertex(vertices, x + 1, y + 1, z + 1);
+
+	}
 
 	// Cara sota
-	afegirVertex(vertices, x, y, z);
-	afegirVertex(vertices, x + 1, y, z);
-	afegirVertex(vertices, x, y, z + 1);
-	afegirVertex(vertices, x + 1, y, z);
-	afegirVertex(vertices, x + 1, y, z + 1);
-	afegirVertex(vertices, x, y, z + 1);
+	if (y == 0 or !chunk[x][y - 1][z]) {
+		afegirVertex(vertices, x, y, z);
+		afegirVertex(vertices, x + 1, y, z);
+		afegirVertex(vertices, x, y, z + 1);
+		afegirVertex(vertices, x + 1, y, z);
+		afegirVertex(vertices, x + 1, y, z + 1);
+		afegirVertex(vertices, x, y, z + 1);
+
+	}
 
 }
 
@@ -104,8 +122,6 @@ void Chunk2::update()
 void Chunk2::render()
 {
 	if (canviat) update();
-
-
 
 	glEnableVertexAttribArray(0);
 
