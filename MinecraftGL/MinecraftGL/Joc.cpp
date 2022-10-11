@@ -59,7 +59,7 @@ void Joc::loop() {
 	// Treure el cursor
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
-	Chunk c;
+	Chunk2 c;
 
 	int fps = 0;
 	float ant = 0.0f;
@@ -71,6 +71,8 @@ void Joc::loop() {
 	{
 		camera.moure(deltaTime, window);
 		camera.girar(window);
+
+		//cout << "X: "<<camera.obtPos().x << ", Z: " << camera.obtPos().z << endl;
 
 		i += 10;
 		j = sin(glfwGetTime());
@@ -113,7 +115,6 @@ void Joc::loop() {
 			ant = currentFrame;
 			cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
 			fps = 0; // Resetejem el comptador
-			cout << "Triangles: " << c.nCubs() * 12 << endl;
 
 		}
 		fps++;

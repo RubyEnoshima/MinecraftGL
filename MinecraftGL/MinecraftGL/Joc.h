@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Chunk.h"
+#include "Chunk2.h"
 #include "Renderer.h"
 #include "Camera.h"
 

@@ -5,6 +5,12 @@ Cub::Cub() {
 	glGenBuffers(1, &EBO);
 }
 
+Cub::~Cub()
+{
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+}
+
 Cub::Cub(int x, int y, int z, int _id)
 {
 	glGenBuffers(1, &VBO);

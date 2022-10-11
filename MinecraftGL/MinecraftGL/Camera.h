@@ -19,6 +19,8 @@ public:
 
 	void moure(float deltaTime, GLFWwindow* window);
 	void girar(GLFWwindow* window);
+
+	glm::vec3 obtPos() const;
 	
 private:
 	void moureDreta(float deltaTime);
@@ -28,7 +30,7 @@ private:
 
 	void mirar();
 
-	const float velocitat = 2.5f;
+	float velocitat = 2.5f;
 	const float sensibilitat = 0.1f;
 	float lastX, lastY;
 

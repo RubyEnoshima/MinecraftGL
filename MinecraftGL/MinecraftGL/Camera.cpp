@@ -3,7 +3,7 @@
 Camera::Camera(float w,float h)
 {
 	pos = glm::vec3(0.0f, altura, 3.0f);
-	objectiu = glm::vec3(0.0, 0.0f, 0.0f);
+	objectiu = glm::vec3(-1.0, 0.0f, -1.0f);
 	direccio = glm::normalize(pos - objectiu);
 	right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), direccio));
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -48,6 +48,11 @@ void Camera::girar(GLFWwindow* window) {
 	mirar();
 }
 
+glm::vec3 Camera::obtPos() const
+{
+	return pos;
+}
+
 
 glm::mat4 Camera::lookAt()
 {
@@ -56,6 +61,12 @@ glm::mat4 Camera::lookAt()
 
 void Camera::moure(float deltaTime, GLFWwindow* window)
 {
+	// Córrer
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
+		velocitat = 3.0f * 2.5;
+	}
+	else velocitat = 3.0f;
+
 	if (glfwGetKey(window, GLFW_KEY_W)) {
 		moureDavant(deltaTime);
 	}

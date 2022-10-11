@@ -6,6 +6,7 @@ class Cub
 {
 public:
 	Cub();
+	~Cub();
 	Cub(int x, int y, int z, int _id);
 
 	void update();
