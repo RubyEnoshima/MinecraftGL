@@ -13,13 +13,14 @@
 using namespace std;
 
 #define X 16
-#define Y 127
+#define Y 127 // 102 se empieza a ver raruno
 #define Z 16
 
 class Chunk2
 {
 public:
 	Chunk2();
+	Chunk2(int x, int z);
 	~Chunk2();
 
 	void canviarCub(int x, int y, int z, uint8_t tipus); // Canvia el tipus d'un cub concret
@@ -35,8 +36,8 @@ private:
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
 
 	unsigned int VBO;
+	int posX = 0, posZ = 0;
 
-	//Cub chunk[X][Y][Z];
 	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
 
 	unsigned int elements = 0;

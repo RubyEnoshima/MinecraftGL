@@ -25,6 +25,7 @@ public:
 	int carregaShaders(); // Carrega els shaders. Retorna 1 si tot ha anat bé.
 	unsigned int obtenirUniform(const char* uniform) const;
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
+	void canviarColor(const glm::vec4 color);
 
 	// Monitor
 	float aspectRatio() const;

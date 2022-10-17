@@ -165,6 +165,11 @@ void Renderer::colocarMat4(const string uniform, const glm::mat4 matriu)
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, uniform.c_str()), 1, GL_FALSE, &matriu[0][0]);
 }
 
+void Renderer::canviarColor(const glm::vec4 color)
+{
+	glUniform4f(obtenirUniform("inColor"), color[0], color[1], color[2], color[3]);
+}
+
 float Renderer::aspectRatio() const
 {
 	int w, h;

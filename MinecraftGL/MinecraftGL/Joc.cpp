@@ -60,12 +60,15 @@ void Joc::loop() {
 	// Treure el cursor
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
-	Chunk2 c;
+	Chunk2 c(1, 0);
+	Chunk2 c2(1,1);
 
 	int fps = 0;
 	float ant = 0.0f;
 
 	float i = 0.0f; float j = 1.0f;
+
+	renderer.canviarColor(glm::vec4(0.85f,0.5f,0.0f, 1.0f));
 
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
@@ -87,7 +90,8 @@ void Joc::loop() {
 		glClearColor(0.4f, 0.2f, 0.7f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		c.render(); // Nomes renderitzem un quadrat
+		c.render();
+		c2.render();
 
 		// ---- camera ----
 
