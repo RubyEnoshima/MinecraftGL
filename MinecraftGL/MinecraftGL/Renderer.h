@@ -27,6 +27,7 @@ public:
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
 	void canviarColor(const glm::vec4 color);
 
+
 	// Monitor
 	float aspectRatio() const;
 private:

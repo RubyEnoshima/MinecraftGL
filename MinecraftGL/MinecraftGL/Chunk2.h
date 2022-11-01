@@ -20,7 +20,6 @@ class Chunk2
 {
 public:
 	Chunk2();
-	Chunk2(int x, int z);
 	~Chunk2();
 
 	void canviarCub(int x, int y, int z, uint8_t tipus); // Canvia el tipus d'un cub concret
@@ -36,7 +35,6 @@ private:
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
 
 	unsigned int VBO;
-	int posX = 0, posZ = 0;
 
 	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
 

@@ -6,14 +6,6 @@ Chunk2::Chunk2()
 	glGenBuffers(1, &VBO);
 }
 
-Chunk2::Chunk2(int x, int z)
-{
-	memset(chunk, 1, sizeof(chunk));
-	glGenBuffers(1, &VBO);
-	posX = x;
-	posZ = z;
-}
-
 Chunk2::~Chunk2()
 {
 	glDeleteBuffers(1, &VBO);
@@ -39,7 +31,7 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	// Cara esq
-	if (x%X==0 or !chunk[x%X - 1][y][z%Z]) {
+	if (x==0 or !chunk[x - 1][y][z]) {
 		afegirVertex(vertices, x, y, z);
 		afegirVertex(vertices, x, y, z+1);
 		afegirVertex(vertices, x, y+1, z);
@@ -50,7 +42,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	}
 
 	// Cara dre
-	if (x % X == X - 1 or !chunk[x % X + 1][y][z % Z]) {
+	if (x == X - 1 or !chunk[x + 1][y][z]) {
 		afegirVertex(vertices, x + 1, y, z);
 		afegirVertex(vertices, x + 1, y + 1, z);
 		afegirVertex(vertices, x + 1, y, z + 1);
@@ -61,7 +53,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	}
 
 	// Cara frontal
-	if (z % Z == Z - 1 or !chunk[x % X][y][z % Z + 1]) {
+	if (z == Z - 1 or !chunk[x][y][z + 1]) {
 		afegirVertex(vertices, x, y, z + 1);
 		afegirVertex(vertices, x + 1, y, z + 1);
 		afegirVertex(vertices, x, y + 1, z + 1);
@@ -72,7 +64,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	}
 
 	// Cara darrera
-	if (z % Z == 0 or !chunk[x % X][y][z % Z - 1]) {
+	if (z == 0 or !chunk[x][y][z - 1]) {
 		afegirVertex(vertices, x, y, z);
 		afegirVertex(vertices, x, y + 1, z);
 		afegirVertex(vertices, x + 1, y, z);
@@ -83,7 +75,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	}
 
 	// Cara adalt
-	if (y==Y-1 or !chunk[x % X][y + 1][z % Z]) {
+	if (y==Y-1 or !chunk[x][y + 1][z]) {
 		afegirVertex(vertices, x, y + 1, z);
 		afegirVertex(vertices, x, y + 1, z + 1);
 		afegirVertex(vertices, x + 1, y + 1, z);
@@ -94,7 +86,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	}
 
 	// Cara sota
-	if (y == 0 or !chunk[x % X][y - 1][z % Z]) {
+	if (y == 0 or !chunk[x][y - 1][z]) {
 		afegirVertex(vertices, x, y, z);
 		afegirVertex(vertices, x + 1, y, z);
 		afegirVertex(vertices, x, y, z + 1);
@@ -110,10 +102,10 @@ void Chunk2::update()
 {
 	vector<GLbyte> vertices;
 
-	for (int i = X*posX; i < X*posX + X; i++) {
+	for (int i = 0; i < X; i++) {
 		for (int j = 0; j < Y; j++) {
-			for (int k = Z*posZ; k < Z*posZ + Z; k++) {
-				uint8_t tipus = chunk[i%X][j][k%Z];
+			for (int k = 0; k < Z; k++) {
+				uint8_t tipus = chunk[i][j][k];
 				if(tipus) afegirCub(vertices,i,j,k);
 			}
 		}

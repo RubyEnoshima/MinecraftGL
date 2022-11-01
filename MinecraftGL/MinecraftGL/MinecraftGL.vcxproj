@@ -150,6 +150,7 @@
     <ClCompile Include="Joc.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="SuperChunk.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="Cub.h" />
     <ClInclude Include="Joc.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SuperChunk.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
