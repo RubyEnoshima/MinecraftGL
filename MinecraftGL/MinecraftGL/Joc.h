@@ -5,6 +5,8 @@
 #include "Renderer.h"
 #include "Camera.h"
 
+#define rgb renderer.rgb
+
 using namespace std;
 
 static class Joc

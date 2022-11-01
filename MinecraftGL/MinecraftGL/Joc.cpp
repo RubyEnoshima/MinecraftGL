@@ -69,7 +69,7 @@ void Joc::loop() {
 
 	float i = 0.0f; float j = 1.0f;
 
-	renderer.canviarColor(glm::vec4(0.85f,0.5f,0.0f, 1.0f));
+	renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));
 
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
@@ -88,7 +88,7 @@ void Joc::loop() {
 		lastFrame = currentFrame;
 
 		// Canvia el color del background
-		glClearColor(0.4f, 0.2f, 0.7f, 1.0f);
+		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 

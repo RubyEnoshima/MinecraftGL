@@ -170,6 +170,11 @@ void Renderer::canviarColor(const glm::vec4 color)
 	glUniform4f(obtenirUniform("inColor"), color[0], color[1], color[2], color[3]);
 }
 
+float Renderer::rgb(int color) const
+{
+	return color/255.0f;
+}
+
 float Renderer::aspectRatio() const
 {
 	int w, h;
