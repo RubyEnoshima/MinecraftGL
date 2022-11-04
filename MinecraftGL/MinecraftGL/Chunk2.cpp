@@ -1,9 +1,11 @@
 #include "Chunk2.h"
 
-Chunk2::Chunk2()
+Chunk2::Chunk2(unsigned int _x, unsigned int _y)
 {
-	memset(chunk, 1, sizeof(chunk));
+	memset(chunk, TERRA, sizeof(chunk));
 	glGenBuffers(1, &VBO);
+	posX = _x;
+	posY = _y;
 }
 
 Chunk2::~Chunk2()
@@ -14,6 +16,7 @@ Chunk2::~Chunk2()
 
 void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 {
+	cout << posX << posY << endl;
 	chunk[x][y][z] = tipus;
 	canviat = true;
 }
@@ -31,7 +34,7 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	// Cara esq
-	if (x==0 or !chunk[x - 1][y][z]) {
+	if ((x==0 and veiEsq and !veiEsq->obtenirCub(X-1,y,z) or (x==0 and !veiEsq)) or (x!=0 and !chunk[x - 1][y][z])) {
 		afegirVertex(vertices, x, y, z);
 		afegirVertex(vertices, x, y, z+1);
 		afegirVertex(vertices, x, y+1, z);
@@ -42,7 +45,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	}
 
 	// Cara dre
-	if (x == X - 1 or !chunk[x + 1][y][z]) {
+	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0,y,z) or (x == X-1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z])) {
 		afegirVertex(vertices, x + 1, y, z);
 		afegirVertex(vertices, x + 1, y + 1, z);
 		afegirVertex(vertices, x + 1, y, z + 1);
@@ -53,7 +56,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	}
 
 	// Cara frontal
-	if (z == Z - 1 or !chunk[x][y][z + 1]) {
+	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x,y,0) or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1])) {
 		afegirVertex(vertices, x, y, z + 1);
 		afegirVertex(vertices, x + 1, y, z + 1);
 		afegirVertex(vertices, x, y + 1, z + 1);
@@ -64,7 +67,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	}
 
 	// Cara darrera
-	if (z == 0 or !chunk[x][y][z - 1]) {
+	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x,y,Z-1) or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1])) {
 		afegirVertex(vertices, x, y, z);
 		afegirVertex(vertices, x, y + 1, z);
 		afegirVertex(vertices, x + 1, y, z);
@@ -134,5 +137,25 @@ void Chunk2::render()
 
 int Chunk2::nCubs() const
 {
-	return 0;
+	return elements/6;
+}
+
+void Chunk2::emplenarChunk()
+{
+	for (int i = 0; i < X; i++) {
+		for (int j = 0; j < Y; j++) {
+			for (int k = 0; k < Z; k++) {
+				canviarCub(i,j,k,1);
+			}
+		}
+	}
+}
+
+void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)
+{
+	veiEsq = left;
+	veiDre = right;
+	veiUp = up;
+	veiBaix = down;
+
 }

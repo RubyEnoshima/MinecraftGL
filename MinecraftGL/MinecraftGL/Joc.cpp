@@ -52,16 +52,27 @@ int Joc::crearFinestra() {
 	return success;
 }
 
+void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
+	if (click == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
+		RayCast r(&joc->camera, &joc->renderer, window);
+		glm::vec3 ray = r.calcularRay();
+		glm::vec3 O = joc->camera.obtPos();
+		float t;
+		cout << r.rayTriangleIntersect(O,ray,glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), t);
+	}
+}
+
 void Joc::loop() {
-	
+	glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
+	glfwSetMouseButtonCallback(window, mouse_click_callback);
+
 	glEnable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	// Treure el cursor
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	canviarModeMouse(GLFW_CURSOR_DISABLED);
 	
-	/*Chunk2 c(1, 0);
-	Chunk2 c2(1,1);*/
 	SuperChunk sp(&renderer);
 
 	int fps = 0;
@@ -71,17 +82,26 @@ void Joc::loop() {
 
 	renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));
 
+
+	glm::mat4 model = glm::mat4(1.0f);
+	camera.setModel(model);
+	renderer.colocarMat4("model", model);
+	//model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
+	//model = glm::scale(model, glm::vec3(j,j,j));
+
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(1600.0f), renderer.aspectRatio(), 0.1f, 100.0f);
+	camera.setProjection(projection);
+	renderer.colocarMat4("projection", projection);
+
+	glm::mat4 view = glm::mat4(1.0f);
+
+
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
 		camera.moure(deltaTime, window);
 		camera.girar(window);
-
-		//cout << "X: "<<camera.obtPos().x << ", Z: " << camera.obtPos().z << endl;
-
-		i += 10;
-		j = sin(glfwGetTime());
-
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -96,20 +116,9 @@ void Joc::loop() {
 
 		// ---- camera ----
 
-		glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
-		//model = glm::scale(model, glm::vec3(j,j,j));
-
-		glm::mat4 view = glm::mat4(1.0f);
-		// note that we’re translating the scene in the reverse direction
 		view = camera.lookAt();
-
-		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(1600.0f), renderer.aspectRatio(), 0.1f, 100.0f);
-
-		renderer.colocarMat4("model", model);
 		renderer.colocarMat4("view", view);
-		renderer.colocarMat4("projection", projection);
+		
 
 		// -----------------
 

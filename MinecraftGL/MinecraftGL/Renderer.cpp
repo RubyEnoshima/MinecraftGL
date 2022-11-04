@@ -188,3 +188,12 @@ pair<int, int> Renderer::obtenirTamany() const
 	glfwGetWindowSize(window, &w, &h);
 	return pair<int, int>(w, h);
 }
+
+pair<int, int> Renderer::obtenirCentre() const
+{
+	int w, h;
+	glfwGetWindowSize(window, &w, &h);
+	int xpos, ypos;
+	glfwGetWindowPos(window, &xpos, &ypos);
+	return pair<int, int>(xpos+w/2, ypos+h/2);
+}

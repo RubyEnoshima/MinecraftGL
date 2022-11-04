@@ -149,6 +149,7 @@
     <ClCompile Include="Cub.cpp" />
     <ClCompile Include="Joc.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RayCast.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SuperChunk.cpp" />
   </ItemGroup>
@@ -158,8 +159,10 @@
     <ClInclude Include="Chunk2.h" />
     <ClInclude Include="Cub.h" />
     <ClInclude Include="Joc.h" />
+    <ClInclude Include="RayCast.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SuperChunk.h" />
+    <ClInclude Include="Tipus.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="VertexShader.vert">

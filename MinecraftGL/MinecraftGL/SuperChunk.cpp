@@ -3,13 +3,41 @@
 SuperChunk::SuperChunk(Renderer* _renderer)
 {
 	renderer = _renderer;
+
 	for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)
 		{
-			Chunks[i][j] = new Chunk2();
+			Chunks[i][j] = new Chunk2(i,j);
 		}
 	}
+
+	for (int i = 0; i < XC; i++)
+	{
+		for (int j = 0; j < YC; j++)
+		{
+			Chunk2* up = NULL;
+			Chunk2* left = NULL;
+			Chunk2* right = NULL;
+			Chunk2* down = NULL;
+			if (i - 1 >= 0) left = Chunks[i - 1][j];
+			if (i + 1 < XC) right = Chunks[i + 1][j];
+			if (j - 1 >= 0) up = Chunks[i][j - 1];
+			if (j + 1 < YC) down = Chunks[i][j + 1];
+			Chunks[i][j]->afegirVeins(left, right, up, down);
+		}
+	}
+
+}
+
+void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
+{
+	Chunks[x / X][y / Y][z / Z].canviarCub(x%X,y,z%Z,tipus);
+}
+
+uint8_t SuperChunk::obtenirCub(int x, int y, int z)
+{
+	return Chunks[(x / X)][y/Y][(z / Z)].obtenirCub(x % X, y, z % Z);
 }
 
 void SuperChunk::update()

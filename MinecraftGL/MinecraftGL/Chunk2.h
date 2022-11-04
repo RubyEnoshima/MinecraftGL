@@ -8,7 +8,8 @@
 
 #include <string.h>
 #include <iostream>
-#include<vector>
+#include <vector>
+#include "Tipus.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ using namespace std;
 class Chunk2
 {
 public:
-	Chunk2();
+	Chunk2(unsigned int _x, unsigned int _y);
 	~Chunk2();
 
 	void canviarCub(int x, int y, int z, uint8_t tipus); // Canvia el tipus d'un cub concret
@@ -30,16 +31,25 @@ public:
 
 	int nCubs() const;
 
+	void emplenarChunk(); // Funció debug
+	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
+
 private:
 	static void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
 
 	unsigned int VBO;
 
+	unsigned int posX, posY;
 	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
 
 	unsigned int elements = 0;
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
+
+	Chunk2* veiEsq = NULL;
+	Chunk2* veiDre = NULL;
+	Chunk2* veiUp = NULL;
+	Chunk2* veiBaix = NULL;
 };
 

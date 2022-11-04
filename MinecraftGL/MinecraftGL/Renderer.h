@@ -19,7 +19,8 @@ public:
 	int crearFinestra(); // Inicia OpenGL i crea una finestra. Retorna 1 si tot ha anat bé.
 	void centrarFinestra(); // Centra la finestra
 	GLFWwindow* finestra(); // Retorna la finestra principal
-	pair<int, int> obtenirTamany() const;
+	pair<int, int> obtenirTamany() const; // Retorna el tamany de la finestra
+	pair<int, int> obtenirCentre() const; // Retorna el centre de la finestra
 
 	// Shaders
 	int carregaShaders(); // Carrega els shaders. Retorna 1 si tot ha anat bé.

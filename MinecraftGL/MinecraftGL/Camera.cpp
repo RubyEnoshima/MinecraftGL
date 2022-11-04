@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(float w,float h)
+Camera::Camera()
 {
 	pos = glm::vec3(0.0f, altura, 3.0f);
 	objectiu = glm::vec3(-1.0, 0.0f, -1.0f);
@@ -9,6 +9,31 @@ Camera::Camera(float w,float h)
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	mirar();
+}
+
+void Camera::setProjection(const glm::mat4& _projection)
+{
+	projection = _projection;
+}
+
+void Camera::setModel(const glm::mat4& _model)
+{
+	model = _model;
+}
+
+glm::mat4 Camera::getProjection() const
+{
+	return projection;
+}
+
+glm::mat4 Camera::getModel() const
+{
+	return model;
+}
+
+glm::mat4 Camera::getView() const
+{
+	return view;
 }
 
 void Camera::mirar() {
@@ -56,7 +81,8 @@ glm::vec3 Camera::obtPos() const
 
 glm::mat4 Camera::lookAt()
 {
-	return glm::lookAt(pos, pos + front, cameraUp);
+	view = glm::lookAt(pos, pos + front, cameraUp);
+	return view;
 }
 
 void Camera::moure(float deltaTime, GLFWwindow* window)

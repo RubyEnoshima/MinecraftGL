@@ -42,6 +42,9 @@
     <ClCompile Include="SuperChunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RayCast.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Joc.h">
@@ -63,6 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SuperChunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RayCast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tipus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

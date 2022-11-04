@@ -13,7 +13,14 @@ using namespace std;
 class Camera
 {
 public:
-	Camera(float w=800.0f,float h=600.0f); 
+	Camera(); 
+
+	void setProjection(const glm::mat4& _projection);
+	void setModel(const glm::mat4& _model);
+
+	glm::mat4 getProjection() const;
+	glm::mat4 getModel() const;
+	glm::mat4 getView() const;
 
 	glm::mat4 lookAt();
 
@@ -47,6 +54,10 @@ private:
 	glm::vec3 cameraUp;
 	glm::vec3 right;
 	glm::vec3 front;
+
+	glm::mat4 view;
+	glm::mat4 projection;
+	glm::mat4 model;
 
 };
 
