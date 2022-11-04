@@ -12,6 +12,9 @@ glm::vec3 RayCast::calcularRay() const
 	float xCentre = r->obtenirCentre().first;
 	float yCentre = r->obtenirCentre().second;
 
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+
 	float x = (2.0f * xCentre) / r->obtenirTamany().first - 1.0f;
 	float y = 1.0f - (2.0f * yCentre) / r->obtenirTamany().second;
 
@@ -23,6 +26,11 @@ glm::vec3 RayCast::calcularRay() const
 	glm::vec3 ray_wor = glm::normalize(glm::vec3(ray_wor4.x,ray_wor4.y,ray_wor4.z));
 	
 	return ray_wor;
+}
+
+glm::vec3 RayCast::calcularRayV2() const
+{
+    return glm::vec3();
 }
 
 bool RayCast::rayTriangleIntersect(

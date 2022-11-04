@@ -55,11 +55,21 @@ int Joc::crearFinestra() {
 void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
 	if (click == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
+		
 		RayCast r(&joc->camera, &joc->renderer, window);
 		glm::vec3 ray = r.calcularRay();
 		glm::vec3 O = joc->camera.obtPos();
 		float t;
-		cout << r.rayTriangleIntersect(O,ray,glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), t);
+		cout << "Ray: " << ray.x << " " << ray.y << " " << ray.z << endl;
+		//cout << r.rayTriangleIntersect(O,ray,glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), t);
+		
+		float xCentre = joc->renderer.obtenirCentre().first;
+		float yCentre = joc->renderer.obtenirCentre().second;
+		float px[4];
+		glReadPixels(1920/2, 1080/2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &px);
+		glm::vec3 kaka = glm::normalize(glm::unProject(glm::vec3(xCentre,yCentre,1.0f), joc->camera.getView() * joc->camera.getModel(), joc->camera.getProjection(), glm::vec4(0.0f,0.0f,800.0f,600.0f)));
+		cout << "x: " << kaka.x << " y: " << kaka.y << " z: " << kaka.z << endl;
+		
 	}
 }
 
@@ -67,6 +77,7 @@ void Joc::loop() {
 	glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
 	glfwSetMouseButtonCallback(window, mouse_click_callback);
 
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 

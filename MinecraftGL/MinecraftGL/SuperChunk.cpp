@@ -22,8 +22,8 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			Chunk2* down = NULL;
 			if (i - 1 >= 0) left = Chunks[i - 1][j];
 			if (i + 1 < XC) right = Chunks[i + 1][j];
-			if (j - 1 >= 0) up = Chunks[i][j - 1];
-			if (j + 1 < YC) down = Chunks[i][j + 1];
+			if (j - 1 >= 0) down = Chunks[i][j - 1];
+			if (j + 1 < YC) up = Chunks[i][j + 1];
 			Chunks[i][j]->afegirVeins(left, right, up, down);
 		}
 	}

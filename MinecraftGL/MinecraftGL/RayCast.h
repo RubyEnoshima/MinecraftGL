@@ -7,6 +7,7 @@ public:
 	RayCast(Camera* cam, Renderer* renderer, GLFWwindow* _window);
 
 	glm::vec3 calcularRay() const;
+	glm::vec3 calcularRayV2() const;
 
 	bool rayTriangleIntersect(
 		const glm::vec3& orig, const glm::vec3& dir,
