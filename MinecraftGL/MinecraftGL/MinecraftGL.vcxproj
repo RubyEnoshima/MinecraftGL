@@ -151,6 +151,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RayCast.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SuperChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +162,7 @@
     <ClInclude Include="Joc.h" />
     <ClInclude Include="RayCast.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SuperChunk.h" />
     <ClInclude Include="Tipus.h" />
   </ItemGroup>
@@ -174,6 +176,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <None Include="DepthShader.frag" />
     <None Include="FragmentShader.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

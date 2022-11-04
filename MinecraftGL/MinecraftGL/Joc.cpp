@@ -68,7 +68,7 @@ void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
 		float px[4];
 		glReadPixels(1920/2, 1080/2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &px);
 		glm::vec3 kaka = glm::normalize(glm::unProject(glm::vec3(xCentre,yCentre,1.0f), joc->camera.getView() * joc->camera.getModel(), joc->camera.getProjection(), glm::vec4(0.0f,0.0f,800.0f,600.0f)));
-		cout << "x: " << kaka.x << " y: " << kaka.y << " z: " << kaka.z << endl;
+		cout << "x: " << px[0] << " y: " << px[1] << " z: " << px[2] << endl;
 		
 	}
 }
@@ -120,7 +120,7 @@ void Joc::loop() {
 
 		// Canvia el color del background
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 
 		sp.render();

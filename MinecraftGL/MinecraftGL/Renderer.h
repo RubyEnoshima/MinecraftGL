@@ -6,11 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <iostream>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-using namespace std;
+#include "ShaderProgram.h"
 
 class Renderer
 {
@@ -23,7 +19,8 @@ public:
 	pair<int, int> obtenirCentre() const; // Retorna el centre de la finestra
 
 	// Shaders
-	int carregaShaders(); // Carrega els shaders. Retorna 1 si tot ha anat bé.
+	int carregaShaders();
+	void useShader();
 	unsigned int obtenirUniform(const char* uniform) const;
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
 	void canviarColor(const glm::vec4 color);
@@ -33,11 +30,10 @@ public:
 	// Monitor
 	float aspectRatio() const;
 private:
-	// Arxius pels shaders
-	const string vertexShaderSource = "VertexShader.vert";
-	const string fragmentShaderSource = "FragmentShader.frag";
 
-	unsigned int VAO, shaderProgram;
+	unsigned int VAO, shaderActual;
+
+	ShaderProgram shader;
 
 	GLFWwindow* window;
 
