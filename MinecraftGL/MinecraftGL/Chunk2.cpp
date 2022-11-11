@@ -32,6 +32,13 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 	vertices.push_back(z);
 }
 
+glm::vec3 Chunk2::calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2)
+{
+	glm::vec3 A = P1 - P0, B = P2-P1;
+	glm::vec3 N(A.y*B.z-A.z*B.y, A.z * B.x - A.x * B.z, A.x * B.y - A.y * B.x);
+	return glm::normalize(N);
+}
+
 void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 	// Cara esq
 	if ((x==0 and veiEsq and !veiEsq->obtenirCub(X-1,y,z) or (x==0 and !veiEsq)) or (x!=0 and !chunk[x - 1][y][z])) {
@@ -42,6 +49,8 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 		afegirVertex(vertices, x, y, z+1);
 		afegirVertex(vertices, x, y+1, z+1);
 
+		//glm::vec3 n = calcularNormal(glm::vec3(x,y,z), glm::vec3(x, y, z+1), glm::vec3(x, y+1, z));
+		//cout << n.x << n.y << n.z << endl;
 	}
 
 	// Cara dre
@@ -52,7 +61,6 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 		afegirVertex(vertices, x + 1, y + 1, z);
 		afegirVertex(vertices, x + 1, y + 1, z + 1);
 		afegirVertex(vertices, x + 1, y, z + 1);
-
 	}
 
 	// Cara frontal
@@ -74,7 +82,7 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 		afegirVertex(vertices, x, y + 1, z);
 		afegirVertex(vertices, x + 1, y + 1, z);
 		afegirVertex(vertices, x + 1, y, z);
-
+		
 	}
 
 	// Cara adalt

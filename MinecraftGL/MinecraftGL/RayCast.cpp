@@ -28,62 +28,50 @@ glm::vec3 RayCast::calcularRay() const
 	return ray_wor;
 }
 
-glm::vec3 RayCast::calcularRayV2() const
+bool RayCast::intersecta(const glm::vec3& O, const glm::vec3& D, const glm::vec3 n) const
 {
-    return glm::vec3();
+    //float t = calcT(O,D,n);
+    //return t > 0;
+
+    float denominator = glm::dot(n,D);
+
+    if (denominator >= 1e-6) // 1e-6 = 0.000001
+    {
+        glm::vec3 vector_subtraction = glm::vec3(0,0,0) - O;
+        float distance = glm::dot(vector_subtraction,n);
+
+        return (distance >= 0);
+    }
+
+    return false;
 }
 
-bool RayCast::rayTriangleIntersect(
-    const glm::vec3& orig, const glm::vec3& dir,
-    const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2,
-    float& t)
+glm::vec3 RayCast::calcularRay2() const
 {
-    // compute plane's normal
-    glm::vec3 v0v1 = v1 - v0;
-    glm::vec3 v0v2 = v2 - v0;
-    // no need to normalize
-    glm::vec3 N = glm::cross(v0v1,v0v2);  //N 
-    float area2 = N.length();
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
 
-    // Step 1: finding P
+    cout << xpos << ypos;
 
-    // check if ray and plane are parallel.
-    float NdotRayDirection = glm::dot(N,dir);
-    if (fabs(NdotRayDirection) < 0.0000001f)  //almost 0 
-        return false;  //they are parallel so they don't intersect ! 
+    float mouseX = xpos / (r->obtenirTamany().first * 0.5f) - 1.0f;
+    float mouseY = ypos / (r->obtenirTamany().second * 0.5f) - 1.0f;
 
-    // compute d parameter using equation 2
-    float d = glm::dot(-N,v0);
+    glm::mat4 proj = camera->getProjection();
+    glm::mat4 view = camera->getView();
 
-    // compute t (equation 3)
-    t = -(glm::dot(N,orig) + d) / NdotRayDirection;
+    glm::mat4 invVP = glm::inverse(proj * view);
+    glm::vec4 screenPos = glm::vec4(mouseX, -mouseY, 1.0f, 1.0f);
+    glm::vec4 worldPos = invVP * screenPos;
 
-    // check if the triangle is in behind the ray
-    if (t < 0) return false;  //the triangle is behind 
+    glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
 
-    // compute the intersection point using equation 1
-    glm::vec3 P = orig + t * dir;
+    return dir;
+}
 
-    // Step 2: inside-outside test
-    glm::vec3 C;  //vector perpendicular to triangle's plane 
+float RayCast::calcT(const glm::vec3& O, const glm::vec3& D, const glm::vec3 n) const {
+    return -((glm::dot(O, n)) / (glm::dot(D, n)));
+}
 
-    // edge 0
-    glm::vec3 edge0 = v1 - v0;
-    glm::vec3 vp0 = P - v0;
-    C = glm::cross(edge0,vp0);
-    if (glm::dot(N,C) < 0) return false;  //P is on the right side 
-
-    // edge 1
-    glm::vec3 edge1 = v2 - v1;
-    glm::vec3 vp1 = P - v1;
-    C = glm::cross(edge1,vp1);
-    if (glm::dot(N,C) < 0)  return false;  //P is on the right side 
-
-    // edge 2
-    glm::vec3 edge2 = v0 - v2;
-    glm::vec3 vp2 = P - v2;
-    C = glm::cross(edge2,vp2);
-    if (glm::dot(N,C) < 0) return false;  //P is on the right side; 
-
-    return true;  //this ray hits the triangle 
+glm::vec3 RayCast::calcPunt(const glm::vec3& O, const glm::vec3& D, float t) const {
+    return O + (D*t);
 }

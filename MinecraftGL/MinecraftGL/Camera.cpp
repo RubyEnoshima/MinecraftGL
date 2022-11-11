@@ -2,7 +2,7 @@
 
 Camera::Camera()
 {
-	pos = glm::vec3(0.0f, altura, 3.0f);
+	pos = glm::vec3(0.0f, altura, 0.0f);
 	objectiu = glm::vec3(-1.0, 0.0f, -1.0f);
 	direccio = glm::normalize(pos - objectiu);
 	right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), direccio));

@@ -152,7 +152,9 @@
     <ClCompile Include="RayCast.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="SuperChunk.cpp" />
+    <ClCompile Include="Textura.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SuperChunk.h" />
+    <ClInclude Include="Textura.h" />
     <ClInclude Include="Tipus.h" />
   </ItemGroup>
   <ItemGroup>

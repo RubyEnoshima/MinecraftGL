@@ -33,6 +33,7 @@ public:
 
 	void emplenarChunk(); // Funció debug
 	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
+	static glm::vec3 calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2);
 
 private:
 	static void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);

@@ -52,23 +52,42 @@ int Joc::crearFinestra() {
 	return success;
 }
 
+glm::vec3 calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2)
+{
+	glm::vec3 A = P1 - P0, B = P2 - P1;
+	glm::vec3 N(A.y * B.z - A.z * B.y, A.z * B.x - A.x * B.z, A.x * B.y - A.y * B.x);
+	return glm::normalize(N);
+}
+
 void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
 	if (click == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 		
 		RayCast r(&joc->camera, &joc->renderer, window);
 		glm::vec3 ray = r.calcularRay();
-		glm::vec3 O = joc->camera.obtPos();
-		float t;
-		cout << "Ray: " << ray.x+O.x << " " << ray.y+O.y << " " << ray.z+O.z << endl;
-		//cout << r.rayTriangleIntersect(O,ray,glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), t);
-		
-		float xCentre = joc->renderer.obtenirCentre().first;
-		float yCentre = joc->renderer.obtenirCentre().second;
-		float px[4];
-		glReadPixels(1920/2, 1080/2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &px);
-		glm::vec3 kaka = glm::normalize(glm::unProject(glm::vec3(xCentre,yCentre,1.0f), joc->camera.getView() * joc->camera.getModel(), joc->camera.getProjection(), glm::vec4(0.0f,0.0f,800.0f,600.0f)));
-		cout << "x: " << kaka[0] << " y: " << kaka[1] << " z: " << kaka[2] << endl;
+		glm::vec3 O = (joc->camera.obtPos());
+
+		glm::vec3 n(0, 1, 0);
+
+
+		bool intersecta = r.intersecta(O, ray, n);
+		cout << "Ray: " << ray.x << " " << ray.y << " " << ray.z << " ";
+		if (intersecta) {
+			float t = r.calcT(O, ray, n);
+			glm::vec3 punt = r.calcPunt(O, ray, t);
+			cout << "Intersecta en " << punt.x << " " << punt.y << " " << punt.z << endl;
+		}
+		else cout << "No intersecta" << endl;
+
+		//cout << "Ray: " << ray.x+O.x << " " << ray.y+O.y << " " << ray.z+O.z << endl;
+		////cout << r.rayTriangleIntersect(O,ray,glm::vec3(0.0f,0.0f,0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), t);
+		//
+		//float xCentre = joc->renderer.obtenirCentre().first;
+		//float yCentre = joc->renderer.obtenirCentre().second;
+		//float px[4];
+		//glReadPixels(1920/2, 1080/2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &px);
+		//glm::vec3 kaka = glm::normalize(glm::unProject(glm::vec3(xCentre,yCentre,1.0f), joc->camera.getView() * joc->camera.getModel(), joc->camera.getProjection(), glm::vec4(0.0f,0.0f,800.0f,600.0f)));
+		//cout << "x: " << kaka[0] << " y: " << kaka[1] << " z: " << kaka[2] << endl;
 		
 	}
 }
