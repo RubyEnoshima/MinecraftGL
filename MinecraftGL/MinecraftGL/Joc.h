@@ -5,9 +5,11 @@
 #include "Renderer.h"
 #include "Camera.h"
 #include "RayCast.h"
+#include "glm/gtx/io.hpp"
 
 #define rgb renderer.rgb
 
+#include "Cub.h"
 using namespace std;
 
 class Joc
@@ -19,6 +21,7 @@ public:
 	
 	Camera camera;
 	Renderer renderer;
+	SuperChunk* mon;
 	
 private:
 	void canviarModeMouse(int mode);

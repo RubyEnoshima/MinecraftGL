@@ -1,5 +1,19 @@
 #include "SuperChunk.h"
 
+SuperChunk::SuperChunk()
+{
+	renderer = nullptr;
+	for (int x = 0; x < XC; x++)
+		for (int y = 0; y < YC; y++)
+			Chunks[x][y] = nullptr;
+}
+
+SuperChunk::~SuperChunk() {
+	for (int x = 0; x < XC; x++)
+		for (int y = 0; y < YC; y++)
+				delete Chunks[x][y];
+}
+
 SuperChunk::SuperChunk(Renderer* _renderer)
 {
 	renderer = _renderer;
@@ -47,17 +61,20 @@ void SuperChunk::update()
 
 void SuperChunk::render()
 {	
-	for (int i = 0; i < XC; i++)
-	{
-		for (int j = 0; j < YC; j++)
+	if (renderer) {
+		for (int i = 0; i < XC; i++)
 		{
-			if (Chunks[i][j]) {
-				// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
-				glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X*XC/2, -Y, j * Z - Z * YC / 2));
-				renderer->colocarMat4("model",model);
-				Chunks[i][j]->render();
+			for (int j = 0; j < YC; j++)
+			{
+				if (Chunks[i][j]) {
+					// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
+					glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y, j * Z - Z * YC / 2));
+					renderer->colocarMat4("model", model);
+					Chunks[i][j]->render();
+				}
+
 			}
-			
 		}
 	}
+	
 }

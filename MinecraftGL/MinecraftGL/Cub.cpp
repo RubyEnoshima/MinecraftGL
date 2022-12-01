@@ -1,8 +1,7 @@
 #include "Cub.h"
 
 Cub::Cub() {
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	Cub(0, 0, 0, 0);
 }
 
 Cub::~Cub()

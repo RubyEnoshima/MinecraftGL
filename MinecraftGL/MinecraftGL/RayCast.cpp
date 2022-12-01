@@ -12,9 +12,6 @@ glm::vec3 RayCast::calcularRay() const
 	float xCentre = r->obtenirCentre().first;
 	float yCentre = r->obtenirCentre().second;
 
-    double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos);
-
 	float x = (2.0f * xCentre) / r->obtenirTamany().first - 1.0f;
 	float y = 1.0f - (2.0f * yCentre) / r->obtenirTamany().second;
 
@@ -30,8 +27,8 @@ glm::vec3 RayCast::calcularRay() const
 
 bool RayCast::intersecta(const glm::vec3& O, const glm::vec3& D, const glm::vec3 n) const
 {
-    //float t = calcT(O,D,n);
-    //return t > 0;
+    float t = calcT(O,D,n);
+    return t > 0;
 
     float denominator = glm::dot(n,D);
 

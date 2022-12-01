@@ -16,7 +16,6 @@ Chunk2::~Chunk2()
 
 void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 {
-	cout << posX << posY << endl;
 	chunk[x][y][z] = tipus;
 	canviat = true;
 }
@@ -111,21 +110,22 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 
 void Chunk2::update()
 {
-	vector<GLbyte> vertices;
+	vector<GLbyte> _vertices;
 
 	for (int i = 0; i < X; i++) {
 		for (int j = 0; j < Y; j++) {
 			for (int k = 0; k < Z; k++) {
 				uint8_t tipus = chunk[i][j][k];
-				if(tipus) afegirCub(vertices,i,j,k);
+				if(tipus) afegirCub(_vertices,i,j,k);
 			}
 		}
 	}
 
-	elements = vertices.size();
+	elements = _vertices.size();
+	vertices = _vertices.data();
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, elements, vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, elements, vertices, GL_STATIC_DRAW);
 	
 	canviat = false;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <iostream>
 #include <glad/glad.h>
 #include "stb_image.h"
 using namespace std;

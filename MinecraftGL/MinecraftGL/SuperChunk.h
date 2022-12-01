@@ -8,6 +8,8 @@
 class SuperChunk
 {
 public:
+	SuperChunk();
+	~SuperChunk();
 	SuperChunk(Renderer* _renderer);
 
 	void canviarCub(int x, int y, int z, uint8_t tipus); // Canvia el tipus d'un cub concret
