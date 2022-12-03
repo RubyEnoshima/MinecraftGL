@@ -22,8 +22,14 @@ public:
 	Camera camera;
 	Renderer renderer;
 	SuperChunk* mon;
+
+	void DestruirCub();
+	void PosarCub();
+	
 	
 private:
+	void ObtenirCubMira();
+
 	void canviarModeMouse(int mode);
 
 	void loop();
@@ -32,5 +38,6 @@ private:
 	float lastFrame = 0.0f;
 	
 	GLFWwindow* window;
+	glm::vec3 CubActual;
 };
 

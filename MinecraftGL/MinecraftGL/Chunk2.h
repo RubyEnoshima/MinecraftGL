@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include "Tipus.h"
+#include "Textura.h"
 
 using namespace std;
 
@@ -35,19 +36,18 @@ public:
 	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
 	static glm::vec3 calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2);
 
+	void BoundingBox(int8_t x, int8_t y, int8_t z);
+
 	GLbyte* vertices = NULL;
 	unsigned int elements = 0;
 private:
-	static void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
+	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
 
 	unsigned int VBO;
 
 	unsigned int posX, posY;
 	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
-
-	
-	
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
 

@@ -39,6 +39,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			if (j - 1 >= 0) down = Chunks[i][j - 1];
 			if (j + 1 < YC) up = Chunks[i][j + 1];
 			Chunks[i][j]->afegirVeins(left, right, up, down);
+			Chunks[i][j]->emplenarChunk();
 		}
 	}
 
@@ -52,6 +53,12 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 uint8_t SuperChunk::obtenirCub(int x, int y, int z)
 {
 	return Chunks[(x / X)][y/Y][(z / Z)].obtenirCub(x % X, y, z % Z);
+}
+
+void SuperChunk::BoundingBox(int x, int y, int z)
+{
+	if (x != X && y != Y && z != Z)
+		Chunks[x / X][y / Y][z / Z].BoundingBox(x % X, y, z % Z);
 }
 
 void SuperChunk::update()
@@ -68,7 +75,7 @@ void SuperChunk::render()
 			{
 				if (Chunks[i][j]) {
 					// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
-					glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y, j * Z - Z * YC / 2));
+					glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y/2, j * Z - Z * YC / 2));
 					renderer->colocarMat4("model", model);
 					Chunks[i][j]->render();
 				}

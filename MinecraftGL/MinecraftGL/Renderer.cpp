@@ -68,9 +68,13 @@ int Renderer::carregaShaders()
 {
 	shader = ShaderProgram("VertexShader.vert", "FragmentShader.frag");
 	int totbe = shader.carregaShaders();
+
 	if (totbe) {
 		useShader();
 	}
+
+	Textura t("minecraft.png");
+
 	return totbe;
 }
 

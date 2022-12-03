@@ -15,6 +15,8 @@ public:
 	void canviarCub(int x, int y, int z, uint8_t tipus); // Canvia el tipus d'un cub concret
 	uint8_t obtenirCub(int x, int y, int z); // Retorna el tipus del cub
 
+	void BoundingBox(int x, int y, int z);
+
 	void update();
 	void render();
 private:

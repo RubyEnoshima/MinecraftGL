@@ -29,6 +29,11 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 	vertices.push_back(x);
 	vertices.push_back(y);
 	vertices.push_back(z);
+	vertices.push_back(1);
+	vertices.push_back(1);
+	vertices.push_back(1);
+	vertices.push_back(0);
+	vertices.push_back(0);
 }
 
 glm::vec3 Chunk2::calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2)
@@ -36,6 +41,61 @@ glm::vec3 Chunk2::calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const
 	glm::vec3 A = P1 - P0, B = P2-P1;
 	glm::vec3 N(A.y*B.z-A.z*B.y, A.z * B.x - A.x * B.z, A.x * B.y - A.y * B.x);
 	return glm::normalize(N);
+}
+
+void Chunk2::BoundingBox(int8_t x, int8_t y, int8_t z)
+{
+	// Cube 1x1x1, centered on origin
+	GLfloat vertices[] = {
+	  0.0+x, 0.0+y, 0.0+z, 1.0,
+	  1.0+x, 0.0+y, 0.0+z, 1.0,
+	  1.0+x, 1.0+y, 0.0+z, 1.0,
+	  0.0+x, 1.0+y, 0.0+z, 1.0,
+	  0.0+x, 0.0+y, 1.0+z, 1.0,
+	  1.0+x, 0.0+y, 1.0+z, 1.0,
+	  1.0+x, 1.0+y, 1.0+z, 1.0,
+	  0.0+x, 1.0+y, 1.0+z, 1.0,
+	};
+	GLuint vbo_vertices;
+	glGenBuffers(1, &vbo_vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	GLushort elements[] = {
+	  0, 1, 2, 3,
+	  4, 5, 6, 7,
+	  0, 4, 1, 5, 
+	  2, 6, 3, 7
+	};
+	GLuint ibo_elements;
+	glGenBuffers(1, &ibo_elements);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0,					// attribute
+		4,                  // number of elements per vertex, here (x,y,z,w)
+		GL_FLOAT,           // the type of each element
+		GL_FALSE,           // take our values as-is
+		0,                  // no extra data between each position
+		0                   // offset of first element
+	);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4 * sizeof(GLushort)));
+	glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8 * sizeof(GLushort)));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glDisableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDeleteBuffers(1, &vbo_vertices);
+	glDeleteBuffers(1, &ibo_elements);
 }
 
 void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
@@ -48,8 +108,6 @@ void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
 		afegirVertex(vertices, x, y, z+1);
 		afegirVertex(vertices, x, y+1, z+1);
 
-		//glm::vec3 n = calcularNormal(glm::vec3(x,y,z), glm::vec3(x, y, z+1), glm::vec3(x, y+1, z));
-		//cout << n.x << n.y << n.z << endl;
 	}
 
 	// Cara dre
@@ -134,13 +192,21 @@ void Chunk2::render()
 {
 	if (canviat) update();
 
-	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 0, (void*)0); // EL SEGUNDO HAY QUE CAMBIARLO POR 4
+
+	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)(6 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(2);
+
 	glDrawArrays(GL_TRIANGLES, 0, elements);
 
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 }
 
 int Chunk2::nCubs() const
@@ -151,9 +217,9 @@ int Chunk2::nCubs() const
 void Chunk2::emplenarChunk()
 {
 	for (int i = 0; i < X; i++) {
-		for (int j = 0; j < Y; j++) {
+		for (int j = Y/2; j < Y; j++) {
 			for (int k = 0; k < Z; k++) {
-				canviarCub(i,j,k,1);
+				canviarCub(i,j,k,0);
 			}
 		}
 	}
@@ -167,3 +233,4 @@ void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)
 	veiBaix = down;
 
 }
+
