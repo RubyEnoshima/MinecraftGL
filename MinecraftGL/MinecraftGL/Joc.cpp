@@ -140,7 +140,7 @@ void Joc::loop() {
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));
+		renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 		mon->render();
 
 		// Obtenim el cub al que estem mirant i el senyalem al mon
@@ -148,6 +148,7 @@ void Joc::loop() {
 		//cout << CubActual << endl;
 		renderer.canviarColor(glm::vec4(rgb(0), rgb(0), rgb(0), 1.0f));
 		mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
+
 
 		view = camera.lookAt();
 		renderer.colocarMat4("view", view);

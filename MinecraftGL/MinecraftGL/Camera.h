@@ -34,6 +34,8 @@ private:
 	void moureEsquerra(float deltaTime);
 	void moureDavant(float deltaTime);
 	void moureDarrera(float deltaTime);
+	void moureAmunt(float deltaTime);
+	void moureAvall(float deltaTime);
 
 	void mirar();
 

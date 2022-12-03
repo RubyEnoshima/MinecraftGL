@@ -2,7 +2,7 @@
 
 Chunk2::Chunk2(unsigned int _x, unsigned int _y)
 {
-	memset(chunk, TERRA, sizeof(chunk));
+	memset(chunk, 2, sizeof(chunk));
 	glGenBuffers(1, &VBO);
 	posX = _x;
 	posY = _y;
@@ -25,36 +25,35 @@ uint8_t Chunk2::obtenirCub(int x, int y, int z)
 	return chunk[x][y][z];
 }
 
-void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z) {
+void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, uint8_t u, uint8_t v) {
+	// Posicio
 	vertices.push_back(x);
 	vertices.push_back(y);
 	vertices.push_back(z);
+	// Color
 	vertices.push_back(1);
 	vertices.push_back(1);
 	vertices.push_back(1);
-	vertices.push_back(0);
-	vertices.push_back(0);
-}
-
-glm::vec3 Chunk2::calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2)
-{
-	glm::vec3 A = P1 - P0, B = P2-P1;
-	glm::vec3 N(A.y*B.z-A.z*B.y, A.z * B.x - A.x * B.z, A.x * B.y - A.y * B.x);
-	return glm::normalize(N);
+	// Coordenades de textura
+	vertices.push_back(u);
+	vertices.push_back(v);
+	// Tipus
+	vertices.push_back(tipus%16);
+	vertices.push_back(tipus/16);
 }
 
 void Chunk2::BoundingBox(int8_t x, int8_t y, int8_t z)
 {
 	// Cube 1x1x1, centered on origin
 	GLfloat vertices[] = {
-	  0.0+x, 0.0+y, 0.0+z, 1.0,
-	  1.0+x, 0.0+y, 0.0+z, 1.0,
-	  1.0+x, 1.0+y, 0.0+z, 1.0,
-	  0.0+x, 1.0+y, 0.0+z, 1.0,
-	  0.0+x, 0.0+y, 1.0+z, 1.0,
-	  1.0+x, 0.0+y, 1.0+z, 1.0,
-	  1.0+x, 1.0+y, 1.0+z, 1.0,
-	  0.0+x, 1.0+y, 1.0+z, 1.0,
+	  0.0 + x, 0.0 + y, 0.0 + z, 1.0,
+	  1.0 + x, 0.0 + y, 0.0 + z, 1.0,
+	  1.0 + x, 1.0 + y, 0.0 + z, 1.0,
+	  0.0 + x, 1.0 + y, 0.0 + z, 1.0,
+	  0.0 + x, 0.0 + y, 1.0 + z, 1.0,
+	  1.0 + x, 0.0 + y, 1.0 + z, 1.0,
+	  1.0 + x, 1.0 + y, 1.0 + z, 1.0,
+	  0.0 + x, 1.0 + y, 1.0 + z, 1.0,
 	};
 	GLuint vbo_vertices;
 	glGenBuffers(1, &vbo_vertices);
@@ -65,7 +64,7 @@ void Chunk2::BoundingBox(int8_t x, int8_t y, int8_t z)
 	GLushort elements[] = {
 	  0, 1, 2, 3,
 	  4, 5, 6, 7,
-	  0, 4, 1, 5, 
+	  0, 4, 1, 5,
 	  2, 6, 3, 7
 	};
 	GLuint ibo_elements;
@@ -98,69 +97,71 @@ void Chunk2::BoundingBox(int8_t x, int8_t y, int8_t z)
 	glDeleteBuffers(1, &ibo_elements);
 }
 
-void Chunk2::afegirCub(vector<GLbyte>&vertices, int8_t x, int8_t y, int8_t z) {
+void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	// Cara esq
-	if ((x==0 and veiEsq and !veiEsq->obtenirCub(X-1,y,z) or (x==0 and !veiEsq)) or (x!=0 and !chunk[x - 1][y][z])) {
-		afegirVertex(vertices, x, y, z);
-		afegirVertex(vertices, x, y, z+1);
-		afegirVertex(vertices, x, y+1, z);
-		afegirVertex(vertices, x, y+1, z);
-		afegirVertex(vertices, x, y, z+1);
-		afegirVertex(vertices, x, y+1, z+1);
+	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z])) {
+		afegirVertex(vertices, x, y, z, tipus, 0, 1);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0);
 
 	}
 
 	// Cara dre
-	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0,y,z) or (x == X-1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z])) {
-		afegirVertex(vertices, x + 1, y, z);
-		afegirVertex(vertices, x + 1, y + 1, z);
-		afegirVertex(vertices, x + 1, y, z + 1);
-		afegirVertex(vertices, x + 1, y + 1, z);
-		afegirVertex(vertices, x + 1, y + 1, z + 1);
-		afegirVertex(vertices, x + 1, y, z + 1);
+	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) or (x == X - 1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z])) {
+		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 1);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0);
+		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 0, 0);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 1);
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x,y,0) or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1])) {
-		afegirVertex(vertices, x, y, z + 1);
-		afegirVertex(vertices, x + 1, y, z + 1);
-		afegirVertex(vertices, x, y + 1, z + 1);
-		afegirVertex(vertices, x, y + 1, z + 1);
-		afegirVertex(vertices, x + 1, y, z + 1);
-		afegirVertex(vertices, x + 1, y + 1, z + 1);
+	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1])) {
+		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0);
+
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1);
+		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 0);
 
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x,y,Z-1) or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1])) {
-		afegirVertex(vertices, x, y, z);
-		afegirVertex(vertices, x, y + 1, z);
-		afegirVertex(vertices, x + 1, y, z);
-		afegirVertex(vertices, x, y + 1, z);
-		afegirVertex(vertices, x + 1, y + 1, z);
-		afegirVertex(vertices, x + 1, y, z);
-		
+	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1])) {
+		afegirVertex(vertices, x, y, z, tipus, 1, 1);
+		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0);
+		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1);
+
+		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 0, 0);
+		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1);
+
 	}
 
 	// Cara adalt
-	if (y==Y-1 or !chunk[x][y + 1][z]) {
-		afegirVertex(vertices, x, y + 1, z);
-		afegirVertex(vertices, x, y + 1, z + 1);
-		afegirVertex(vertices, x + 1, y + 1, z);
-		afegirVertex(vertices, x + 1, y + 1, z);
-		afegirVertex(vertices, x, y + 1, z + 1);
-		afegirVertex(vertices, x + 1, y + 1, z + 1);
+	if (y == Y - 1 or !chunk[x][y + 1][z]) {
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1);
+		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 1);
 
 	}
 
 	// Cara sota
 	if (y == 0 or !chunk[x][y - 1][z]) {
-		afegirVertex(vertices, x, y, z);
-		afegirVertex(vertices, x + 1, y, z);
-		afegirVertex(vertices, x, y, z + 1);
-		afegirVertex(vertices, x + 1, y, z);
-		afegirVertex(vertices, x + 1, y, z + 1);
-		afegirVertex(vertices, x, y, z + 1);
+		afegirVertex(vertices, x, y, z, tipus, 0, 0);
+		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 0);
+		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 0);
 
 	}
 
@@ -174,7 +175,7 @@ void Chunk2::update()
 		for (int j = 0; j < Y; j++) {
 			for (int k = 0; k < Z; k++) {
 				uint8_t tipus = chunk[i][j][k];
-				if(tipus) afegirCub(_vertices,i,j,k);
+				if (tipus) afegirCub(_vertices, i, j, k, tipus);
 			}
 		}
 	}
@@ -184,7 +185,7 @@ void Chunk2::update()
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, elements, vertices, GL_STATIC_DRAW);
-	
+
 	canviat = false;
 }
 
@@ -195,31 +196,34 @@ void Chunk2::render()
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)0);
+	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)(6 * sizeof(GLbyte)));
+	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(6 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(8 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(3);
 
 	glDrawArrays(GL_TRIANGLES, 0, elements);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
 }
 
 int Chunk2::nCubs() const
 {
-	return elements/6;
+	return elements / 6;
 }
 
 void Chunk2::emplenarChunk()
 {
 	for (int i = 0; i < X; i++) {
-		for (int j = Y/2; j < Y; j++) {
+		for (int j = Y / 2; j < Y; j++) {
 			for (int k = 0; k < Z; k++) {
-				canviarCub(i,j,k,0);
+				canviarCub(i, j, k, 0);
 			}
 		}
 	}
@@ -233,4 +237,3 @@ void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)
 	veiBaix = down;
 
 }
-

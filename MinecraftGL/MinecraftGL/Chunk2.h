@@ -34,15 +34,14 @@ public:
 
 	void emplenarChunk(); // Funció debug
 	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
-	static glm::vec3 calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2);
-
+	
 	void BoundingBox(int8_t x, int8_t y, int8_t z);
 
 	GLbyte* vertices = NULL;
 	unsigned int elements = 0;
 private:
-	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
-	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z);
+	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, uint8_t u=0, uint8_t v=0);
+	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
 	unsigned int VBO;
 

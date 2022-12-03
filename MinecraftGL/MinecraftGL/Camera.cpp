@@ -105,6 +105,12 @@ void Camera::moure(float deltaTime, GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_D)) {
 		moureDreta(deltaTime);
 	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+		moureAmunt(deltaTime);
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
+		moureAvall(deltaTime);
+	}
 }
 
 void Camera::moureDreta(float deltaTime)
@@ -127,5 +133,18 @@ void Camera::moureDarrera(float deltaTime)
 {
 	pos -= velocitat * deltaTime * front;
 	pos.y = altura;
+
+}
+
+void Camera::moureAmunt(float deltaTime)
+{
+	pos.y += velocitat * deltaTime;
+	altura = pos.y;
+}
+
+void Camera::moureAvall(float deltaTime)
+{
+	pos.y -= velocitat * deltaTime;
+	altura = pos.y;
 
 }
