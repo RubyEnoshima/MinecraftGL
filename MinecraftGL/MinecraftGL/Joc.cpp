@@ -59,9 +59,134 @@ glm::vec3 calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::ve
 	return glm::normalize(N);
 }
 
-int redondear(float n) {
-	if (abs(n) - abs((int)n) >= 0.51) return n + 1;
-	return n - 1;
+void afegirVertex(vector<glm::vec3>& vertices, int8_t x, int8_t y, int8_t z) {
+	// Posicio
+	vertices.push_back(glm::vec3(x,y,z));
+}
+
+void obtenirCares(vector<glm::vec3>& vertices, int8_t x, int8_t y, int8_t z) {
+	// Cara esq
+	{
+		afegirVertex(vertices, x, y, z);
+		afegirVertex(vertices, x, y, z + 1);
+		afegirVertex(vertices, x, y + 1, z);
+		//afegirVertex(vertices, x, y + 1, z);
+		//afegirVertex(vertices, x, y, z + 1);
+		//afegirVertex(vertices, x, y + 1, z + 1);
+
+	}
+
+	// Cara dre
+	{
+		afegirVertex(vertices, x + 1, y, z);
+		afegirVertex(vertices, x + 1, y + 1, z);
+		afegirVertex(vertices, x + 1, y, z + 1);
+		//afegirVertex(vertices, x + 1, y + 1, z);
+		//afegirVertex(vertices, x + 1, y + 1, z + 1);
+		//afegirVertex(vertices, x + 1, y, z + 1);
+	}
+
+	// Cara frontal
+	{
+		afegirVertex(vertices, x, y, z + 1);
+		afegirVertex(vertices, x + 1, y, z + 1);
+		afegirVertex(vertices, x, y + 1, z + 1);
+
+		//afegirVertex(vertices, x, y + 1, z + 1);
+		//afegirVertex(vertices, x + 1, y, z + 1);
+		//afegirVertex(vertices, x + 1, y + 1, z + 1);
+
+	}
+
+	// Cara darrera
+	{
+		afegirVertex(vertices, x, y, z);
+		afegirVertex(vertices, x, y + 1, z);
+		afegirVertex(vertices, x + 1, y, z);
+
+		//afegirVertex(vertices, x, y + 1, z);
+		//afegirVertex(vertices, x + 1, y + 1, z);
+		//afegirVertex(vertices, x + 1, y, z);
+
+	}
+
+	// Cara adalt
+	{
+		afegirVertex(vertices, x, y + 1, z);
+		afegirVertex(vertices, x, y + 1, z + 1);
+		afegirVertex(vertices, x + 1, y + 1, z);
+		//afegirVertex(vertices, x + 1, y + 1, z);
+		//afegirVertex(vertices, x, y + 1, z + 1);
+		//afegirVertex(vertices, x + 1, y + 1, z + 1);
+
+	}
+
+	// Cara sota
+	{
+		afegirVertex(vertices, x, y, z);
+		afegirVertex(vertices, x + 1, y, z);
+		afegirVertex(vertices, x, y, z + 1);
+		//afegirVertex(vertices, x + 1, y, z);
+		//afegirVertex(vertices, x + 1, y, z + 1);
+		//afegirVertex(vertices, x, y, z + 1);
+
+	}
+
+}
+
+void Linea(int8_t x, int8_t y, int8_t z)
+{
+	// Cube 1x1x1, centered on origin
+	GLfloat vertices[] = {
+	  0.0 + x, 0.0 + y, 0.0 + z, 1.0,
+	  1.0 + x, 0.0 + y, 0.0 + z, 1.0,
+	  1.0 + x, 1.0 + y, 0.0 + z, 1.0,
+	  0.0 + x, 1.0 + y, 0.0 + z, 1.0,
+	  0.0 + x, 0.0 + y, 1.0 + z, 1.0,
+	  1.0 + x, 0.0 + y, 1.0 + z, 1.0,
+	  1.0 + x, 1.0 + y, 1.0 + z, 1.0,
+	  0.0 + x, 1.0 + y, 1.0 + z, 1.0,
+	};
+	GLuint vbo_vertices;
+	glGenBuffers(1, &vbo_vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	GLushort elements[] = {
+	  0, 1, 2, 3,
+	  4, 5, 6, 7,
+	  0, 4, 1, 5,
+	  2, 6, 3, 7
+	};
+	GLuint ibo_elements;
+	glGenBuffers(1, &ibo_elements);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0,					// attribute
+		4,                  // number of elements per vertex, here (x,y,z,w)
+		GL_FLOAT,           // the type of each element
+		GL_FALSE,           // take our values as-is
+		0,                  // no extra data between each position
+		0                   // offset of first element
+	);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4 * sizeof(GLushort)));
+	glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8 * sizeof(GLushort)));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glDisableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDeleteBuffers(1, &vbo_vertices);
+	glDeleteBuffers(1, &ibo_elements);
 }
 
 void Joc::ObtenirCubMira() {
@@ -77,8 +202,9 @@ void Joc::ObtenirCubMira() {
 	glm::vec4 viewport = glm::vec4(0, 0, ww, wh);
 	glm::vec3 wincoord = glm::vec3(ww / 2, wh / 2, depth);
 	glm::vec3 objcoord = glm::unProject(wincoord, camera.getView(), camera.getProjection(), viewport);
-	CubActual = glm::vec3(floorf(objcoord.x) + 8, floorf(objcoord.y) + Y/2, floorf(objcoord.z) + 8);
-
+	CubActual = glm::vec3(floorf(objcoord.x) + 8, floorf(objcoord.y) + Y / 2, floorf(objcoord.z) + 8);
+	
+	
 }
 
 void Joc::DestruirCub() {
@@ -87,17 +213,35 @@ void Joc::DestruirCub() {
 }
 
 void Joc::PosarCub() {
-	if (CubActual.x != X && CubActual.y != Y && CubActual.z != Z)
+	if (CubActual.x != X && CubActual.y != Y && CubActual.z != Z) {
+
+		vector<glm::vec3> vertices;
+		obtenirCares(vertices, CubActual.x, CubActual.y, CubActual.z);
+
+		RayCast raycast(&camera, &renderer);
+		glm::vec3 ray = raycast.calcularRay();
+
+		int i = 0; // 0: esq, 1: dre, 2: front, 3: darr, 4: adalt, 5: sota
+		int j = 0;
+		while (i < 6 && !raycast.intersecta(vertices[j], vertices[j + 1], vertices[j + 2])) {
+			i++;
+			j += 3;
+		}
+		cout << i << endl;
+
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 2);
+		
+	}
 }
 
 void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
-	// DESTRUIR CUB
+
 	if (click == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
 		joc->DestruirCub();
 	}
+
 	else if (click == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
@@ -160,7 +304,7 @@ void Joc::loop() {
 		// Mostrem els frames que hi ha hagut en un segon (fps)
 		if (currentFrame-ant>=1.0f) { // Si la diferència és 1 és que ha passat un segon
 			ant = currentFrame;
-			cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
+			//cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
 			fps = 0; // Resetejem el comptador
 
 		}

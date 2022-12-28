@@ -1,13 +1,12 @@
 #include "RayCast.h"
 
-RayCast::RayCast(Camera* cam, Renderer* renderer, GLFWwindow* _window)
+RayCast::RayCast(Camera* cam, Renderer* renderer)
 {
 	camera = cam;
-	window = _window;
 	r = renderer;
 }
 
-glm::vec3 RayCast::calcularRay() const
+glm::vec3 RayCast::calcularRay()
 {
 	float xCentre = r->obtenirCentre().first;
 	float yCentre = r->obtenirCentre().second;
@@ -21,48 +20,44 @@ glm::vec3 RayCast::calcularRay() const
 
 	glm::vec4 ray_wor4 = glm::inverse(camera->getView()) * ray_eye;
 	glm::vec3 ray_wor = glm::normalize(glm::vec3(ray_wor4.x,ray_wor4.y,ray_wor4.z));
-	
+	Dir = ray_wor;
 	return ray_wor;
 }
 
-bool RayCast::intersecta(const glm::vec3& O, const glm::vec3& D, const glm::vec3 n) const
+bool RayCast::intersecta(const glm::vec3 v0, const glm::vec3 v1, const glm::vec3 v2) const
 {
-    float t = calcT(O,D,n);
-    return t > 0;
+	glm::vec3 Origen = camera->obtPos();
+	
+	// Calculem la normal del pla del triangle
+	glm::vec3 v0v1 = v1 - v0;
+	glm::vec3 v0v2 = v2 - v0;
+	glm::vec3 N = glm::cross(v0v1,v0v2);
 
-    float denominator = glm::dot(n,D);
+	float denom = glm::dot(N, Dir);
 
-    if (denominator >= 1e-6) // 1e-6 = 0.000001
-    {
-        glm::vec3 vector_subtraction = glm::vec3(0,0,0) - O;
-        float distance = glm::dot(vector_subtraction,n);
 
-        return (distance >= 0);
-    }
+	if (fabs(denom) > 0.01f) // !parallel
+	{
+		float t = glm::dot(N, v0 - Origen) / denom;
+		cout << v0 << v1 << v2 << N << t << endl;
+		return t>=0; // hit, intersection value
+	}
+	return false;
 
-    return false;
-}
+	
+	float NdotRayDirection = glm::dot(N,Dir);
+	if (fabs(NdotRayDirection) < 0.001f)  //almost 0 
+		return false;  //they are parallel so they don't intersect ! 
 
-glm::vec3 RayCast::calcularRay2() const
-{
-    double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos);
+	// compute d parameter using equation 2
+	float d = glm::dot(- N,v0);
 
-    cout << xpos << ypos;
+	// compute t (equation 3)
+	float t = -(glm::dot(N,Origen) + d) / NdotRayDirection;
 
-    float mouseX = xpos / (r->obtenirTamany().first * 0.5f) - 1.0f;
-    float mouseY = ypos / (r->obtenirTamany().second * 0.5f) - 1.0f;
-
-    glm::mat4 proj = camera->getProjection();
-    glm::mat4 view = camera->getView();
-
-    glm::mat4 invVP = glm::inverse(proj * view);
-    glm::vec4 screenPos = glm::vec4(mouseX, -mouseY, 1.0f, 1.0f);
-    glm::vec4 worldPos = invVP * screenPos;
-
-    glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
-
-    return dir;
+	// check if the triangle is in behind the ray
+	if (t < 0) return false;  //the triangle is behind 
+	return true;
 }
 
 float RayCast::calcT(const glm::vec3& O, const glm::vec3& D, const glm::vec3 n) const {

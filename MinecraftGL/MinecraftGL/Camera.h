@@ -21,13 +21,13 @@ public:
 	glm::mat4 getProjection() const;
 	glm::mat4 getModel() const;
 	glm::mat4 getView() const;
+	glm::vec3 obtPos() const;
 
 	glm::mat4 lookAt();
 
 	void moure(float deltaTime, GLFWwindow* window);
 	void girar(GLFWwindow* window);
 
-	glm::vec3 obtPos() const;
 	
 private:
 	void moureDreta(float deltaTime);

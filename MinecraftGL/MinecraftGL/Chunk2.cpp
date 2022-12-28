@@ -2,7 +2,7 @@
 
 Chunk2::Chunk2(unsigned int _x, unsigned int _y)
 {
-	memset(chunk, 2, sizeof(chunk));
+	memset(chunk, 6, sizeof(chunk));
 	glGenBuffers(1, &VBO);
 	posX = _x;
 	posY = _y;
@@ -25,7 +25,7 @@ uint8_t Chunk2::obtenirCub(int x, int y, int z)
 	return chunk[x][y][z];
 }
 
-void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, uint8_t u, uint8_t v) {
+void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v) {
 	// Posicio
 	vertices.push_back(x);
 	vertices.push_back(y);
@@ -37,7 +37,7 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 	// Coordenades de textura
 	vertices.push_back(u);
 	vertices.push_back(v);
-	// Tipus
+	// Tipus (posició del mapa de textures)
 	vertices.push_back(tipus%16);
 	vertices.push_back(tipus/16);
 }
@@ -195,15 +195,25 @@ void Chunk2::render()
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)0);
+	/*glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(6 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(8 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(3);*/
+
+	
+	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)(6*sizeof(GLbyte)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)(2 * sizeof(bool) + 6 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(3);
+	
 
 	glDrawArrays(GL_TRIANGLES, 0, elements);
 

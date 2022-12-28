@@ -39,5 +39,6 @@ private:
 	
 	GLFWwindow* window;
 	glm::vec3 CubActual;
+	glm::vec3 Costat;
 };
 

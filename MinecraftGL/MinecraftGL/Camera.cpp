@@ -125,13 +125,13 @@ void Camera::moureEsquerra(float deltaTime)
 
 void Camera::moureDavant(float deltaTime)
 {
-	pos += velocitat * deltaTime * front;
+	pos += velocitat * deltaTime * glm::normalize(glm::vec3(front.x*2,0,front.z*2));
 	pos.y = altura;
 }
 
 void Camera::moureDarrera(float deltaTime)
 {
-	pos -= velocitat * deltaTime * front;
+	pos -= velocitat * deltaTime * glm::normalize(glm::vec3(front.x * 2, 0, front.z * 2));
 	pos.y = altura;
 
 }
