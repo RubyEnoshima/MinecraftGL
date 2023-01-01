@@ -52,143 +52,6 @@ int Joc::crearFinestra() {
 	return success;
 }
 
-glm::vec3 calcularNormal(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2)
-{
-	glm::vec3 A = P1 - P0, B = P2 - P1;
-	glm::vec3 N(A.y * B.z - A.z * B.y, A.z * B.x - A.x * B.z, A.x * B.y - A.y * B.x);
-	return glm::normalize(N);
-}
-
-void afegirVertex(vector<glm::vec3>& vertices, int8_t x, int8_t y, int8_t z) {
-	// Posicio
-	vertices.push_back(glm::vec3(x,y,z));
-}
-
-void obtenirCares(vector<glm::vec3>& vertices, int8_t x, int8_t y, int8_t z) {
-	// Cara esq
-	{
-		afegirVertex(vertices, x, y, z);
-		afegirVertex(vertices, x, y, z + 1);
-		afegirVertex(vertices, x, y + 1, z);
-		//afegirVertex(vertices, x, y + 1, z);
-		//afegirVertex(vertices, x, y, z + 1);
-		//afegirVertex(vertices, x, y + 1, z + 1);
-
-	}
-
-	// Cara dre
-	{
-		afegirVertex(vertices, x + 1, y, z);
-		afegirVertex(vertices, x + 1, y + 1, z);
-		afegirVertex(vertices, x + 1, y, z + 1);
-		//afegirVertex(vertices, x + 1, y + 1, z);
-		//afegirVertex(vertices, x + 1, y + 1, z + 1);
-		//afegirVertex(vertices, x + 1, y, z + 1);
-	}
-
-	// Cara frontal
-	{
-		afegirVertex(vertices, x, y, z + 1);
-		afegirVertex(vertices, x + 1, y, z + 1);
-		afegirVertex(vertices, x, y + 1, z + 1);
-
-		//afegirVertex(vertices, x, y + 1, z + 1);
-		//afegirVertex(vertices, x + 1, y, z + 1);
-		//afegirVertex(vertices, x + 1, y + 1, z + 1);
-
-	}
-
-	// Cara darrera
-	{
-		afegirVertex(vertices, x, y, z);
-		afegirVertex(vertices, x, y + 1, z);
-		afegirVertex(vertices, x + 1, y, z);
-
-		//afegirVertex(vertices, x, y + 1, z);
-		//afegirVertex(vertices, x + 1, y + 1, z);
-		//afegirVertex(vertices, x + 1, y, z);
-
-	}
-
-	// Cara adalt
-	{
-		afegirVertex(vertices, x, y + 1, z);
-		afegirVertex(vertices, x, y + 1, z + 1);
-		afegirVertex(vertices, x + 1, y + 1, z);
-		//afegirVertex(vertices, x + 1, y + 1, z);
-		//afegirVertex(vertices, x, y + 1, z + 1);
-		//afegirVertex(vertices, x + 1, y + 1, z + 1);
-
-	}
-
-	// Cara sota
-	{
-		afegirVertex(vertices, x, y, z);
-		afegirVertex(vertices, x + 1, y, z);
-		afegirVertex(vertices, x, y, z + 1);
-		//afegirVertex(vertices, x + 1, y, z);
-		//afegirVertex(vertices, x + 1, y, z + 1);
-		//afegirVertex(vertices, x, y, z + 1);
-
-	}
-
-}
-
-void Linea(int8_t x, int8_t y, int8_t z)
-{
-	// Cube 1x1x1, centered on origin
-	GLfloat vertices[] = {
-	  0.0 + x, 0.0 + y, 0.0 + z, 1.0,
-	  1.0 + x, 0.0 + y, 0.0 + z, 1.0,
-	  1.0 + x, 1.0 + y, 0.0 + z, 1.0,
-	  0.0 + x, 1.0 + y, 0.0 + z, 1.0,
-	  0.0 + x, 0.0 + y, 1.0 + z, 1.0,
-	  1.0 + x, 0.0 + y, 1.0 + z, 1.0,
-	  1.0 + x, 1.0 + y, 1.0 + z, 1.0,
-	  0.0 + x, 1.0 + y, 1.0 + z, 1.0,
-	};
-	GLuint vbo_vertices;
-	glGenBuffers(1, &vbo_vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	GLushort elements[] = {
-	  0, 1, 2, 3,
-	  4, 5, 6, 7,
-	  0, 4, 1, 5,
-	  2, 6, 3, 7
-	};
-	GLuint ibo_elements;
-	glGenBuffers(1, &ibo_elements);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_vertices);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(
-		0,					// attribute
-		4,                  // number of elements per vertex, here (x,y,z,w)
-		GL_FLOAT,           // the type of each element
-		GL_FALSE,           // take our values as-is
-		0,                  // no extra data between each position
-		0                   // offset of first element
-	);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_elements);
-	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, 0);
-	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, (GLvoid*)(4 * sizeof(GLushort)));
-	glDrawElements(GL_LINES, 8, GL_UNSIGNED_SHORT, (GLvoid*)(8 * sizeof(GLushort)));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	glDisableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glDeleteBuffers(1, &vbo_vertices);
-	glDeleteBuffers(1, &ibo_elements);
-}
-
 void Joc::ObtenirCubMira() {
 	int ww = renderer.obtenirTamany().first;
 	int wh = renderer.obtenirTamany().second;
@@ -208,28 +71,56 @@ void Joc::ObtenirCubMira() {
 }
 
 void Joc::DestruirCub() {
+	// Si és un cub vàlid
 	if (CubActual.x != X && CubActual.y != Y && CubActual.z != Z)
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
 }
 
+glm::vec3 Joc::ObtenirCostat() const {
+
+	// Renderitzem només el cub que estem mirant d'una manera especial
+	renderer.DibuixarDarrera();
+
+	GLenum err;
+	while ((err = glGetError()) == GL_INVALID_OPERATION) {
+		cerr << "OpenGL error: " << err << endl;
+		cerr << glfwGetVersionString();
+	}
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	mon->renderCub(CubActual.x, CubActual.y, CubActual.z);
+
+	int ww = renderer.obtenirTamany().first;
+	int wh = renderer.obtenirTamany().second;
+	glm::vec3 color;
+	// Llegim el color del costat que estem mirant
+	glReadPixels(ww / 2, wh / 2, 1, 1, GL_RGB, GL_FLOAT, &color);
+	
+	// Tornem a posar el buffer per defecte i dibuixar l'escena tal qual
+	renderer.DibuixarFront();
+
+
+	if (color[0] > 0) {
+		if (color[2] > 0) return glm::vec3(0,0,-1);
+		if (color[1] > 0) return glm::vec3(0,-1,0);
+		return glm::vec3(0, 0, 1);
+	}
+	if (color[1] > 0) {
+		if (color[2] > 0) return glm::vec3(-1,0,0);
+		return glm::vec3(0,1,0);
+	}
+	return glm::vec3(1, 0, 0);
+}
+
 void Joc::PosarCub() {
+	// Si és un cub vàlid
 	if (CubActual.x != X && CubActual.y != Y && CubActual.z != Z) {
-
-		vector<glm::vec3> vertices;
-		obtenirCares(vertices, CubActual.x, CubActual.y, CubActual.z);
-
-		RayCast raycast(&camera, &renderer);
-		glm::vec3 ray = raycast.calcularRay();
-
-		int i = 0; // 0: esq, 1: dre, 2: front, 3: darr, 4: adalt, 5: sota
-		int j = 0;
-		while (i < 6 && !raycast.intersecta(vertices[j], vertices[j + 1], vertices[j + 2])) {
-			i++;
-			j += 3;
-		}
-		cout << i << endl;
-
-		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 2);
+		// Obtenim el costat al que estem mirant
+		glm::vec3 Costat = ObtenirCostat();
+		
+		// Canviem el cub
+		mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, 2);
 		
 	}
 }
@@ -283,14 +174,18 @@ void Joc::loop() {
 		// Canvia el color del background
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
-		renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
+
+		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 		mon->render();
+		//mon->renderCub(7, 62, 4);
+
+		glfwPollEvents(); // Processar events
 
 		// Obtenim el cub al que estem mirant i el senyalem al mon
 		ObtenirCubMira();
+		
 		//cout << CubActual << endl;
-		renderer.canviarColor(glm::vec4(rgb(0), rgb(0), rgb(0), 1.0f));
+		//renderer.canviarColor(glm::vec4(rgb(0), rgb(0), rgb(0), 1.0f));
 		mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
 
 
@@ -299,7 +194,6 @@ void Joc::loop() {
 
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra
-		glfwPollEvents(); // Processar events
 
 		// Mostrem els frames que hi ha hagut en un segon (fps)
 		if (currentFrame-ant>=1.0f) { // Si la diferència és 1 és que ha passat un segon
@@ -330,7 +224,7 @@ void Joc::gameLoop() {
 		mon = new SuperChunk(&renderer);
 
 		// Posem el color taronja
-		renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));
+		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));
 
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1, 0);

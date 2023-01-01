@@ -7,11 +7,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "ShaderProgram.h"
+#include "Framebuffer.h"
 #include "Textura.h"
 
 class Renderer
 {
 public:
+	~Renderer();
 	// Finestra
 	int crearFinestra(); // Inicia OpenGL i crea una finestra. Retorna 1 si tot ha anat bé.
 	void centrarFinestra(); // Centra la finestra
@@ -22,11 +24,16 @@ public:
 	// Shaders
 	int carregaShaders();
 	void useShader();
+
 	unsigned int obtenirUniform(const char* uniform) const;
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
 	void canviarColor(const glm::vec4 color);
 
 	float rgb(int color) const;
+
+	// Framebuffer
+	void DibuixarDarrera() const;
+	void DibuixarFront() const;
 
 	// Monitor
 	float aspectRatio() const;
@@ -35,10 +42,11 @@ private:
 	unsigned int VAO, shaderActual;
 
 	ShaderProgram shader;
+	Framebuffer framebuffer;
 
 	GLFWwindow* window;
 
-	const int width = 800;
-	const int height = 600;
+	const int WIDTH = 800;
+	const int HEIGHT = 600;
 };
 

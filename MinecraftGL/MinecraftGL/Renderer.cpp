@@ -5,6 +5,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
+Renderer::~Renderer()
+{
+	glDeleteBuffers(1,&VAO);
+}
+
 int Renderer::crearFinestra()
 {
 	// Iniciem OpenGL
@@ -16,7 +21,7 @@ int Renderer::crearFinestra()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Creem una nova finestra amb unes dimensions i un nom i que comenci en Windowed mode
-	window = glfwCreateWindow(width, height, "MinecraftGL", NULL, NULL);
+	window = glfwCreateWindow(WIDTH, HEIGHT, "MinecraftGL", NULL, NULL);
 
 	// Si no aconseguim crear-la, terminem el programa
 	if (window == NULL)
@@ -36,10 +41,12 @@ int Renderer::crearFinestra()
 	}
 
 	// Li diem la mida al viewport, i des d'on comença
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Assignem una funció per quan es redimensioni la finestra creada
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	framebuffer = Framebuffer(WIDTH, HEIGHT);
 
 	centrarFinestra();
 
@@ -73,7 +80,7 @@ int Renderer::carregaShaders()
 		useShader();
 	}
 
-	Textura t("minecraft.png");
+	Textura t("minecraft_transp.png");
 
 	return totbe;
 }
@@ -102,6 +109,16 @@ void Renderer::canviarColor(const glm::vec4 color)
 float Renderer::rgb(int color) const
 {
 	return color/255.0f;
+}
+
+void Renderer::DibuixarDarrera() const
+{
+	framebuffer.Unir();
+}
+
+void Renderer::DibuixarFront() const
+{
+	framebuffer.Desunir();
 }
 
 float Renderer::aspectRatio() const

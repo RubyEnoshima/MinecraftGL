@@ -29,6 +29,7 @@ public:
 
 	void update();
 	void render();
+	void renderCub(int x, int y, int z);
 
 	int nCubs() const;
 
@@ -37,11 +38,12 @@ public:
 	
 	void BoundingBox(int8_t x, int8_t y, int8_t z);
 
-	GLbyte* vertices = NULL;
+	vector<GLbyte> vertices;
 	unsigned int elements = 0;
 private:
-	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0);
+	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, bool r=1, bool g=1, bool b=1);
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
+	void afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
 	unsigned int VBO;
 

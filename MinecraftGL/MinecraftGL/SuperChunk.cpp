@@ -85,3 +85,10 @@ void SuperChunk::render()
 	}
 	
 }
+
+void SuperChunk::renderCub(int x, int y, int z)
+{
+	//glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x - X * XC / 2, -Y / 2, z - Z * YC / 2));
+	//renderer->colocarMat4("model", model);
+	Chunks[(x / X)][y / Y][(z / Z)].renderCub(x % X, y, z % Z);
+}

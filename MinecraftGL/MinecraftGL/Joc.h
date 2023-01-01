@@ -18,17 +18,15 @@ public:
 	void gameLoop(); // Fa que comenci el joc i executa el loop
 
 	int crearFinestra(); // Retorna 1 si s'ha pogut crear la finestra
-	
-	Camera camera;
-	Renderer renderer;
-	SuperChunk* mon;
 
+	// Funcions per quan es prem alguna tecla o botó
 	void DestruirCub();
 	void PosarCub();
 	
 	
 private:
-	void ObtenirCubMira();
+	void ObtenirCubMira(); // Pos en CubActual el vector del cub al que estem mirant
+	glm::vec3 ObtenirCostat() const;
 
 	void canviarModeMouse(int mode);
 
@@ -40,5 +38,9 @@ private:
 	GLFWwindow* window;
 	glm::vec3 CubActual;
 	glm::vec3 Costat;
+
+	Camera camera;
+	Renderer renderer;
+	SuperChunk* mon;
 };
 

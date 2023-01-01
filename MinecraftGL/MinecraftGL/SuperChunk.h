@@ -19,6 +19,7 @@ public:
 
 	void update();
 	void render();
+	void renderCub(int x, int y, int z);
 private:
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;
