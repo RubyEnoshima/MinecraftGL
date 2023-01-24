@@ -2,8 +2,8 @@
 #include "Chunk2.h"
 #include "Renderer.h"
 
-#define XC 1
-#define YC 1
+#define XC 4
+#define YC 4
 
 class SuperChunk
 {

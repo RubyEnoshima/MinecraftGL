@@ -58,21 +58,21 @@ void Joc::ObtenirCubMira() {
 	float depth;
 	glReadPixels(ww / 2, wh / 2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 	if (depth <= 0 || depth >= 1) {
-		CubActual = glm::vec3(X, Y, Z);
+		CubActual = glm::vec3(-1, -1, -1);
 		return;
 	}
 
 	glm::vec4 viewport = glm::vec4(0, 0, ww, wh);
 	glm::vec3 wincoord = glm::vec3(ww / 2, wh / 2, depth);
 	glm::vec3 objcoord = glm::unProject(wincoord, camera.getView(), camera.getProjection(), viewport);
-	CubActual = glm::vec3(floorf(objcoord.x) + 8, floorf(objcoord.y) + Y / 2, floorf(objcoord.z) + 8);
+	CubActual = glm::vec3(floorf(objcoord.x), floorf(objcoord.y) + Y / 2, floorf(objcoord.z));
 	
-	
+	//cout << CubActual << endl;
 }
 
 void Joc::DestruirCub() {
 	// Si és un cub vàlid
-	if (CubActual.x != X && CubActual.y != Y && CubActual.z != Z)
+	//if (CubActual.x != X && CubActual.y != Y && CubActual.z != Z)
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
 }
 
@@ -100,7 +100,7 @@ glm::vec3 Joc::ObtenirCostat() const {
 	// Tornem a posar el buffer per defecte i dibuixar l'escena tal qual
 	renderer.DibuixarFront();
 
-
+	// Mirem quin costat és pel color
 	if (color[0] > 0) {
 		if (color[2] > 0) return glm::vec3(0,0,-1);
 		if (color[1] > 0) return glm::vec3(0,-1,0);
@@ -115,14 +115,14 @@ glm::vec3 Joc::ObtenirCostat() const {
 
 void Joc::PosarCub() {
 	// Si és un cub vàlid
-	if (CubActual.x != X && CubActual.y != Y && CubActual.z != Z) {
-		// Obtenim el costat al que estem mirant
-		glm::vec3 Costat = ObtenirCostat();
+	if (CubActual.x == -1 && CubActual.y == -1 && CubActual.z == -1) return;
+
+	// Obtenim el costat al que estem mirant
+	glm::vec3 Costat = ObtenirCostat();
 		
-		// Canviem el cub
-		mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, 2);
+	// Canviem el cub
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, 2);
 		
-	}
 }
 
 void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
@@ -198,7 +198,7 @@ void Joc::loop() {
 		// Mostrem els frames que hi ha hagut en un segon (fps)
 		if (currentFrame-ant>=1.0f) { // Si la diferència és 1 és que ha passat un segon
 			ant = currentFrame;
-			//cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
+			cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
 			fps = 0; // Resetejem el comptador
 
 		}
