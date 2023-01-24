@@ -39,7 +39,8 @@ private:
 
 	void mirar();
 
-	float velocitat = 2.5f;
+	float velocitatAct;
+	float velocitat = 3.75f;
 	const float sensibilitat = 0.1f;
 	float lastX, lastY;
 

@@ -73,11 +73,11 @@ GLFWwindow* Renderer::finestra()
 
 int Renderer::carregaShaders()
 {
-	shader = ShaderProgram("VertexShader.vert", "FragmentShader.frag");
-	int totbe = shader.carregaShaders();
+	shaderBasic = ShaderProgram("VertexShader.vert", "FragmentShader.frag");
+	int totbe = shaderBasic.carregaShaders();
 
 	if (totbe) {
-		useShader();
+		usarShader();
 	}
 
 	Textura t("minecraft_transp.png");
@@ -85,10 +85,10 @@ int Renderer::carregaShaders()
 	return totbe;
 }
 
-void Renderer::useShader()
+void Renderer::usarShader(int i)
 {
-	shaderActual = shader.getProgram();
-	glUseProgram(shaderActual);
+	shaderActual = shaderBasic.getProgram();
+	shaderBasic.usar();
 }
 
 unsigned int Renderer::obtenirUniform(const char* uniform) const

@@ -23,7 +23,7 @@ public:
 
 	// Shaders
 	int carregaShaders();
-	void useShader();
+	void usarShader(int i = 0);
 
 	unsigned int obtenirUniform(const char* uniform) const;
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
@@ -41,7 +41,9 @@ private:
 
 	unsigned int VAO, shaderActual;
 
-	ShaderProgram shader;
+	ShaderProgram shaderBasic;
+	ShaderProgram shaderPla;
+
 	Framebuffer framebuffer;
 
 	GLFWwindow* window;

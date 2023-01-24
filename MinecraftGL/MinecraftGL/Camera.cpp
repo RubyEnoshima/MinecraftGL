@@ -89,9 +89,9 @@ void Camera::moure(float deltaTime, GLFWwindow* window)
 {
 	// Córrer
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
-		velocitat = 3.0f * 2.5;
+		velocitatAct = velocitat * 2.0f;
 	}
-	else velocitat = 3.0f;
+	else velocitatAct = velocitat;
 
 	if (glfwGetKey(window, GLFW_KEY_W)) {
 		moureDavant(deltaTime);
@@ -115,36 +115,36 @@ void Camera::moure(float deltaTime, GLFWwindow* window)
 
 void Camera::moureDreta(float deltaTime)
 {
-	pos += glm::normalize(glm::cross(front, cameraUp)) * velocitat * deltaTime;
+	pos += glm::normalize(glm::cross(front, cameraUp)) * velocitatAct * deltaTime;
 }
 
 void Camera::moureEsquerra(float deltaTime)
 {
-	pos -= glm::normalize(glm::cross(front, cameraUp)) * velocitat * deltaTime;
+	pos -= glm::normalize(glm::cross(front, cameraUp)) * velocitatAct * deltaTime;
 }
 
 void Camera::moureDavant(float deltaTime)
 {
-	pos += velocitat * deltaTime * glm::normalize(glm::vec3(front.x*2,0,front.z*2));
+	pos += velocitatAct * deltaTime * glm::normalize(glm::vec3(front.x*2,0,front.z*2));
 	pos.y = altura;
 }
 
 void Camera::moureDarrera(float deltaTime)
 {
-	pos -= velocitat * deltaTime * glm::normalize(glm::vec3(front.x * 2, 0, front.z * 2));
+	pos -= velocitatAct * deltaTime * glm::normalize(glm::vec3(front.x * 2, 0, front.z * 2));
 	pos.y = altura;
 
 }
 
 void Camera::moureAmunt(float deltaTime)
 {
-	pos.y += velocitat * deltaTime;
+	pos.y += velocitatAct * deltaTime;
 	altura = pos.y;
 }
 
 void Camera::moureAvall(float deltaTime)
 {
-	pos.y -= velocitat * deltaTime;
+	pos.y -= velocitatAct * deltaTime;
 	altura = pos.y;
 
 }

@@ -96,6 +96,11 @@ int ShaderProgram::carregaShaders() {
 	return 1;
 }
 
+void ShaderProgram::usar()
+{
+	glUseProgram(shaderProgram);
+}
+
 int ShaderProgram::getProgram() const
 {
 	return shaderProgram;

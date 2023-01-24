@@ -14,6 +14,7 @@ public:
 	ShaderProgram(string vertex = "VertexShader.vert",string frag = "FragmentShader.frag");
 
 	int carregaShaders(); // Carrega els shaders. Retorna 1 si tot ha anat bé.
+	void usar();
 	int getProgram() const;
 
 private:
