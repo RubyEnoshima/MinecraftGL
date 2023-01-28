@@ -2,8 +2,8 @@
 
 ShaderProgram::ShaderProgram(string vertex, string frag)
 {
-	vertexShaderSource = vertex;
-	fragmentShaderSource = frag;
+	vertexShaderSource = "Shaders/"+vertex;
+	fragmentShaderSource = "Shaders/" + frag;
 }
 
 int ShaderProgram::carregaShaders() {

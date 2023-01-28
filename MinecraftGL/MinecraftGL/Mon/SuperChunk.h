@@ -1,9 +1,9 @@
 #pragma once
 #include "Chunk2.h"
-#include "Renderer.h"
+#include "Renderer/Renderer.h"
 
-#define XC 4
-#define YC 4
+#define XC 3
+#define YC 3
 
 class SuperChunk
 {

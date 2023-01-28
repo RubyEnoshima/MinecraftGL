@@ -5,12 +5,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/noise.hpp>
 
 #include <string.h>
 #include <iostream>
 #include <vector>
 #include "Tipus.h"
-#include "Textura.h"
 
 using namespace std;
 

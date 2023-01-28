@@ -1,15 +1,12 @@
 #pragma once
 
-#include "Chunk.h"
-#include "SuperChunk.h"
-#include "Renderer.h"
-#include "Camera.h"
-#include "RayCast.h"
+#include "Mon/SuperChunk.h"
+#include "Renderer/Renderer.h"
+#include "Jugador/Camera.h"
 #include "glm/gtx/io.hpp"
 
 #define rgb renderer.rgb
 
-#include "Cub.h"
 using namespace std;
 
 class Joc

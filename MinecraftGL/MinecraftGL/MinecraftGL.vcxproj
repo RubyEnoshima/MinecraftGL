@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\include;C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\MinecraftGL\MinecraftGL;C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\include;C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\include;C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\MinecraftGL\MinecraftGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,46 +143,36 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GLFW\lib\glad.c" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Chunk.cpp" />
-    <ClCompile Include="Chunk2.cpp" />
-    <ClCompile Include="Cub.cpp" />
-    <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="Joc.cpp" />
+    <ClCompile Include="Jugador\Camera.cpp" />
+    <ClCompile Include="Jugador\RayCast.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RayCast.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Mon\Chunk2.cpp" />
+    <ClCompile Include="Mon\Cub.cpp" />
+    <ClCompile Include="Mon\SuperChunk.cpp" />
+    <ClCompile Include="Renderer\Framebuffer.cpp" />
+    <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Renderer\Textura.cpp" />
+    <ClCompile Include="Shaders\ShaderProgram.cpp" />
     <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="SuperChunk.cpp" />
-    <ClCompile Include="Textura.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Chunk.h" />
-    <ClInclude Include="Chunk2.h" />
-    <ClInclude Include="Cub.h" />
-    <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="Joc.h" />
-    <ClInclude Include="RayCast.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="SuperChunk.h" />
-    <ClInclude Include="Textura.h" />
+    <ClInclude Include="Jugador\Camera.h" />
+    <ClInclude Include="Jugador\RayCast.h" />
+    <ClInclude Include="Mon\Chunk2.h" />
+    <ClInclude Include="Mon\Cub.h" />
+    <ClInclude Include="Mon\SuperChunk.h" />
+    <ClInclude Include="Renderer\Framebuffer.h" />
+    <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Renderer\Textura.h" />
+    <ClInclude Include="Shaders\ShaderProgram.h" />
     <ClInclude Include="Tipus.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="VertexShader.vert">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <FileType>Document</FileType>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="DepthShader.frag" />
-    <None Include="FragmentShader.frag" />
+    <None Include="Shaders\DepthShader.frag" />
+    <None Include="Shaders\FragmentShader.frag" />
+    <None Include="Shaders\VertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

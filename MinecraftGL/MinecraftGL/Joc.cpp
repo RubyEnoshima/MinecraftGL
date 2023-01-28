@@ -72,7 +72,7 @@ void Joc::ObtenirCubMira() {
 
 void Joc::DestruirCub() {
 	// Si és un cub vàlid
-	//if (CubActual.x != X && CubActual.y != Y && CubActual.z != Z)
+	if (CubActual.x != -1 && CubActual.y != -1 && CubActual.z != -1)
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
 }
 
@@ -186,7 +186,8 @@ void Joc::loop() {
 		
 		//cout << CubActual << endl;
 		//renderer.canviarColor(glm::vec4(rgb(0), rgb(0), rgb(0), 1.0f));
-		mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
+		if(CubActual.x != -1 && mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
+			mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
 
 
 		view = camera.lookAt();

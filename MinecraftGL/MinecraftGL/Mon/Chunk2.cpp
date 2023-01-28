@@ -2,7 +2,7 @@
 
 Chunk2::Chunk2(unsigned int _x, unsigned int _y)
 {
-	memset(chunk, 6, sizeof(chunk));
+	memset(chunk, 0, sizeof(chunk));
 	glGenBuffers(1, &VBO);
 	posX = _x;
 	posY = _y;
@@ -287,9 +287,10 @@ int Chunk2::nCubs() const
 void Chunk2::emplenarChunk()
 {
 	for (int i = 0; i < X; i++) {
-		for (int j = Y / 2; j < Y; j++) {
-			for (int k = 0; k < Z; k++) {
-				canviarCub(i, j, k, 0);
+		for (int k = 0; k < Z; k++) {
+			float height = Y/2;
+			for (int j = 0; j < height; j++) {
+				canviarCub(i, j, k, 6);
 			}
 		}
 	}
