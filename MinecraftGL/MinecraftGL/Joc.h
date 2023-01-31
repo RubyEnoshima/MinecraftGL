@@ -19,6 +19,8 @@ public:
 
 	int crearFinestra(); // Retorna 1 si s'ha pogut crear la finestra
 
+	void canviarProjeccio(float aspectRatio);
+
 	// Funcions per quan es prem alguna tecla o botó
 	void DestruirCub();
 	void PosarCub();

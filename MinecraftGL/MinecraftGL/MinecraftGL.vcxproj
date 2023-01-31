@@ -170,8 +170,9 @@
     <ClInclude Include="Tipus.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\DepthShader.frag" />
+    <None Include="Shaders\FragmentLlum.frag" />
     <None Include="Shaders\FragmentShader.frag" />
+    <None Include="Shaders\VertexLlum.vert" />
     <None Include="Shaders\VertexShader.vert" />
   </ItemGroup>
   <ItemGroup>

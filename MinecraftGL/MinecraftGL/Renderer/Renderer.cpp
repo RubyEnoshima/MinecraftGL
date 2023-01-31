@@ -1,10 +1,5 @@
 #include "Renderer.h"
 
-// Si es redimensiona la finestra, actualitzar el viewport
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
-}
-
 Renderer::~Renderer()
 {
 	glDeleteBuffers(1,&VAO);
@@ -44,7 +39,7 @@ int Renderer::crearFinestra()
 	glViewport(0, 0, WIDTH, HEIGHT);
 
 	// Assignem una funció per quan es redimensioni la finestra creada
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	//glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	framebuffer = Framebuffer(WIDTH, HEIGHT);
 
@@ -128,13 +123,14 @@ float Renderer::aspectRatio() const
 {
 	int w, h;
 	glfwGetWindowSize(window, &w, &h);
+	cout << "Width: " << w << ", height: " << h << endl;
 	return (float)w/(float)h;
 }
 
 pair<int, int> Renderer::obtenirTamany() const
 {
 	int w, h;
-	glfwGetWindowSize(window, &w, &h);
+	glfwGetFramebufferSize(window, &w, &h);
 	return pair<int, int>(w, h);
 }
 

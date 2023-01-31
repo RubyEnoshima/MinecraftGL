@@ -8,6 +8,21 @@ void Joc::canviarModeMouse(int mode)
 	glfwSetInputMode(window, GLFW_CURSOR, mode);
 }
 
+void Joc::canviarProjeccio(float aspectRatio) {
+	glm::mat4 projection;
+	projection = glm::perspective(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 100.0f);
+	camera.setProjection(projection);
+	renderer.colocarMat4("projection", projection);
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
+
+	joc->canviarProjeccio(0);
+}
+
 // Funció per processar tots els inputs
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	// Si es pressiona ESC, es tanca la finestra
@@ -110,7 +125,7 @@ glm::vec3 Joc::ObtenirCostat() {
 	renderer.usarShader(0);
 	renderer.DibuixarFront();
 	
-	// Mirem quin costat és pel color
+	// Mirem quin costat és pel color que hem obtingut abans
 	if (color[0] > 0) {
 		if (color[2] > 0) return glm::vec3(0,0,-1);
 		if (color[1] > 0) return glm::vec3(0,-1,0);
@@ -131,7 +146,7 @@ void Joc::PosarCub() {
 	glm::vec3 Costat = ObtenirCostat();
 		
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, PEDRA);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, FUSTA_PLANXA);
 		
 }
 
@@ -159,10 +174,8 @@ void Joc::loop() {
 	  model = glm::scale(model, glm::vec3(j,j,j));*/
 
 	// Matriu de projecció
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 100.0f);
-	camera.setProjection(projection);
-	renderer.colocarMat4("projection", projection);
+	canviarProjeccio(renderer.aspectRatio());
+	
 
 	// Matriu view
 	glm::mat4 view = glm::mat4(1.0f);
@@ -224,6 +237,7 @@ void Joc::gameLoop() {
 	if (renderer.carregaShaders()) {
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
 		glfwSetMouseButtonCallback(window, mouse_click_callback);
+		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
