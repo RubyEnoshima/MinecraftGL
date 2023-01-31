@@ -123,6 +123,7 @@ void SuperChunk::update()
 void SuperChunk::render()
 {	
 	if (renderer) {
+
 		for (int i = 0; i < XC; i++)
 		{
 			for (int j = 0; j < YC; j++)
@@ -149,5 +150,6 @@ void SuperChunk::renderCub(int x, int y, int z)
 		renderer->colocarMat4("model", model);
 
 		Chunks[(x / X)][(z / Z)]->renderCub(x % X, y, z % Z);
+
 	}
 }

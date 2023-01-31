@@ -25,8 +25,8 @@ public:
 	
 	
 private:
-	void ObtenirCubMira(); // Pos en CubActual el vector del cub al que estem mirant
-	glm::vec3 ObtenirCostat() const;
+	void ObtenirCubMira(); // Posa en CubActual el vector del cub al que estem mirant
+	glm::vec3 ObtenirCostat();
 
 	void canviarModeMouse(int mode);
 

@@ -79,7 +79,7 @@ void Joc::DestruirCub() {
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
 }
 
-glm::vec3 Joc::ObtenirCostat() const {
+glm::vec3 Joc::ObtenirCostat() {
 
 	// Renderitzem només el cub que estem mirant d'una manera especial
 	renderer.DibuixarDarrera();
@@ -90,19 +90,26 @@ glm::vec3 Joc::ObtenirCostat() const {
 		cerr << glfwGetVersionString();
 	}
 
+	// Canviem el shader que fem servir per un mes senzill
+	renderer.usarShader(1);
+	renderer.colocarMat4("view", camera.lookAt());
+	renderer.colocarMat4("projection", camera.getProjection());
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	mon->renderCub(CubActual.x, CubActual.y, CubActual.z);
 
 	int ww = renderer.obtenirTamany().first;
 	int wh = renderer.obtenirTamany().second;
-	glm::vec3 color;
+
 	// Llegim el color del costat que estem mirant
+	glm::vec3 color;
 	glReadPixels(ww / 2, wh / 2, 1, 1, GL_RGB, GL_FLOAT, &color);
 	
-	// Tornem a posar el buffer per defecte i dibuixar l'escena tal qual
+	// Tornem a posar el buffer i el shader per defecte i aixi dibuixem l'escena tal qual
+	renderer.usarShader(0);
 	renderer.DibuixarFront();
-
+	
 	// Mirem quin costat és pel color
 	if (color[0] > 0) {
 		if (color[2] > 0) return glm::vec3(0,0,-1);

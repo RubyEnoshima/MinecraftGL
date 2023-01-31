@@ -123,71 +123,82 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 }
 
+void Chunk2::afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, bool r, bool g, bool b) {
+	// Posicio
+	vertices.push_back(x);
+	vertices.push_back(y);
+	vertices.push_back(z);
+	// Color
+	vertices.push_back(r);
+	vertices.push_back(g);
+	vertices.push_back(b);
+}
+
 void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	// Cara esq
 	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z])) {
-		afegirVertex(vertices, x, y, z, tipus, 0, 1, 0);
-		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, 0);
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, 0);
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, 0);
-		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, 0);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, 0);
+		afegirVertexFlat(vertices, x, y, z, 0);
+		afegirVertexFlat(vertices, x, y, z + 1, 0);
+		afegirVertexFlat(vertices, x, y + 1, z, 0);
+		afegirVertexFlat(vertices, x, y + 1, z, 0);
+		afegirVertexFlat(vertices, x, y, z + 1, 0);
+		afegirVertexFlat(vertices, x, y + 1, z + 1, 0);
 
 	}
 
 	// Cara dre
 	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) or (x == X - 1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z])) {
-		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, 0, 0);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, 0, 0);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 1, 0, 0);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, 0, 0);
-		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 0, 0, 0, 0);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 1, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y, z, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y + 1, z, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y, z + 1, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y + 1, z, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y + 1, z + 1, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y, z + 1, 0, 0);
 	}
 
 	// Cara frontal
 	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1])) {
-		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1, 1, 0, 0);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1, 1, 0, 0);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, 1, 0, 0);
+		afegirVertexFlat(vertices, x, y, z + 1, 1, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y, z + 1, 1, 0, 0);
+		afegirVertexFlat(vertices, x, y + 1, z + 1, 1, 0, 0);
 
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, 1, 0, 0);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1, 1, 0, 0);
-		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 0, 1, 0, 0);
+		afegirVertexFlat(vertices, x, y + 1, z + 1, 1, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y, z + 1, 1, 0, 0);
+		afegirVertexFlat(vertices, x + 1, y + 1, z + 1, 1, 0, 0);
 
 	}
 
 	// Cara darrera
 	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1])) {
-		afegirVertex(vertices, x, y, z, tipus, 1, 1, 1, 0, 1);
-		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, 1, 0, 1);
-		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, 1, 0, 1);
+		afegirVertexFlat(vertices, x, y, z, 1, 0, 1);
+		afegirVertexFlat(vertices, x, y + 1, z, 1, 0, 1);
+		afegirVertexFlat(vertices, x + 1, y, z, 1, 0, 1);
 
-		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, 1, 0, 1);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 0, 0, 1, 0, 1);
-		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, 1, 0, 1);
+		afegirVertexFlat(vertices, x, y + 1, z, 1, 0, 1);
+		afegirVertexFlat(vertices, x + 1, y + 1, z, 1, 0, 1);
+		afegirVertexFlat(vertices, x + 1, y, z, 1, 0, 1);
 
 	}
 
 	// Cara adalt
 	if (y == Y - 1 or !chunk[x][y + 1][z]) {
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, 0, 1, 0);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, 0, 1, 0);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, 0, 1, 0);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, 0, 1, 0);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, 0, 1, 0);
-		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 1, 0, 1, 0);
+		afegirVertexFlat(vertices, x, y + 1, z, 0, 1, 0);
+		afegirVertexFlat(vertices, x, y + 1, z + 1, 0, 1, 0);
+		afegirVertexFlat(vertices, x + 1, y + 1, z, 0, 1, 0);
+		afegirVertexFlat(vertices, x + 1, y + 1, z, 0, 1, 0);
+		afegirVertexFlat(vertices, x, y + 1, z + 1, 0, 1, 0);
+		afegirVertexFlat(vertices, x + 1, y + 1, z + 1, 0, 1, 0);
 
 	}
 
 	// Cara sota
 	if (y == 0 or !chunk[x][y - 1][z]) {
-		afegirVertex(vertices, x, y, z, tipus, 0, 0, 1, 1, 0);
-		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, 1, 1, 0);
-		afegirVertex(vertices, x, y, z + 1, tipus, 1, 0, 1, 1, 0);
-		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, 1, 1, 0);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1, 1, 1, 0);
-		afegirVertex(vertices, x, y, z + 1, tipus, 1, 0, 1, 1, 0);
+		afegirVertexFlat(vertices, x, y, z, 1, 1, 0);
+		afegirVertexFlat(vertices, x + 1, y, z, 1, 1, 0);
+		afegirVertexFlat(vertices, x, y, z + 1, 1, 1, 0);
+		afegirVertexFlat(vertices, x + 1, y, z, 1, 1, 0);
+		afegirVertexFlat(vertices, x + 1, y, z + 1, 1, 1, 0);
+		afegirVertexFlat(vertices, x, y, z + 1, 1, 1, 0);
 
 	}
 
@@ -263,21 +274,15 @@ void Chunk2::renderCub(int x, int y, int z)
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_FLAT);
 
-	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 2 * sizeof(bool) + 8 * sizeof(GLbyte), (void*)0);
+	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 2 * sizeof(bool) + 8 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 2 * sizeof(bool) + 8 * sizeof(GLbyte), (void*)(6 * sizeof(GLbyte)));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 2 * sizeof(bool) + 8 * sizeof(GLbyte), (void*)(2 * sizeof(bool) + 6 * sizeof(GLbyte)));
-	glEnableVertexAttribArray(3);
 
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-	glDisableVertexAttribArray(3);
 
 	glDeleteBuffers(1, &VBO_FLAT);
 
@@ -294,8 +299,11 @@ void Chunk2::emplenarChunk()
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
 			int height = Y/2 + (int)(glm::perlin(glm::vec2((float)(i + X * posX) / X, (float)(k + Z * posY) / Z)) * 5);
-			for (int j = 0; j < height; j++) {
-				canviarCub(i, j, k, GESPA);
+			for (int j = 0; j <= height; j++) {
+				if (j == height) canviarCub(i, j, k, GESPA);
+				else if (j < height - 3) canviarCub(i, j, k, PEDRA);
+				else canviarCub(i, j, k, TERRA);
+				
 			}
 		}
 	}

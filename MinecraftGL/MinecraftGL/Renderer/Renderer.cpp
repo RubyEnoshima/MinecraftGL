@@ -79,7 +79,7 @@ int Renderer::carregaShaders()
 	shaders[1].carregaShaders();
 
 	if (totbe) {
-		usarShader(0);
+		usarShader();
 	}
 
 	Textura t("minecraft_transp.png");
@@ -90,7 +90,7 @@ int Renderer::carregaShaders()
 void Renderer::usarShader(int i)
 {
 	shaderActual = shaders[i].getProgram();
-	cout << "Usant " << shaderActual << endl;
+	//cout << "Usant " << shaderActual << endl;
 	shaders[i].usar();
 }
 
