@@ -41,8 +41,10 @@ private:
 
 	unsigned int VAO, shaderActual;
 
-	ShaderProgram shaderBasic;
-	ShaderProgram shaderPla;
+	//ShaderProgram shaderBasic;
+	//ShaderProgram shaderPla;
+
+	ShaderProgram shaders[5];
 
 	Framebuffer framebuffer;
 

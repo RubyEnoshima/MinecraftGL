@@ -95,4 +95,8 @@
     <None Include="Shaders\FragmentShader.frag" />
     <None Include="Shaders\VertexShader.vert" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Shaders\VertexPla.vert" />
+    <Text Include="Shaders\FragmentPla.frag" />
+  </ItemGroup>
 </Project>
