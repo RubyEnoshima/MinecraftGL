@@ -52,8 +52,6 @@ private:
 	unsigned int posX, posY;
 	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
 
-	
-
 	Chunk2* veiEsq = NULL;
 	Chunk2* veiDre = NULL;
 	Chunk2* veiUp = NULL;

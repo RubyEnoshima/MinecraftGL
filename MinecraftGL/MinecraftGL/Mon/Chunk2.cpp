@@ -11,7 +11,6 @@ Chunk2::Chunk2(unsigned int _x, unsigned int _y)
 Chunk2::~Chunk2()
 {
 	glDeleteBuffers(1, &VBO);
-
 }
 
 void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
@@ -27,6 +26,8 @@ void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 
 uint8_t Chunk2::obtenirCub(int x, int y, int z)
 {
+	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return 0;
+
 	return chunk[x][y][z];
 }
 
@@ -49,8 +50,9 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 
 void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
+	if (tipus == GESPA) tipus = GESPA_COSTAT;
 	// Cara esq
-	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z])) {
+	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) /*or (x == 0 and !veiEsq)*/) or (x != 0 and !chunk[x - 1][y][z])) {
 		afegirVertex(vertices, x, y, z, tipus, 0, 1);
 		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1);
 		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0);
@@ -61,7 +63,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara dre
-	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) or (x == X - 1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z])) {
+	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) /*or (x == X - 1 and !veiDre)*/) or (x != X - 1 and !chunk[x + 1][y][z])) {
 		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1);
 		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0);
 		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 1);
@@ -71,7 +73,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1])) {
+	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) /*or (z == Z - 1 and !veiUp)*/) or (z != Z - 1 and !chunk[x][y][z + 1])) {
 		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1);
 		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1);
 		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0);
@@ -83,7 +85,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1])) {
+	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) /*or (z == 0 and !veiBaix)*/) or (z != 0 and !chunk[x][y][z - 1])) {
 		afegirVertex(vertices, x, y, z, tipus, 1, 1);
 		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0);
 		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1);
@@ -94,6 +96,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	}
 
+	if (tipus == GESPA_COSTAT) tipus = GESPA;
 	// Cara adalt
 	if (y == Y - 1 or !chunk[x][y + 1][z]) {
 		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0);
@@ -105,6 +108,8 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	}
 
+
+	if (tipus == GESPA) tipus = TERRA;
 	// Cara sota
 	if (y == 0 or !chunk[x][y - 1][z]) {
 		afegirVertex(vertices, x, y, z, tipus, 0, 0);
@@ -250,7 +255,7 @@ void Chunk2::renderCub(int x, int y, int z)
 	vector<GLbyte> _vertices;
 	unsigned int VBO_FLAT;
 
-	afegirCubFlat(_vertices, x, y, z, 14);
+	afegirCubFlat(_vertices, x, y, z, 0);
 	glGenBuffers(1, &VBO_FLAT);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_FLAT);
@@ -288,9 +293,9 @@ void Chunk2::emplenarChunk()
 {
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
-			float height = Y/2;
+			int height = Y/2 + (int)(glm::perlin(glm::vec2((float)(i + X * posX) / X, (float)(k + Z * posY) / Z)) * 5);
 			for (int j = 0; j < height; j++) {
-				canviarCub(i, j, k, 6);
+				canviarCub(i, j, k, GESPA);
 			}
 		}
 	}

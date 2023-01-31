@@ -1,4 +1,7 @@
 #include "Joc.h"
+Joc::~Joc() {
+	delete mon;
+}
 
 void Joc::canviarModeMouse(int mode)
 {
@@ -121,7 +124,7 @@ void Joc::PosarCub() {
 	glm::vec3 Costat = ObtenirCostat();
 		
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, 2);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, PEDRA);
 		
 }
 
@@ -199,7 +202,8 @@ void Joc::loop() {
 		// Mostrem els frames que hi ha hagut en un segon (fps)
 		if (currentFrame-ant>=1.0f) { // Si la diferència és 1 és que ha passat un segon
 			ant = currentFrame;
-			cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
+			//cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
+			glfwSetWindowTitle(window, ("MinecraftGL - FPS: " + to_string(fps)).c_str());
 			fps = 0; // Resetejem el comptador
 
 		}

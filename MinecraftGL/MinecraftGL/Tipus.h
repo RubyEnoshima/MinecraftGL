@@ -1,5 +1,8 @@
 enum TIPUS {
 	AIRE = 0,
-	TERRA = 1,
-	GESPA = 2
+	GESPA = 1,
+	PEDRA = 2,
+	TERRA = 3,
+	GESPA_COSTAT = 4,
+	FUSTA_PLANXA = 5
 };

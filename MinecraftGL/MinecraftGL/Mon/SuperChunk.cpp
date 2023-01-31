@@ -17,7 +17,6 @@ SuperChunk::~SuperChunk() {
 SuperChunk::SuperChunk(Renderer* _renderer)
 {
 	renderer = _renderer;
-
 	for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)

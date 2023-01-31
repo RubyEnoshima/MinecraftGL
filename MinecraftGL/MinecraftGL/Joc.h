@@ -5,6 +5,8 @@
 #include "Jugador/Camera.h"
 #include "glm/gtx/io.hpp"
 
+#include <string>
+
 #define rgb renderer.rgb
 
 using namespace std;
@@ -12,6 +14,7 @@ using namespace std;
 class Joc
 {
 public:
+	~Joc();
 	void gameLoop(); // Fa que comenci el joc i executa el loop
 
 	int crearFinestra(); // Retorna 1 si s'ha pogut crear la finestra
@@ -39,5 +42,7 @@ private:
 	Camera camera;
 	Renderer renderer;
 	SuperChunk* mon;
+
+	
 };
 

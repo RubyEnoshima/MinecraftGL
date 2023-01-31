@@ -23,5 +23,10 @@ public:
 private:
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;
+	
+	int octaves = 8;
+	float frequencia = 8.0;
+	float amplitud = 1.0;
+	int seed = 94;
 };
 
