@@ -70,8 +70,13 @@ int Renderer::carregaShaders()
 {
 	shaders[0] = ShaderProgram("VertexShader.vert", "FragmentShader.frag");
 	shaders[1] = ShaderProgram("VertexPla.vert", "FragmentPla.frag");
-	int totbe = shaders[0].carregaShaders();
-	shaders[1].carregaShaders();
+	shaders[2] = ShaderProgram("VertexLlum.vert", "FragmentLlum.frag");
+
+	int totbe = 1, i=0;
+	while (totbe && i<MAX_SHADERS) {
+		totbe = shaders[i].carregaShaders();
+		i++;
+	}
 
 	if (totbe) {
 		usarShader();
@@ -122,7 +127,7 @@ void Renderer::DibuixarFront() const
 float Renderer::aspectRatio() const
 {
 	int w, h;
-	glfwGetWindowSize(window, &w, &h);
+	glfwGetFramebufferSize(window, &w, &h);
 	cout << "Width: " << w << ", height: " << h << endl;
 	return (float)w/(float)h;
 }

@@ -10,6 +10,8 @@
 #include "Framebuffer.h"
 #include "Textura.h"
 
+#define MAX_SHADERS 3
+
 class Renderer
 {
 public:
@@ -44,7 +46,7 @@ private:
 	//ShaderProgram shaderBasic;
 	//ShaderProgram shaderPla;
 
-	ShaderProgram shaders[5];
+	ShaderProgram shaders[MAX_SHADERS];
 
 	Framebuffer framebuffer;
 

@@ -8,7 +8,7 @@ void Joc::canviarModeMouse(int mode)
 	glfwSetInputMode(window, GLFW_CURSOR, mode);
 }
 
-void Joc::canviarProjeccio(float aspectRatio) {
+void Joc::canviarProjeccio() {
 	glm::mat4 projection;
 	projection = glm::perspective(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 100.0f);
 	camera.setProjection(projection);
@@ -20,7 +20,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
-	joc->canviarProjeccio(0);
+	joc->canviarProjeccio();
 }
 
 // Funció per processar tots els inputs
@@ -146,7 +146,7 @@ void Joc::PosarCub() {
 	glm::vec3 Costat = ObtenirCostat();
 		
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, FUSTA_PLANXA);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, CRISTAL);
 		
 }
 
@@ -174,7 +174,7 @@ void Joc::loop() {
 	  model = glm::scale(model, glm::vec3(j,j,j));*/
 
 	// Matriu de projecció
-	canviarProjeccio(renderer.aspectRatio());
+	canviarProjeccio();
 	
 
 	// Matriu view

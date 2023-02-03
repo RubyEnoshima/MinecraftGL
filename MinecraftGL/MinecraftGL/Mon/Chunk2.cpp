@@ -20,8 +20,10 @@ void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 
 	if (x == 0 && veiEsq) veiEsq->canviat = true;
 	else if (x == X - 1 && veiDre) veiDre->canviat = true;
-	else if (z == 0 && veiBaix) veiBaix->canviat = true;
+	if (z == 0 && veiBaix) veiBaix->canviat = true;
 	else if (z == Z - 1 && veiUp) veiUp->canviat = true;
+
+	
 }
 
 uint8_t Chunk2::obtenirCub(int x, int y, int z)
@@ -37,9 +39,9 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 	vertices.push_back(y);
 	vertices.push_back(z);
 	// Color
-	vertices.push_back(r);
-	vertices.push_back(g);
-	vertices.push_back(b);
+	//vertices.push_back(r);
+	//vertices.push_back(g);
+	//vertices.push_back(b);
 	// Coordenades de textura
 	vertices.push_back(u);
 	vertices.push_back(v);
@@ -235,30 +237,31 @@ void Chunk2::render()
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	/*glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)0);
+
+	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 7 * sizeof(GLbyte), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(6 * sizeof(GLbyte)));
+	//glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	//glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 7 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 10 * sizeof(GLbyte), (void*)(8 * sizeof(GLbyte)));
-	glEnableVertexAttribArray(3);*/
+	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 7 * sizeof(GLbyte), (void*)(5 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(3);
 
 	
-	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)0);
+	/*glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)(6*sizeof(GLbyte)));
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)(2 * sizeof(bool) + 6 * sizeof(GLbyte)));
-	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(3);*/
 	
 
 	glDrawArrays(GL_TRIANGLES, 0, elements);
 
 	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
+	//glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
 }
@@ -287,8 +290,6 @@ void Chunk2::renderCub(int x, int y, int z)
 	glDisableVertexAttribArray(1);
 
 	glDeleteBuffers(1, &VBO_FLAT);
-
-	//canviat = true;
 }
 
 int Chunk2::nCubs() const
