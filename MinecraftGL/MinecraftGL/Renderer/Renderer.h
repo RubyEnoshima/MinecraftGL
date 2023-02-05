@@ -29,7 +29,8 @@ public:
 
 	unsigned int obtenirUniform(const char* uniform) const;
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
-	void canviarColor(const glm::vec4 color);
+	void canviarColorLlum(const glm::vec3 color);
+	void canviarPosLlum(const glm::vec3 pos);
 
 	float rgb(int color) const;
 

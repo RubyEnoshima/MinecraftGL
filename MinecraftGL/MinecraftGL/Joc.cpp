@@ -25,6 +25,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // Funció per processar tots els inputs
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
+
 	// Si es pressiona ESC, es tanca la finestra
 	if (key == GLFW_KEY_ESCAPE and action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -46,16 +48,33 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		cout << "Cambiar camara" << endl;
 	}
 
+	// F2 = Cull/!Cull
 	else if (key == GLFW_KEY_F2 and action == GLFW_PRESS) {
-		if (glIsEnabled(GL_CULL_FACE)) {
-			glDisable(GL_CULL_FACE);
-		}
-		else {
-			glEnable(GL_CULL_FACE);
-		}
+		
+		joc->Culling();
 	}
 
-	// cout << "Tecla: " << key << endl;
+	// F4
+	else if (key == GLFW_KEY_F4 and action == GLFW_PRESS) {
+		joc->VSync();
+	}
+
+}
+
+void Joc::Culling() {
+	_Culling = !_Culling;
+	if (!_Culling) {
+		glDisable(GL_CULL_FACE);
+	}
+	else {
+		glEnable(GL_CULL_FACE);
+	}
+}
+
+void Joc::VSync() {
+	_VSync = !_VSync;
+	glfwSwapInterval(_VSync);
+
 }
 
 int Joc::crearFinestra() {
@@ -146,7 +165,7 @@ void Joc::PosarCub() {
 	glm::vec3 Costat = ObtenirCostat();
 		
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, CRISTAL);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, TERRA);
 		
 }
 
@@ -176,13 +195,15 @@ void Joc::loop() {
 	// Matriu de projecció
 	canviarProjeccio();
 	
-
 	// Matriu view
 	glm::mat4 view = glm::mat4(1.0f);
 
 	// Per controlar els fps
 	int fps = 0;
 	float ant = 0.0f;
+
+	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
+	glm::vec3 pos = glm::vec3(0, Y, 0.0f);
 
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
@@ -201,6 +222,7 @@ void Joc::loop() {
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 		mon->render();
 		//mon->renderCub(7, 62, 4);
+		renderer.canviarPosLlum(pos);
 
 		glfwPollEvents(); // Processar events
 
@@ -209,7 +231,7 @@ void Joc::loop() {
 		
 		//cout << CubActual << endl;
 		//renderer.canviarColor(glm::vec4(rgb(0), rgb(0), rgb(0), 1.0f));
-		if(CubActual.x != -1 && mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
+		if(mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
 			mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
 
 
@@ -232,9 +254,11 @@ void Joc::loop() {
 }
 
 void Joc::gameLoop() {
-	cout << "Joc start" << endl << endl;
+	cout << "Joc start\n\n\n";
 
 	if (renderer.carregaShaders()) {
+		cout << "-------------\n\n\n\n";
+
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
 		glfwSetMouseButtonCallback(window, mouse_click_callback);
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -254,6 +278,9 @@ void Joc::gameLoop() {
 
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1, 0);
+
+		glfwSwapInterval(_VSync);
+
 		// El loop de veritat
 		loop();
 

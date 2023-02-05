@@ -25,6 +25,8 @@ public:
 	void DestruirCub();
 	void PosarCub();
 	
+	void Culling();
+	void VSync();
 	
 private:
 	void ObtenirCubMira(); // Posa en CubActual el vector del cub al que estem mirant
@@ -36,6 +38,9 @@ private:
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
+
+	bool _VSync = false;
+	bool _Culling = true;
 	
 	GLFWwindow* window;
 	glm::vec3 CubActual;

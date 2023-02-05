@@ -42,8 +42,10 @@ public:
 	unsigned int elements = 0;
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
+	bool unCanviat = false;
+	glm::vec3 cubCanviat;
 private:
-	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, bool r=1, bool g=1, bool b=1);
+	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, int n1, int n2, int n3, bool u=0, bool v=0);
 	void afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, bool r=1, bool g=1, bool b=1);
 
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);

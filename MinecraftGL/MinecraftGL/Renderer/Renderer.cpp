@@ -104,9 +104,14 @@ void Renderer::colocarMat4(const string uniform, const glm::mat4 matriu)
 	glUniformMatrix4fv(glGetUniformLocation(shaderActual, uniform.c_str()), 1, GL_FALSE, &matriu[0][0]);
 }
 
-void Renderer::canviarColor(const glm::vec4 color)
+void Renderer::canviarColorLlum(const glm::vec3 color)
 {
-	glUniform4f(obtenirUniform("inColor"), color[0], color[1], color[2], color[3]);
+	glUniform3f(obtenirUniform("lightColor"), color[0], color[1], color[2]);
+}
+
+void Renderer::canviarPosLlum(const glm::vec3 pos)
+{
+	glUniform3f(obtenirUniform("lightPos"), pos[0], pos[1], pos[2]);
 }
 
 float Renderer::rgb(int color) const

@@ -46,9 +46,13 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 {
-	if(Chunks[x/X][z/Z])
-		Chunks[x / X][z / Z]->canviarCub(x%X,y,z%Z,tipus);
-	cout << "Chunk: " << x/X << ", " << z/Z << "    " << x % X << ", " << z % Z << endl;
+	if (Chunks[x / X][z / Z]) {
+		Chunk2* chunk = Chunks[x / X][z / Z];
+		chunk->canviarCub(x % X, y, z % Z, tipus);
+		chunk->unCanviat = true;
+		chunk->cubCanviat = glm::vec3(x % X, y, z % Z);
+	}
+	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << x % X << ", " << z % Z << endl;
 }
 
 uint8_t SuperChunk::obtenirCub(int x, int y, int z)
