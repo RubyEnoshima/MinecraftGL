@@ -15,117 +15,150 @@ Chunk2::~Chunk2()
 
 void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 {
-	chunk[x][y][z] = tipus;
+	chunk[x][y][z].tipus = tipus;
+
 	canviat = true;
 
 	if (x == 0 && veiEsq) veiEsq->canviat = true;
 	else if (x == X - 1 && veiDre) veiDre->canviat = true;
 	if (z == 0 && veiBaix) veiBaix->canviat = true;
 	else if (z == Z - 1 && veiUp) veiUp->canviat = true;
+}
 
-	
+void Chunk2::canviarLlumCub(int x, int y, int z, uint8_t llum)
+{
+	chunk[x][y][z].llum = llum;
 }
 
 uint8_t Chunk2::obtenirCub(int x, int y, int z)
 {
 	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return 0;
 
-	return chunk[x][y][z];
+	return chunk[x][y][z].tipus;
 }
 
-void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, int n1, int n2, int n3, bool u, bool v) {
+uint8_t Chunk2::obtenirLlumCub(int x, int y, int z)
+{
+	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return 0;
+
+	return chunk[x][y][z].llum;
+}
+
+void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum) {
 	// Posicio
 	vertices.push_back(x);
 	vertices.push_back(y);
 	vertices.push_back(z);
+
 	// Color
 	//vertices.push_back(r);
 	//vertices.push_back(g);
 	//vertices.push_back(b);
-	// Normals
-	vertices.push_back(n1);
-	vertices.push_back(n2);
-	vertices.push_back(n3);
+	
+	// Quantitat de llum
+	vertices.push_back(llum);
+
 	// Coordenades de textura
 	vertices.push_back(u);
 	vertices.push_back(v);
+
 	// Tipus (posició del mapa de textures)
 	vertices.push_back(tipus%16);
 	vertices.push_back(tipus/16);
+
 }
 
 
 void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
+	uint8_t llum;
 	if (tipus == GESPA) tipus = GESPA_COSTAT;
 	else if (tipus == NEU) tipus = NEU_COSTAT;
 	// Cara esq
-	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) /*or (x == 0 and !veiEsq)*/) or (x != 0 and (!chunk[x - 1][y][z] or chunk[x-1][y][z]==CRISTAL))) {
-		afegirVertex(vertices, x, y, z, tipus, -1, 0, 0, 0, 1);
-		afegirVertex(vertices, x, y, z + 1, tipus, -1, 0, 0, 1, 1);
-		afegirVertex(vertices, x, y + 1, z, tipus, -1, 0, 0, 0, 0);
-		afegirVertex(vertices, x, y + 1, z, tipus, -1, 0, 0, 0, 0);
-		afegirVertex(vertices, x, y, z + 1, tipus, -1, 0, 0, 1, 1);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, -1, 0, 0, 1, 0);
+	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z)) or (x != 0 and (!chunk[x - 1][y][z].tipus or chunk[x-1][y][z].tipus==CRISTAL))) {
+		llum = chunk[x - 1][y][z].llum;
+		if (x == 0) llum = veiEsq->chunk[X - 1][y][z].llum;
+
+		afegirVertex(vertices, x, y, z, tipus, 0, 1, llum);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, llum);
 
 	}
 
 	// Cara dre
-	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) /*or (x == X - 1 and !veiDre)*/) or (x != X - 1 and (!chunk[x + 1][y][z] or chunk[x + 1][y][z] == CRISTAL))) {
-		afegirVertex(vertices, x + 1, y, z, tipus, 1, 0, 0, 1, 1);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, 0, 1, 0);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 0, 0, 0, 1);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, 0, 1, 0);
-		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 0, 0, 0, 0);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 0, 0, 0, 1);
+	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or chunk[x + 1][y][z].tipus == CRISTAL))) {
+		llum = chunk[x + 1][y][z].llum;
+		if (x == X - 1) llum = veiDre->chunk[0][y][z].llum;
+
+		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, llum);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 1, llum);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
+		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 0, 0, llum);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 1, llum);
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) /*or (z == Z - 1 and !veiUp)*/) or (z != Z - 1 and (!chunk[x][y][z + 1] or chunk[x][y][z + 1]==CRISTAL))) {
-		afegirVertex(vertices, x, y, z + 1, tipus, 0, 0, 1, 0, 1);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 0, 1, 1, 1);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, 1, 0, 0);
+	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or chunk[x][y][z + 1].tipus ==CRISTAL))) {
+		llum = chunk[x][y][z + 1].llum;
+		if (z == Z - 1) llum = veiUp->chunk[x][y][0].llum;
+		
+		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1, llum);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, llum);
 
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, 1, 0, 0);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 0, 1, 1, 1);
-		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 0, 0, 1, 1, 0);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, llum);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 0, llum);
 
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) /*or (z == 0 and !veiBaix)*/) or (z != 0 and (!chunk[x][y][z - 1] or chunk[x][y][z - 1]==CRISTAL))) {
-		afegirVertex(vertices, x, y, z, tipus, 0, 0, -1, 1, 1);
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, -1, 1, 0);
-		afegirVertex(vertices, x + 1, y, z, tipus, 0, 0, -1, 0, 1);
+	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1)) or (z != 0 and (!chunk[x][y][z - 1].tipus or chunk[x][y][z - 1].tipus ==CRISTAL))) {
+		llum = chunk[x][y][z - 1].llum;
+		if (z == 0) llum = veiBaix->chunk[x][y][Z - 1].llum;
+		
+		afegirVertex(vertices, x, y, z, tipus, 1, 1, llum);
+		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, llum);
+		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, llum);
 
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, -1, 1, 0);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 0, 0, -1, 0, 0);
-		afegirVertex(vertices, x + 1, y, z, tipus, 0, 0, -1, 0, 1);
+		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, llum);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, llum);
 
 	}
 
 	if (tipus == GESPA_COSTAT) tipus = GESPA;
 	else if (tipus == NEU_COSTAT) tipus = NEU;
 	// Cara adalt
-	if (y == Y - 1 or !chunk[x][y + 1][z] or chunk[x][y + 1][z]==CRISTAL) {
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 1, 0, 0, 0);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, 0, 0, 1);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 0, 1, 0, 1, 0);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 0, 1, 0, 1, 0);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, 0, 0, 1);
-		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 0, 1, 0, 1, 1);
+	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or chunk[x][y + 1][z].tipus == CRISTAL) {
+		llum = chunk[x][y + 1][z].llum;
+		if (y == Y - 1) llum = 0;
+
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, llum);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, llum);
+		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 1, llum);
 
 	}
 
 
 	if (tipus == GESPA || tipus == NEU) tipus = TERRA;
 	// Cara sota
-	if (y == 0 or !chunk[x][y - 1][z] or chunk[x][y - 1][z] == CRISTAL) {
-		afegirVertex(vertices, x, y, z, tipus, 0, -1, 0, 0, 0);
-		afegirVertex(vertices, x + 1, y, z, tipus, 0, -1, 0, 0, 1);
-		afegirVertex(vertices, x, y, z + 1, tipus, 0, -1, 0, 1, 0);
-		afegirVertex(vertices, x + 1, y, z, tipus, 0, -1, 0, 0, 1);
-		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, -1, 0, 1, 1);
-		afegirVertex(vertices, x, y, z + 1, tipus, 0, -1, 0, 1, 0);
+	if (y == 0 or !chunk[x][y - 1][z].tipus or chunk[x][y - 1][z].tipus == CRISTAL) {
+		llum = chunk[x][y - 1][z].llum;
+		if (y == Y - 1) llum = 0;
+
+		afegirVertex(vertices, x, y, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, llum);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 0, llum);
+		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, llum);
+		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 0, llum);
 
 	}
 
@@ -144,7 +177,7 @@ void Chunk2::afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8
 
 void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	// Cara esq
-	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z])) {
+	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z].tipus)) {
 		afegirVertexFlat(vertices, x, y, z, 0);
 		afegirVertexFlat(vertices, x, y, z + 1, 0);
 		afegirVertexFlat(vertices, x, y + 1, z, 0);
@@ -155,7 +188,7 @@ void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara dre
-	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) or (x == X - 1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z])) {
+	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) or (x == X - 1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z].tipus)) {
 		afegirVertexFlat(vertices, x + 1, y, z, 0, 0);
 		afegirVertexFlat(vertices, x + 1, y + 1, z, 0, 0);
 		afegirVertexFlat(vertices, x + 1, y, z + 1, 0, 0);
@@ -165,7 +198,7 @@ void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1])) {
+	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1].tipus)) {
 		afegirVertexFlat(vertices, x, y, z + 1, 1, 0, 0);
 		afegirVertexFlat(vertices, x + 1, y, z + 1, 1, 0, 0);
 		afegirVertexFlat(vertices, x, y + 1, z + 1, 1, 0, 0);
@@ -177,7 +210,7 @@ void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1])) {
+	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1].tipus)) {
 		afegirVertexFlat(vertices, x, y, z, 1, 0, 1);
 		afegirVertexFlat(vertices, x, y + 1, z, 1, 0, 1);
 		afegirVertexFlat(vertices, x + 1, y, z, 1, 0, 1);
@@ -189,7 +222,7 @@ void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara adalt
-	if (y == Y - 1 or !chunk[x][y + 1][z]) {
+	if (y == Y - 1 or !chunk[x][y + 1][z].tipus) {
 		afegirVertexFlat(vertices, x, y + 1, z, 0, 1, 0);
 		afegirVertexFlat(vertices, x, y + 1, z + 1, 0, 1, 0);
 		afegirVertexFlat(vertices, x + 1, y + 1, z, 0, 1, 0);
@@ -200,7 +233,7 @@ void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara sota
-	if (y == 0 or !chunk[x][y - 1][z]) {
+	if (y == 0 or !chunk[x][y - 1][z].tipus) {
 		afegirVertexFlat(vertices, x, y, z, 1, 1, 0);
 		afegirVertexFlat(vertices, x + 1, y, z, 1, 1, 0);
 		afegirVertexFlat(vertices, x, y, z + 1, 1, 1, 0);
@@ -238,8 +271,11 @@ void Chunk2::update()
 		for (int i = 0; i < X; i++) {
 			for (int j = 0; j < Y; j++) {
 				for (int k = 0; k < Z; k++) {
-					uint8_t tipus = chunk[i][j][k];
-					if (tipus) afegirCub(_vertices, i, j, k, tipus);
+					uint8_t tipus = chunk[i][j][k].tipus;
+					if (tipus) {
+						//if (tipus == LLUM) llum = 12;
+						afegirCub(_vertices, i, j, k, tipus);
+					}
 				}
 			}
 		}
@@ -261,13 +297,16 @@ void Chunk2::render()
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	/*glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 7 * sizeof(GLbyte), (void*)0);
+	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 7 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glVertexAttribPointer(1, 1, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)(4 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 7 * sizeof(GLbyte), (void*)(5 * sizeof(GLbyte)));
-	glEnableVertexAttribArray(3);*/
+	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)(6 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(3);
 
+	/*
 	// Posició
 	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -280,6 +319,7 @@ void Chunk2::render()
 	// Tipus (posició al mapa de textures)
 	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, 2*sizeof(bool) + 8 * sizeof(GLbyte), (void*)(2 * sizeof(bool) + 6 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(3);
+	*/
 	
 
 	glDrawArrays(GL_TRIANGLES, 0, elements);

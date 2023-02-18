@@ -15,8 +15,13 @@
 using namespace std;
 
 #define X 16
-#define Y 126 // 102 se empieza a ver raruno
+#define Y 128 // 102 se empieza a ver raruno
 #define Z 16
+
+struct Cub {
+	uint8_t tipus;
+	uint8_t llum;
+};
 
 class Chunk2
 {
@@ -24,8 +29,14 @@ public:
 	Chunk2(unsigned int _x=0, unsigned int _y=0);
 	~Chunk2();
 
-	void canviarCub(int x, int y, int z, uint8_t tipus); // Canvia el tipus d'un cub concret
-	uint8_t obtenirCub(int x, int y, int z); // Retorna el tipus del cub
+	// Canvia el tipus d'un cub concret
+	void canviarCub(int x, int y, int z, uint8_t tipus); 
+	// Canvia la llum d'un cub concret
+	void canviarLlumCub(int x, int y, int z, uint8_t llum); 
+	// Retorna el tipus del cub
+	uint8_t obtenirCub(int x, int y, int z); 
+	// Retorna la llum del cub
+	uint8_t obtenirLlumCub(int x, int y, int z);
 
 	void update();
 	void render();
@@ -45,7 +56,7 @@ public:
 	bool unCanviat = false;
 	glm::vec3 cubCanviat;
 private:
-	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, int n1, int n2, int n3, bool u=0, bool v=0);
+	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2);
 	void afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, bool r=1, bool g=1, bool b=1);
 
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
@@ -54,7 +65,7 @@ private:
 	unsigned int VBO;
 
 	unsigned int posX, posY;
-	uint8_t chunk[X][Y][Z]; // Es guarda el tipus de cada cub
+	Cub chunk[X][Y][Z]; // Es guarda el tipus de cada cub
 
 	Chunk2* veiEsq = NULL;
 	Chunk2* veiDre = NULL;

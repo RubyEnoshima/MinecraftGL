@@ -165,7 +165,7 @@ void Joc::PosarCub() {
 	glm::vec3 Costat = ObtenirCostat();
 		
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, CRISTAL);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, LLUM);
 		
 }
 

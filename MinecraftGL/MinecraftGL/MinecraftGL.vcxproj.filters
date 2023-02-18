@@ -30,9 +30,6 @@
     <ClCompile Include="Mon\Chunk2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mon\Cub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Mon\SuperChunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mon\Chunk2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mon\Cub.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mon\SuperChunk.h">

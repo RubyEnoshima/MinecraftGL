@@ -15,13 +15,17 @@ class Joc
 {
 public:
 	~Joc();
-	void gameLoop(); // Fa que comenci el joc i executa el loop
 
-	int crearFinestra(); // Retorna 1 si s'ha pogut crear la finestra
+	// Fa que comenci el joc i executa el loop
+	void gameLoop(); 
+
+	// Retorna 1 si s'ha pogut crear la finestra
+	int crearFinestra(); 
 
 	void canviarProjeccio();
 
-	// Funcions per quan es prem alguna tecla o botó
+	// -- Funcions per quan es prem alguna tecla o botó --
+
 	void DestruirCub();
 	void PosarCub();
 	
@@ -29,7 +33,8 @@ public:
 	void VSync();
 	
 private:
-	void ObtenirCubMira(); // Posa en CubActual el vector del cub al que estem mirant
+	// Posa en CubActual el vector del cub al que estem mirant
+	void ObtenirCubMira(); 
 	glm::vec3 ObtenirCostat();
 
 	void canviarModeMouse(int mode);

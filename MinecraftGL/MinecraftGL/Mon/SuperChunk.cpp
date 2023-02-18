@@ -44,18 +44,86 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 
 }
 
+vector<glm::vec3> SuperChunk::obtenirColindants(glm::vec3& pos) const
+{
+	vector<glm::vec3> cubs;
+	cubs.push_back(pos + glm::vec3(0, 0, 1));
+	cubs.push_back(pos + glm::vec3(0, 0, -1));
+	cubs.push_back(pos + glm::vec3(-1, 0, 0));
+	cubs.push_back(pos + glm::vec3(1, 0, 0));
+	/*cubs.push_back(pos + glm::vec3(0, 1, 0));
+	cubs.push_back(pos + glm::vec3(0, -1, 0));*/
+	return cubs;
+}
+
+uint8_t SuperChunk::obtenirLlumMaxima(const vector<glm::vec3>& cubs)
+{
+	uint8_t max = 0;
+	for (const glm::vec3& cub : cubs) {
+		uint8_t llum = obtenirLlumCub(cub.x, cub.y, cub.z);
+		if (llum > max) max = llum;
+	}
+	return max;
+}
+
+void SuperChunk::calcularLlum()
+{
+	// RESETEAR LUZ DE TODO EL MUNDO
+
+	// Per cada llum al món...
+	for(glm::vec3& llum : llums){
+		vector<glm::vec3> cubs = obtenirColindants(llum);
+
+		//while (!cubs.empty()) {
+			glm::vec3 cubActual = cubs.back();
+			cout << cubActual.x << " " << cubActual.y << " " << cubActual.z << endl;
+			// Si és transparent i no iluminat
+			if (!obtenirCub(cubActual.x, cubActual.y, cubActual.z) && !obtenirLlumCub(cubActual.x, cubActual.y, cubActual.z)) {
+				// Canviarllumcub...
+			}
+			
+		//}
+		
+	}
+}
+
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 {
 	if (Chunks[x / X][z / Z]) {
 		Chunk2* chunk = Chunks[x / X][z / Z];
 		chunk->canviarCub(x % X, y, z % Z, tipus);
-		chunk->unCanviat = true;
-		chunk->cubCanviat = glm::vec3(x % X, y, z % Z);
+
+		if (tipus == LLUM) {
+			// Afegim la llum
+			llums.push_back(glm::vec3(x, y, z));
+			canviarLlumCub(x, y, z, 14);
+
+			calcularLlum();
+		}
+
+		//chunk->unCanviat = true;
+		//chunk->cubCanviat = glm::vec3(x % X, y, z % Z);
 	}
 	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << x % X << ", " << z % Z << endl;
 }
 
+void SuperChunk::canviarLlumCub(int x, int y, int z, uint8_t llum)
+{
+	if (Chunks[x / X][z / Z]) {
+		Chunk2* chunk = Chunks[x / X][z / Z];
+		chunk->canviarLlumCub(x % X, y, z % Z, llum);
+
+	}
+}
+
 uint8_t SuperChunk::obtenirCub(int x, int y, int z)
+{
+	if (Chunks[x / X][z / Z])
+		return Chunks[x / X][z / Z]->obtenirCub(x % X, y, z % Z);
+	return 0;
+}
+
+uint8_t SuperChunk::obtenirLlumCub(int x, int y, int z)
 {
 	if (Chunks[x / X][z / Z])
 		return Chunks[x / X][z / Z]->obtenirCub(x % X, y, z % Z);
