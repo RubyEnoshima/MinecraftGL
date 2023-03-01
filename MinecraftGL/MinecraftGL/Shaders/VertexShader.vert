@@ -9,7 +9,8 @@ layout (location = 3) in vec2 aOffset;
 // Iluminació
 //out vec3 normals;
 //out vec3 FragPos;
-out float llum;
+out float llumArtificial;
+out float llumNatural;
 
 // Textura
 out vec2 TexCoord;
@@ -33,7 +34,6 @@ void main()
 	offsetY = int(aOffset.y);
 
 	// Iluminació
-	//normals = mat3(transpose(inverse(model))) * aNormals;
-	//FragPos = vec3(model * vec4(aPos, 1.0));
-	llum = aLlum;
+	llumArtificial = int(aLlum) & 0x0F;
+	llumNatural = (int(aLlum) >> 4) & 0xF;
 }

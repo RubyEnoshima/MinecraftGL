@@ -15,6 +15,8 @@ Chunk2::~Chunk2()
 
 void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 {
+	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return;
+
 	chunk[x][y][z].tipus = tipus;
 
 	canviat = true;
@@ -25,23 +27,43 @@ void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 	else if (z == Z - 1 && veiUp) veiUp->canviat = true;
 }
 
-void Chunk2::canviarLlumCub(int x, int y, int z, uint8_t llum)
-{
-	chunk[x][y][z].llum = llum;
-}
-
-uint8_t Chunk2::obtenirCub(int x, int y, int z)
+uint8_t Chunk2::obtenirCub(int x, int y, int z) const
 {
 	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return 0;
 
 	return chunk[x][y][z].tipus;
 }
 
-uint8_t Chunk2::obtenirLlumCub(int x, int y, int z)
+void Chunk2::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
+{
+	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return;
+
+	chunk[x][y][z].llum = (chunk[x][y][z].llum & 0xF) | (llum << 4);
+	canviat = true;
+
+}
+
+void Chunk2::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
+{
+	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return;
+
+	chunk[x][y][z].llum = (chunk[x][y][z].llum & 0xF0) | llum;
+	canviat = true;
+
+}
+
+uint8_t Chunk2::obtenirLlumNaturalCub(int x, int y, int z) const
 {
 	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return 0;
 
-	return chunk[x][y][z].llum;
+	return (chunk[x][y][z].llum >> 4) & 0xF; // Retornem els primers 4 bits
+}
+
+uint8_t Chunk2::obtenirLlumArtificialCub(int x, int y, int z) const
+{
+	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return 0;
+
+	return chunk[x][y][z].llum & 0xF; // Retornem els ultims 4
 }
 
 void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum) {
@@ -75,8 +97,8 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	else if (tipus == NEU) tipus = NEU_COSTAT;
 	// Cara esq
 	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z)) or (x != 0 and (!chunk[x - 1][y][z].tipus or chunk[x-1][y][z].tipus==CRISTAL))) {
-		llum = chunk[x - 1][y][z].llum;
 		if (x == 0) llum = veiEsq->chunk[X - 1][y][z].llum;
+		else llum = chunk[x - 1][y][z].llum;
 
 		afegirVertex(vertices, x, y, z, tipus, 0, 1, llum);
 		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum);
@@ -275,7 +297,7 @@ void Chunk2::update()
 					if (tipus) {
 						//if (tipus == LLUM) llum = 12;
 						afegirCub(_vertices, i, j, k, tipus);
-					}
+					} 
 				}
 			}
 		}
@@ -294,8 +316,8 @@ void Chunk2::render()
 {
 	if (canviat) update();
 
-
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
 
 	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 8 * sizeof(GLbyte), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -348,7 +370,7 @@ void Chunk2::renderCub(int x, int y, int z)
 	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(1);
 
-	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, elements);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -367,7 +389,10 @@ void Chunk2::emplenarChunk()
 		for (int k = 0; k < Z; k++) {
 			int height = Y/2 + (int)(glm::perlin(glm::vec2((float)(i + X * posX) / X, (float)(k + Z * posY) / Z)) * 5);
 			for (int j = 0; j <= height; j++) {
-				if (j == height) canviarCub(i, j, k, GESPA);
+				if (j == height) { // Capa d'adalt
+					canviarCub(i, j, k, GESPA);
+					canviarLlumNaturalCub(i, j+1, k, 15);
+				}
 				else if (j < height - 3) canviarCub(i, j, k, PEDRA);
 				else canviarCub(i, j, k, TERRA);
 				
@@ -383,4 +408,15 @@ void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)
 	veiUp = up;
 	veiBaix = down;
 
+}
+
+bool Chunk2::cubTop(int8_t x, int8_t y, int8_t z) const
+{
+	if (y == Y - 1) return true;
+
+	for (int i = y + 1; i < Y; i++) {
+		if (obtenirCub(x, i, z) != 0) return false;
+	}
+
+	return true;
 }

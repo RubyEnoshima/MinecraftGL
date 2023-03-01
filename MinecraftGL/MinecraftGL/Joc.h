@@ -31,11 +31,15 @@ public:
 	
 	void Culling();
 	void VSync();
+
+	uint8_t tipusCub = LLUM;
+
 	
 private:
 	// Posa en CubActual el vector del cub al que estem mirant
 	void ObtenirCubMira(); 
 	glm::vec3 ObtenirCostat();
+
 
 	void canviarModeMouse(int mode);
 

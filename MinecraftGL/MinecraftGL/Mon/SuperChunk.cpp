@@ -44,62 +44,88 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 
 }
 
-vector<glm::vec3> SuperChunk::obtenirColindants(glm::vec3& pos) const
-{
-	vector<glm::vec3> cubs;
-	cubs.push_back(pos + glm::vec3(0, 0, 1));
-	cubs.push_back(pos + glm::vec3(0, 0, -1));
-	cubs.push_back(pos + glm::vec3(-1, 0, 0));
-	cubs.push_back(pos + glm::vec3(1, 0, 0));
-	/*cubs.push_back(pos + glm::vec3(0, 1, 0));
-	cubs.push_back(pos + glm::vec3(0, -1, 0));*/
-	return cubs;
-}
-
-uint8_t SuperChunk::obtenirLlumMaxima(const vector<glm::vec3>& cubs)
-{
-	uint8_t max = 0;
-	for (const glm::vec3& cub : cubs) {
-		uint8_t llum = obtenirLlumCub(cub.x, cub.y, cub.z);
-		if (llum > max) max = llum;
+void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum) {
+	// Mirem si és transparent (de moment 0, aire) i si hem de pujar la llum
+	if (obtenirCub(pos.x, pos.y, pos.z) == AIRE && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
+		canviarLlumArtificialCub(pos.x, pos.y, pos.z, llum-1);
+		cuaLlum.emplace(pos);
 	}
-	return max;
 }
 
-void SuperChunk::calcularLlum()
+void SuperChunk::eliminarLlum(glm::vec3 pos, uint8_t llum) {
+	uint8_t llumCub = obtenirLlumArtificialCub(pos.x, pos.y, pos.z);
+	if (llumCub != 0 && llumCub < llum) {
+		canviarLlumArtificialCub(pos.x, pos.y, pos.z, 0);
+		cuaLlumTreure.emplace(pair<glm::vec3, uint8_t>(pos,llumCub));
+	}
+	else if (llumCub >= llum) {
+		llums.emplace(pos);
+	}
+}
+
+void SuperChunk::afegirLlum(const glm::vec3 posLlum)
 {
-	// RESETEAR LUZ DE TODO EL MUNDO
+	// Fem una cua de posicions i afegim la llum
+	cuaLlum.emplace(posLlum);
 
-	// Per cada llum al món...
-	for(glm::vec3& llum : llums){
-		vector<glm::vec3> cubs = obtenirColindants(llum);
+	while (!cuaLlum.empty()) {
+		glm::vec3 bloc = cuaLlum.front();
+		cuaLlum.pop();
+		uint8_t llum = obtenirLlumArtificialCub(bloc.x, bloc.y, bloc.z);
 
-		//while (!cubs.empty()) {
-			glm::vec3 cubActual = cubs.back();
-			cout << cubActual.x << " " << cubActual.y << " " << cubActual.z << endl;
-			// Si és transparent i no iluminat
-			if (!obtenirCub(cubActual.x, cubActual.y, cubActual.z) && !obtenirLlumCub(cubActual.x, cubActual.y, cubActual.z)) {
-				// Canviarllumcub...
-			}
-			
-		//}
-		
+		posarLlum(bloc + glm::vec3(1, 0, 0), llum);
+		posarLlum(bloc + glm::vec3(-1, 0, 0), llum);
+		posarLlum(bloc + glm::vec3(0, 1, 0), llum);
+		posarLlum(bloc + glm::vec3(0, -1, 0), llum);
+		posarLlum(bloc + glm::vec3(0, 0, 1), llum);
+		posarLlum(bloc + glm::vec3(0, 0, -1), llum);
+
+	}
+}
+
+void SuperChunk::treureLlum(const glm::vec3 posLlum, uint8_t llumIni)
+{
+	cuaLlumTreure.emplace(pair<glm::vec3, uint8_t>(posLlum,llumIni));
+	canviarLlumArtificialCub(posLlum.x, posLlum.y, posLlum.z, 0);
+
+	while (!cuaLlumTreure.empty()) {
+		glm::vec3 bloc = cuaLlumTreure.front().first;
+		uint8_t llum = cuaLlumTreure.front().second;
+		cuaLlumTreure.pop();
+
+		eliminarLlum(bloc + glm::vec3(1, 0, 0), llum);
+		eliminarLlum(bloc + glm::vec3(-1, 0, 0), llum);
+		eliminarLlum(bloc + glm::vec3(0, 1, 0), llum);
+		eliminarLlum(bloc + glm::vec3(0, -1, 0), llum);
+		eliminarLlum(bloc + glm::vec3(0, 0, 1), llum);
+		eliminarLlum(bloc + glm::vec3(0, 0, -1), llum);
+
+	}
+
+	while (!llums.empty()) {
+		afegirLlum(llums.front());
+		llums.pop();
 	}
 }
 
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 {
-	if (Chunks[x / X][z / Z]) {
+	if (x / X < XC && z / Z < YC) {
 		Chunk2* chunk = Chunks[x / X][z / Z];
-		chunk->canviarCub(x % X, y, z % Z, tipus);
 
 		if (tipus == LLUM) {
 			// Afegim la llum
-			llums.push_back(glm::vec3(x, y, z));
-			canviarLlumCub(x, y, z, 14);
+			canviarLlumArtificialCub(x, y, z, 14);
 
-			calcularLlum();
+			afegirLlum(glm::vec3(x, y, z));
 		}
+		else if (tipus == AIRE && chunk->obtenirCub(x % X, y, z % Z) == LLUM) {
+			
+			treureLlum(glm::vec3(x, y, z), 14);
+		}
+
+		chunk->canviarCub(x % X, y, z % Z, tipus);
+
 
 		//chunk->unCanviat = true;
 		//chunk->cubCanviat = glm::vec3(x % X, y, z % Z);
@@ -107,32 +133,48 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << x % X << ", " << z % Z << endl;
 }
 
-void SuperChunk::canviarLlumCub(int x, int y, int z, uint8_t llum)
+void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 {
-	if (Chunks[x / X][z / Z]) {
+	if (x / X < XC && z / Z < YC) {
 		Chunk2* chunk = Chunks[x / X][z / Z];
-		chunk->canviarLlumCub(x % X, y, z % Z, llum);
+		chunk->canviarLlumNaturalCub(x % X, y, z % Z, llum);
+
+	}
+}
+
+void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
+{
+	if (x / X < XC && z / Z < YC) {
+		Chunk2* chunk = Chunks[x / X][z / Z];
+		chunk->canviarLlumArtificialCub(x % X, y, z % Z, llum);
 
 	}
 }
 
 uint8_t SuperChunk::obtenirCub(int x, int y, int z)
 {
-	if (Chunks[x / X][z / Z])
+	if (x / X < XC && z / Z < YC)
 		return Chunks[x / X][z / Z]->obtenirCub(x % X, y, z % Z);
 	return 0;
 }
 
-uint8_t SuperChunk::obtenirLlumCub(int x, int y, int z)
+uint8_t SuperChunk::obtenirLlumNaturalCub(int x, int y, int z)
 {
-	if (Chunks[x / X][z / Z])
-		return Chunks[x / X][z / Z]->obtenirCub(x % X, y, z % Z);
+	if (x / X < XC && z / Z < YC)
+		return Chunks[x / X][z / Z]->obtenirLlumNaturalCub(x % X, y, z % Z);
+	return 0;
+}
+
+uint8_t SuperChunk::obtenirLlumArtificialCub(int x, int y, int z)
+{
+	if (x / X < XC && z / Z < YC)
+		return Chunks[x / X][z / Z]->obtenirLlumArtificialCub(x % X, y, z % Z);
 	return 0;
 }
 
 void SuperChunk::BoundingBox(int x, int y, int z)
 {
-	//if (!obtenirCub(x, y, z)) return;
+	if (!obtenirCub(x, y, z)) return;
 	x -= 32;
 	z -= 32;
 	
@@ -217,7 +259,7 @@ void SuperChunk::render()
 
 void SuperChunk::renderCub(int x, int y, int z)
 {
-	if (Chunks[x / X][z / Z]) {
+	if (x / X < XC && z / Z < YC) {
 		// Hem d'aplicar la mateixa transformació que abans
 		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, -Y / 2, z/Z * Z));
 		renderer->colocarMat4("model", model);

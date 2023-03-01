@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\MinecraftGL\MinecraftGL;C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\include;C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\Ruby\Desktop\Ruby\PENDIENTE\TFG\PROJECTE\MinecraftGL\MinecraftGL;C:\Users\Ruby\Desktop\Ruby\PENDIENTE\TFG\PROJECTE\GLFW\include;C:\Users\Ruby\Desktop\Ruby\PENDIENTE\TFG\PROJECTE\GLFW\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\GLFW\include;C:\Users\Ruby\Desktop\PENDIENTE\TFG\PROJECTE\MinecraftGL\MinecraftGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Ruby\Desktop\Ruby\PENDIENTE\TFG\PROJECTE\GLFW\include;C:\Users\Ruby\Desktop\Ruby\PENDIENTE\TFG\PROJECTE\MinecraftGL\MinecraftGL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

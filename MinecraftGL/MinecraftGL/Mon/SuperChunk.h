@@ -1,6 +1,7 @@
 #pragma once
 #include "Chunk2.h"
 #include "Renderer/Renderer.h"
+#include <queue>
 
 #define XC 3
 #define YC 3
@@ -15,15 +16,16 @@ public:
 	// Canvia el tipus d'un cub concret
 	void canviarCub(int x, int y, int z, uint8_t tipus); 
 	// Canvia quanta llum té un cub
-	void canviarLlumCub(int x, int y, int z, uint8_t llum); 
+	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
+	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
 	// Retorna el tipus del cub
 	uint8_t obtenirCub(int x, int y, int z); 
 	// Retorna la llum del cub
-	uint8_t obtenirLlumCub(int x, int y, int z);
+	uint8_t obtenirLlumNaturalCub(int x, int y, int z);
+	uint8_t obtenirLlumArtificialCub(int x, int y, int z);
 
-	uint8_t obtenirLlumMaxima(const vector<glm::vec3>& cubs);
-
-	void calcularLlum();
+	void afegirLlum(const glm::vec3 posLlum);
+	void treureLlum(const glm::vec3 posLlum, uint8_t llumIni);
 
 	// Genera un BoundingBox per un cub concret
 	void BoundingBox(int x, int y, int z);
@@ -33,12 +35,19 @@ public:
 	// Renderitza un cub en una posició de manera que cada cara es pugui identificar pel color
 	void renderCub(int x, int y, int z);
 private:
-	vector<glm::vec3> obtenirColindants(glm::vec3& pos) const;
+	void posarLlum(glm::vec3 pos, uint8_t llum);
+	void eliminarLlum(glm::vec3 pos, uint8_t llum);
 
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;
 	
-	vector<glm::vec3> llums;
+	// Propagació de llums "artificials"
+	queue<glm::vec3> llums;
+	queue<glm::vec3> cuaLlum;
+	queue<pair<glm::vec3, uint8_t>> cuaLlumTreure;
+
+	// Llum natural
+	queue<glm::vec3> cuaLlumNatural;
 
 
 	//int octaves = 8;

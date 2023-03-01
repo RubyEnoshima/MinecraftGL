@@ -82,8 +82,19 @@ int Renderer::carregaShaders()
 		usarShader();
 	}
 
-	Textura t("minecraft_transp.png");
+	Textura textura("minecraft_transp.png");
+	Textura lightMap("lightMap.png");
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textura.textura);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, lightMap.textura);
 
+	glUniform1i(obtenirUniform("textura"), 0);
+	glUniform1i(obtenirUniform("lightMap"), 1);
+	//cout << lightMap.textura << " " << textura.textura;
+
+	
 	return totbe;
 }
 

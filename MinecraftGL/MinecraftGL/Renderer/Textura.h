@@ -11,9 +11,9 @@ public:
 
 	void use();
 
+	unsigned int textura;
 private:
 	string nom;
-	unsigned int textura;
 	unsigned char* data;
 	int width, height, nrChannels;
 };

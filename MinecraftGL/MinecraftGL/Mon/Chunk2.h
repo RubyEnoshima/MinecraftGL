@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include "Tipus.h"
+#include "glm/gtx/io.hpp"
 
 using namespace std;
 
@@ -32,11 +33,13 @@ public:
 	// Canvia el tipus d'un cub concret
 	void canviarCub(int x, int y, int z, uint8_t tipus); 
 	// Canvia la llum d'un cub concret
-	void canviarLlumCub(int x, int y, int z, uint8_t llum); 
+	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
+	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
 	// Retorna el tipus del cub
-	uint8_t obtenirCub(int x, int y, int z); 
+	uint8_t obtenirCub(int x, int y, int z) const; 
 	// Retorna la llum del cub
-	uint8_t obtenirLlumCub(int x, int y, int z);
+	uint8_t obtenirLlumNaturalCub(int x, int y, int z) const;
+	uint8_t obtenirLlumArtificialCub(int x, int y, int z) const;
 
 	void update();
 	void render();
@@ -61,6 +64,8 @@ private:
 
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 	void afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
+
+	bool cubTop(int8_t x, int8_t y, int8_t z) const;
 
 	unsigned int VBO;
 

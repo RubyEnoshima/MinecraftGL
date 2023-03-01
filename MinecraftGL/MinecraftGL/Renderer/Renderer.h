@@ -31,6 +31,7 @@ public:
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
 	void canviarColorLlum(const glm::vec3 color);
 	void canviarPosLlum(const glm::vec3 pos);
+	
 
 	float rgb(int color) const;
 

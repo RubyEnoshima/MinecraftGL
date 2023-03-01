@@ -3,9 +3,8 @@
 out vec4 color;
 
 // Iluminació
-//in vec3 normals;
-//in vec3 FragPos;
-in float llum;
+in float llumArtificial;
+in float llumNatural;
 
 // Textura
 in vec2 TexCoord;
@@ -14,7 +13,9 @@ flat in int offsetY;
 
 uniform vec3 lightColor;
 uniform vec3 lightPos;
+
 uniform sampler2D textura;
+uniform sampler2D lightMap;
 
 void main()
 {
@@ -25,15 +26,26 @@ void main()
 	// Funciona per cristal, pero es pot clicar un bloc a través...
 	if(colorText.a == 0) discard;
 
-	// Ambient
-	float ambientStrength = 0.3;
+
+	// Ambient, per tal que la foscor no sigui tan fosca
+	float ambientStrength = 0.15;
 	vec3 ambient = ambientStrength * lightColor;
 
-	// Diffuse
-	//vec3 norm = normalize(normals);
-	//vec3 lightDir = normalize(lightPos - FragPos);
-	//float diff = max(dot(norm, lightDir), 0.0);
-	//vec3 diffuse = diff * lightColor;
+	// Iluminació
+	float gamma = 0.95 / 0.75;
 
-	color = vec4( (ambient + pow(5 / 16f, 1.4f)) * colorText.xyz, colorText.w);
+	// Artificial
+	float resArtificial = pow(llumArtificial / 16f, gamma);
+	float resNatural = pow(llumNatural / 16f, gamma);
+	vec3 colorLlum = vec3(1.0,1.0,0.75);
+	vec3 LlumFinal = colorLlum*max(resArtificial,resNatural);
+
+	// Natural
+	//vec2 posLight = vec2(TexCoord.x+(0.0/16.0),TexCoord.y+(llumArtificial/16.0));
+
+	color = vec4( (ambient + LlumFinal) * colorText.xyz, colorText.w);
+
+	//vec4 colorLight = texture(lightMap, posLight);
+//	color = colorText * vec4(colorLight.xyz * gamma, colorLight.a);
+	//color = texture(lightMap, posTex);
 }

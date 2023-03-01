@@ -27,36 +27,43 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
-	// Si es pressiona ESC, es tanca la finestra
-	if (key == GLFW_KEY_ESCAPE and action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-
-	// Amb F1 es canvia entre mode normal i wireframe
-	else if (key == GLFW_KEY_F1 and action == GLFW_PRESS) {
-		int mode;
-		glGetIntegerv(GL_POLYGON_MODE, &mode);
-		if (mode == GL_FILL) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (action == GLFW_PRESS) {
+		if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
+		{
+			if (key == GLFW_KEY_9) joc->tipusCub = LLUM;
+			else joc->tipusCub = key%48;
+			return;
 		}
-		else {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		switch (key) {
+			// ESC: es tanca la finestra i tanca el joc
+			case GLFW_KEY_ESCAPE:
+				glfwSetWindowShouldClose(window, true);
+				break;
+			// F1: es canvia entre mode normal i wireframe
+			case GLFW_KEY_F1:
+				int mode;
+				glGetIntegerv(GL_POLYGON_MODE, &mode);
+				if (mode == GL_FILL) {
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				}
+				else {
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				}
+				break;
+			// F5: es canvia la posició de la camera
+			case GLFW_KEY_F5:
+				cout << "Cambiar camara" << endl;
+				break;
+			// F2 = Cull/!Cull
+			case GLFW_KEY_F2:
+				joc->Culling();
+				break;
+			// F4: 
+			case GLFW_KEY_F4:
+				joc->VSync();
+				break;
 		}
-	}
 
-	// Amb F5 es canvia la posició de la camera
-	else if (key == GLFW_KEY_F5 and action == GLFW_PRESS) {
-		cout << "Cambiar camara" << endl;
-	}
-
-	// F2 = Cull/!Cull
-	else if (key == GLFW_KEY_F2 and action == GLFW_PRESS) {
-		
-		joc->Culling();
-	}
-
-	// F4
-	else if (key == GLFW_KEY_F4 and action == GLFW_PRESS) {
-		joc->VSync();
 	}
 
 }
@@ -159,13 +166,13 @@ glm::vec3 Joc::ObtenirCostat() {
 
 void Joc::PosarCub() {
 	// Si és un cub vàlid
-	if (CubActual.x == -1 && CubActual.y == -1 && CubActual.z == -1) return;
+	if (CubActual.x == -1 || CubActual.y == -1 || CubActual.z == -1) return;
 
 	// Obtenim el costat al que estem mirant
 	glm::vec3 Costat = ObtenirCostat();
 		
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, LLUM);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipusCub);
 		
 }
 
