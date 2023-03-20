@@ -15,7 +15,7 @@ Chunk2::~Chunk2()
 
 void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 {
-	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return;
+	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return;
 
 	chunk[x][y][z].tipus = tipus;
 
@@ -29,14 +29,14 @@ void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus)
 
 uint8_t Chunk2::obtenirCub(int x, int y, int z) const
 {
-	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return 0;
+	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return 0;
 
 	return chunk[x][y][z].tipus;
 }
 
 void Chunk2::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 {
-	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return;
+	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return;
 
 	chunk[x][y][z].llum = (chunk[x][y][z].llum & 0xF) | (llum << 4);
 	canviat = true;
@@ -45,7 +45,7 @@ void Chunk2::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 
 void Chunk2::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 {
-	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return;
+	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return;
 
 	chunk[x][y][z].llum = (chunk[x][y][z].llum & 0xF0) | llum;
 	canviat = true;
@@ -54,16 +54,60 @@ void Chunk2::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 
 uint8_t Chunk2::obtenirLlumNaturalCub(int x, int y, int z) const
 {
-	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return 0;
+	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return 0;
 
 	return (chunk[x][y][z].llum >> 4) & 0xF; // Retornem els primers 4 bits
 }
 
 uint8_t Chunk2::obtenirLlumArtificialCub(int x, int y, int z) const
 {
-	if (x < 0 || x > X || y < 0 || y > Y || z < 0 || z > Z) return 0;
+	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return 0;
 
 	return chunk[x][y][z].llum & 0xF; // Retornem els ultims 4
+}
+
+uint8_t Chunk2::obtenirLlumNaturalMaxima(int x, int y, int z) const
+{
+	// MIRAR SI FUNCIONA BÉ
+	uint8_t res = 0;
+	uint8_t llum;
+	// Esq
+	if (x - 1 < 0 && veiEsq && veiEsq->obtenirCub(X - 1, y, z) == AIRE) {
+		llum = veiEsq->obtenirLlumNaturalCub(X - 1, y, z);
+		if (llum > res) res = llum;
+	}
+	else if (x - 1 >= 0) {
+		llum = obtenirLlumNaturalCub(x - 1, y, z);
+		if (llum > res) res = llum;
+	}
+	// Dre
+	if (x + 1 >= X && veiDre && veiDre->obtenirCub(0, y, z) == AIRE) {
+		llum = veiDre->obtenirLlumNaturalCub(0, y, z);
+		if (llum > res) res = llum;
+	}
+	else if (x + 1 < X) {
+		llum = obtenirLlumNaturalCub(x + 1, y, z);
+		if (llum > res) res = llum;
+	}
+	// Davant
+	if (z + 1 >= Z && veiBaix && veiBaix->obtenirCub(x, y, 0) == AIRE) {
+		llum = veiBaix->obtenirLlumNaturalCub(x, y, 0);
+		if (llum > res) res = llum;
+	}
+	else if (z + 1 < Z) {
+		llum = obtenirLlumNaturalCub(x, y, z + 1);
+		if (llum > res) res = llum;
+	}
+	// Darrera 
+	if (z - 1 < 0 && veiUp && veiUp->obtenirCub(x, y, Z - 1) == AIRE) {
+		llum = veiUp->obtenirLlumNaturalCub(x, y, Z - 1);
+		if (llum > res) res = llum;
+	}
+	else if (z - 1 >= 0) {
+		obtenirLlumNaturalCub(x, y, z - 1);
+		if (llum > res) res = llum;
+	}
+	return res;
 }
 
 void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum) {
@@ -383,22 +427,38 @@ int Chunk2::nCubs() const
 	return elements / 6;
 }
 
-void Chunk2::emplenarChunk()
+void Chunk2::emplenarChunk(uint8_t llumNatural)
 {
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
-			int height = Y/2 + (int)(glm::perlin(glm::vec2((float)(i + X * posX) / X, (float)(k + Z * posY) / Z)) * 5);
+
+			int height = Y/2 + (int)(glm::perlin(glm::vec2((float)(i + X * posX) / X, (float)(k + Z * posY) / Z)) * 8);
+
 			for (int j = 0; j <= height; j++) {
+				uint8_t tipus = TERRA;
 				if (j == height) { // Capa d'adalt
-					canviarCub(i, j, k, GESPA);
-					canviarLlumNaturalCub(i, j+1, k, 15);
+					tipus = GESPA;
+
+					chunk[i][j][k].top = true;
 				}
-				else if (j < height - 3) canviarCub(i, j, k, PEDRA);
-				else canviarCub(i, j, k, TERRA);
-				
+				else if (j < height - 3) tipus = PEDRA;
+				else if (j < 2) tipus = BEDROCK;
+				canviarCub(i, j, k, tipus);
 			}
 		}
 	}
+
+	for (int i = 0; i < X; i++) {
+		for (int j = 0; j < Y; j++) {
+			for (int k = 0; k < Z; k++) {
+				if (cubTop(i,j,k))
+				{
+					canviarLlumNaturalCub(i, j+1, k, 15);
+				}
+			}
+		}
+	}
+
 }
 
 void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)
@@ -412,7 +472,9 @@ void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)
 
 bool Chunk2::cubTop(int8_t x, int8_t y, int8_t z) const
 {
+	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return false;
 	if (y == Y - 1) return true;
+	//return chunk[x][y][z].top;
 
 	for (int i = y + 1; i < Y; i++) {
 		if (obtenirCub(x, i, z) != 0) return false;

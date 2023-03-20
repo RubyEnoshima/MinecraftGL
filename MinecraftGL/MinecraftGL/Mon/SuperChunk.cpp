@@ -38,16 +38,25 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			if (j - 1 >= 0) down = Chunks[i][j - 1];
 			if (j + 1 < YC) up = Chunks[i][j + 1];
 			Chunks[i][j]->afegirVeins(left, right, up, down);
-			Chunks[i][j]->emplenarChunk();
+			Chunks[i][j]->emplenarChunk(llumNatural);
 		}
 	}
 
 }
 
-void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum) {
+void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum, bool natural, bool avall) {
 	// Mirem si és transparent (de moment 0, aire) i si hem de pujar la llum
-	if (obtenirCub(pos.x, pos.y, pos.z) == AIRE && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
-		canviarLlumArtificialCub(pos.x, pos.y, pos.z, llum-1);
+	if (obtenirCub(pos.x, pos.y, pos.z) == AIRE && ((natural && obtenirLlumNaturalCub(pos.x, pos.y, pos.z) + 2 <= llum) || obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum)) {
+		uint8_t resLlum = llum - 1;
+		if (natural && avall) {
+			resLlum++;
+		}
+		if (natural) {
+			canviarLlumNaturalCub(pos.x, pos.y, pos.z, resLlum);
+		}
+		else {
+			canviarLlumArtificialCub(pos.x, pos.y, pos.z, resLlum);
+		}
 		cuaLlum.emplace(pos);
 	}
 }
@@ -63,7 +72,7 @@ void SuperChunk::eliminarLlum(glm::vec3 pos, uint8_t llum) {
 	}
 }
 
-void SuperChunk::afegirLlum(const glm::vec3 posLlum)
+void SuperChunk::afegirLlum(const glm::vec3 posLlum, bool natural)
 {
 	// Fem una cua de posicions i afegim la llum
 	cuaLlum.emplace(posLlum);
@@ -71,14 +80,15 @@ void SuperChunk::afegirLlum(const glm::vec3 posLlum)
 	while (!cuaLlum.empty()) {
 		glm::vec3 bloc = cuaLlum.front();
 		cuaLlum.pop();
-		uint8_t llum = obtenirLlumArtificialCub(bloc.x, bloc.y, bloc.z);
-
-		posarLlum(bloc + glm::vec3(1, 0, 0), llum);
-		posarLlum(bloc + glm::vec3(-1, 0, 0), llum);
-		posarLlum(bloc + glm::vec3(0, 1, 0), llum);
-		posarLlum(bloc + glm::vec3(0, -1, 0), llum);
-		posarLlum(bloc + glm::vec3(0, 0, 1), llum);
-		posarLlum(bloc + glm::vec3(0, 0, -1), llum);
+		uint8_t llum;
+		if (!natural) llum = obtenirLlumArtificialCub(bloc.x, bloc.y, bloc.z);
+		else llum = obtenirLlumNaturalCub(bloc.x, bloc.y, bloc.z);
+		posarLlum(bloc + glm::vec3(1, 0, 0), llum, natural);
+		posarLlum(bloc + glm::vec3(-1, 0, 0), llum, natural);
+		if(!natural)posarLlum(bloc + glm::vec3(0, 1, 0), llum, natural);
+		posarLlum(bloc + glm::vec3(0, -1, 0), llum, natural, true);
+		posarLlum(bloc + glm::vec3(0, 0, 1), llum, natural);
+		posarLlum(bloc + glm::vec3(0, 0, -1), llum, natural);
 
 	}
 }
@@ -112,20 +122,39 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 {
 	if (x / X < XC && z / Z < YC) {
 		Chunk2* chunk = Chunks[x / X][z / Z];
-
+		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
+		chunk->canviarCub(x % X, y, z % Z, tipus);
+		cout << x << " " << y << " " << z << endl;
 		if (tipus == LLUM) {
 			// Afegim la llum
 			canviarLlumArtificialCub(x, y, z, 14);
-
 			afegirLlum(glm::vec3(x, y, z));
+			llistaLlums.push_back(glm::vec3(x, y, z));
 		}
-		else if (tipus == AIRE && chunk->obtenirCub(x % X, y, z % Z) == LLUM) {
-			
-			treureLlum(glm::vec3(x, y, z), 14);
+		else if (tipus == AIRE) {
+
+			if (tipusBlocAbans == LLUM) {
+				treureLlum(glm::vec3(x, y, z), 14);
+				llistaLlums.remove(glm::vec3(x, y, z));
+			}
+			else treureLlum(glm::vec3(x, y, z), 0);
+
+			if (chunk->cubTop(x%X, y, z%Z)) {
+				chunk->canviarLlumNaturalCub(x%X, y, z%Z, 15);
+			}
+			else {
+				uint8_t llumMaxima = chunk->obtenirLlumNaturalMaxima(x%X,y,z%Z);
+				if(llumMaxima >= 0) chunk->canviarLlumNaturalCub(x % X, y, z % Z, llumMaxima-1);
+				cout << "llum maxima: " << llumMaxima << endl;
+			}
 		}
-
-		chunk->canviarCub(x % X, y, z % Z, tipus);
-
+		else {
+			for (const glm::vec3 llum : llistaLlums) {
+				treureLlum(llum, 14);
+				canviarLlumArtificialCub(llum.x, llum.y, llum.z, 14);
+				afegirLlum(llum);
+			}
+		}
 
 		//chunk->unCanviat = true;
 		//chunk->cubCanviat = glm::vec3(x % X, y, z % Z);
@@ -175,8 +204,9 @@ uint8_t SuperChunk::obtenirLlumArtificialCub(int x, int y, int z)
 void SuperChunk::BoundingBox(int x, int y, int z)
 {
 	if (!obtenirCub(x, y, z)) return;
-	x -= 32;
-	z -= 32;
+	renderer->activaBounding(1);
+	x -= X*XC-X;
+	z -= Z*YC-Z;
 	
 	GLfloat vertices[] = {
 	  0.0 + x, 0.0 + y, 0.0 + z, 1.0,
@@ -228,6 +258,8 @@ void SuperChunk::BoundingBox(int x, int y, int z)
 
 	glDeleteBuffers(1, &vbo_vertices);
 	glDeleteBuffers(1, &ibo_elements);
+	renderer->activaBounding(0);
+
 }
 
 void SuperChunk::update()

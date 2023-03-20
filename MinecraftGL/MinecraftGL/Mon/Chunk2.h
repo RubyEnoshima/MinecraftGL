@@ -22,6 +22,7 @@ using namespace std;
 struct Cub {
 	uint8_t tipus;
 	uint8_t llum;
+	bool top = false;
 };
 
 class Chunk2
@@ -41,16 +42,19 @@ public:
 	uint8_t obtenirLlumNaturalCub(int x, int y, int z) const;
 	uint8_t obtenirLlumArtificialCub(int x, int y, int z) const;
 
+	uint8_t obtenirLlumNaturalMaxima(int x, int y, int z) const;
+
 	void update();
 	void render();
 	void renderCub(int x, int y, int z);
 
 	int nCubs() const;
 
-	void emplenarChunk(); // Funció debug
+	// Genera el chunk amb Perlin noise i posa la llum on toca
+	void emplenarChunk(uint8_t llumNatural);
 	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
-	
-	//void BoundingBox(int8_t x, int8_t y, int8_t z);
+
+	bool cubTop(int8_t x, int8_t y, int8_t z) const;
 
 	vector<GLbyte> vertices;
 	unsigned int elements = 0;
@@ -64,8 +68,6 @@ private:
 
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 	void afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
-
-	bool cubTop(int8_t x, int8_t y, int8_t z) const;
 
 	unsigned int VBO;
 

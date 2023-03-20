@@ -2,9 +2,10 @@
 #include "Chunk2.h"
 #include "Renderer/Renderer.h"
 #include <queue>
+#include <list>
 
-#define XC 3
-#define YC 3
+#define XC 12
+#define YC 12
 
 class SuperChunk
 {
@@ -24,7 +25,7 @@ public:
 	uint8_t obtenirLlumNaturalCub(int x, int y, int z);
 	uint8_t obtenirLlumArtificialCub(int x, int y, int z);
 
-	void afegirLlum(const glm::vec3 posLlum);
+	void afegirLlum(const glm::vec3 posLlum, bool natural=false);
 	void treureLlum(const glm::vec3 posLlum, uint8_t llumIni);
 
 	// Genera un BoundingBox per un cub concret
@@ -35,7 +36,7 @@ public:
 	// Renderitza un cub en una posició de manera que cada cara es pugui identificar pel color
 	void renderCub(int x, int y, int z);
 private:
-	void posarLlum(glm::vec3 pos, uint8_t llum);
+	void posarLlum(glm::vec3 pos, uint8_t llum, bool natural=false, bool avall=false);
 	void eliminarLlum(glm::vec3 pos, uint8_t llum);
 
 	Chunk2* Chunks[XC][YC];
@@ -45,11 +46,12 @@ private:
 	queue<glm::vec3> llums;
 	queue<glm::vec3> cuaLlum;
 	queue<pair<glm::vec3, uint8_t>> cuaLlumTreure;
+	list<glm::vec3> llistaLlums;
 
 	// Llum natural
 	queue<glm::vec3> cuaLlumNatural;
 
-
+	uint8_t llumNatural = 15;
 	//int octaves = 8;
 	//float frequencia = 8.0;
 	//float amplitud = 1.0;

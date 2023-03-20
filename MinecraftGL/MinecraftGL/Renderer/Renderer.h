@@ -28,11 +28,14 @@ public:
 	void usarShader(int i = 0);
 
 	unsigned int obtenirUniform(const char* uniform) const;
+
 	void colocarMat4(const string uniform,const glm::mat4 matriu);
+	void activaBounding(bool bounding);
+
+	// Llum (deprecated?)
 	void canviarColorLlum(const glm::vec3 color);
 	void canviarPosLlum(const glm::vec3 pos);
 	
-
 	float rgb(int color) const;
 
 	// Framebuffer
@@ -54,7 +57,7 @@ private:
 
 	GLFWwindow* window;
 
-	const int WIDTH = 800;
-	const int HEIGHT = 600;
+	const int WIDTH = 1920;
+	const int HEIGHT = 1080;
 };
 

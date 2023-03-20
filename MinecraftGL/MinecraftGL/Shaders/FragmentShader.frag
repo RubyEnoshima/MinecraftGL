@@ -17,8 +17,15 @@ uniform vec3 lightPos;
 uniform sampler2D textura;
 uniform sampler2D lightMap;
 
+uniform bool bounding;
+
 void main()
 {
+	if(bounding){
+		color = vec4(0,0,0,1);
+		return;
+	}
+
 	// Textura
 	vec2 posTex = vec2(TexCoord.x+(offsetX/16.0),TexCoord.y+(offsetY/16.0));
 	vec4 colorText = texture(textura, posTex);
@@ -28,24 +35,27 @@ void main()
 
 
 	// Ambient, per tal que la foscor no sigui tan fosca
-	float ambientStrength = 0.15;
+	float ambientStrength = 0.12;
 	vec3 ambient = ambientStrength * lightColor;
 
 	// Iluminació
 	float gamma = 0.95 / 0.75;
 
-	// Artificial
-	float resArtificial = pow(llumArtificial / 16f, gamma);
-	float resNatural = pow(llumNatural / 16f, gamma);
-	vec3 colorLlum = vec3(1.0,1.0,0.75);
-	vec3 LlumFinal = colorLlum*max(resArtificial,resNatural);
+	float resArtificial = pow(llumArtificial / 15f, gamma);
 
-	// Natural
-	//vec2 posLight = vec2(TexCoord.x+(0.0/16.0),TexCoord.y+(llumArtificial/16.0));
+	float intensitatNatural = 0.95; // FER-HO UNIFORM
+	float resNatural = pow(llumNatural / 15f, gamma) * intensitatNatural;
 
-	color = vec4( (ambient + LlumFinal) * colorText.xyz, colorText.w);
+	vec3 colorLlum = vec3(0.95,0.95,0.95);
+	if(resArtificial > resNatural) colorLlum = vec3(1.0,1.0,0.90);
 
-	//vec4 colorLight = texture(lightMap, posLight);
-//	color = colorText * vec4(colorLight.xyz * gamma, colorLight.a);
-	//color = texture(lightMap, posTex);
+	float suma = resArtificial+resNatural;
+	if(suma > 1) suma = 1;
+	vec3 LlumFinal = colorLlum*suma*0.9;
+
+	vec4 brillantor = vec4(0.95,0.95,0.95,1);
+
+	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
+	color = vec4( (ambient + LlumFinal) * colorText.xyz, colorText.w)*brillantor;
+
 }
