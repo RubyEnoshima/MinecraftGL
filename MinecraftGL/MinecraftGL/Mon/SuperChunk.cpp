@@ -9,6 +9,7 @@ SuperChunk::SuperChunk()
 }
 
 SuperChunk::~SuperChunk() {
+	delete generador;
 	for (int x = 0; x < XC; x++)
 		for (int y = 0; y < YC; y++)
 				delete Chunks[x][y];
@@ -16,7 +17,11 @@ SuperChunk::~SuperChunk() {
 
 SuperChunk::SuperChunk(Renderer* _renderer)
 {
+	srand(time(NULL));
+
 	renderer = _renderer;
+	generador = new Generador(this);
+
 	for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)
@@ -24,7 +29,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			Chunks[i][j] = new Chunk2(i,j);
 		}
 	}
-
+	
 	for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)
@@ -38,25 +43,42 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			if (j - 1 >= 0) down = Chunks[i][j - 1];
 			if (j + 1 < YC) up = Chunks[i][j + 1];
 			Chunks[i][j]->afegirVeins(left, right, up, down);
-			Chunks[i][j]->emplenarChunk(llumNatural);
+
+			vector<glm::vec3> aux = Chunks[i][j]->emplenarChunk(generador);
+
+			/*vec.push_back(pair<glm::vec2, vector<glm::vec3>>(glm::vec2(i,j), aux));*/
 		}
 	}
 
+	/*for (const pair<glm::vec2, vector<glm::vec3>> v : vec) {
+		for (const glm::vec3 cubs : v.second) {
+			Chunks[(int)v.first[0]][(int)v.first[1]]->canviarLlumNaturalCub(cubs.x, cubs.y+1, cubs.z, llumNatural);
+			afegirLlumNatural(glm::vec3(cubs.x+v.first[0]*X, cubs.y+1, cubs.z + v.first[1] * Z));
+
+		}
+	}*/
+	/*for (int x = 0; x < X*XC; x++) {
+		for (int z = 0; z < Z*YC; z++) {
+			Chunks[x / X][z / Z]->canviarLlumNaturalCub(x % X, Y - 1, z % Z, llumNatural);
+			afegirLlumNatural(glm::vec3(x, Y - 1, z));
+		}
+	}*/
+	/*Chunks[95/X][94/Z]->canviarLlumNaturalCub(95 % X, Y-1, 94 % Z, llumNatural);
+	afegirLlumNatural(glm::vec3(95,Y-1,94));*/
+	
+	/*Chunks[96 / X][94 / Z]->canviarLlumNaturalCub(96 % X, 67, 94 % Z, llumNatural);
+	afegirLlumNatural(glm::vec3(96, 67, 94));*/
+	/*Chunks[97 / X][94 / Z]->canviarLlumNaturalCub(97 % X, 67, 94 % Z, llumNatural);
+	afegirLlumNatural(glm::vec3(97, 67, 94));*/
 }
 
-void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum, bool natural, bool avall) {
+// LLUM ARTIFICIAL
+
+void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum) {
 	// Mirem si és transparent (de moment 0, aire) i si hem de pujar la llum
-	if (obtenirCub(pos.x, pos.y, pos.z) == AIRE && ((natural && obtenirLlumNaturalCub(pos.x, pos.y, pos.z) + 2 <= llum) || obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum)) {
+	if (obtenirCub(pos.x, pos.y, pos.z) == AIRE && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
 		uint8_t resLlum = llum - 1;
-		if (natural && avall) {
-			resLlum++;
-		}
-		if (natural) {
-			canviarLlumNaturalCub(pos.x, pos.y, pos.z, resLlum);
-		}
-		else {
-			canviarLlumArtificialCub(pos.x, pos.y, pos.z, resLlum);
-		}
+		canviarLlumArtificialCub(pos.x, pos.y, pos.z, resLlum);
 		cuaLlum.emplace(pos);
 	}
 }
@@ -72,7 +94,7 @@ void SuperChunk::eliminarLlum(glm::vec3 pos, uint8_t llum) {
 	}
 }
 
-void SuperChunk::afegirLlum(const glm::vec3 posLlum, bool natural)
+void SuperChunk::afegirLlum(const glm::vec3 posLlum)
 {
 	// Fem una cua de posicions i afegim la llum
 	cuaLlum.emplace(posLlum);
@@ -80,15 +102,13 @@ void SuperChunk::afegirLlum(const glm::vec3 posLlum, bool natural)
 	while (!cuaLlum.empty()) {
 		glm::vec3 bloc = cuaLlum.front();
 		cuaLlum.pop();
-		uint8_t llum;
-		if (!natural) llum = obtenirLlumArtificialCub(bloc.x, bloc.y, bloc.z);
-		else llum = obtenirLlumNaturalCub(bloc.x, bloc.y, bloc.z);
-		posarLlum(bloc + glm::vec3(1, 0, 0), llum, natural);
-		posarLlum(bloc + glm::vec3(-1, 0, 0), llum, natural);
-		if(!natural)posarLlum(bloc + glm::vec3(0, 1, 0), llum, natural);
-		posarLlum(bloc + glm::vec3(0, -1, 0), llum, natural, true);
-		posarLlum(bloc + glm::vec3(0, 0, 1), llum, natural);
-		posarLlum(bloc + glm::vec3(0, 0, -1), llum, natural);
+		uint8_t llum = obtenirLlumArtificialCub(bloc.x, bloc.y, bloc.z);
+		posarLlum(bloc + glm::vec3(1, 0, 0), llum);
+		posarLlum(bloc + glm::vec3(-1, 0, 0), llum);
+		posarLlum(bloc + glm::vec3(0, 1, 0), llum);
+		posarLlum(bloc + glm::vec3(0, -1, 0), llum);
+		posarLlum(bloc + glm::vec3(0, 0, 1), llum);
+		posarLlum(bloc + glm::vec3(0, 0, -1), llum);
 
 	}
 }
@@ -118,6 +138,38 @@ void SuperChunk::treureLlum(const glm::vec3 posLlum, uint8_t llumIni)
 	}
 }
 
+// LLUM NATURAL
+
+void SuperChunk::posarLlumNatural(glm::vec3 pos, uint8_t llum, bool avall) {
+	// Mirem si és transparent (de moment 0, aire) i si hem de pujar la llum
+	if (obtenirCub(pos.x, pos.y, pos.z) == AIRE && obtenirLlumNaturalCub(pos.x, pos.y, pos.z) + 2 <= llum) {
+		uint8_t resLlum = llum - 1;
+		if(avall && llum == llumNatural) resLlum = llum;
+		canviarLlumNaturalCub(pos.x, pos.y, pos.z, resLlum);
+		cuaLlumNatural.emplace(pos);
+	}
+}
+
+void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
+{
+	// Fem una cua de posicions i afegim la llum
+	cuaLlumNatural.emplace(posLlum);
+
+	while (!cuaLlumNatural.empty()) {
+		glm::vec3 bloc = cuaLlumNatural.front();
+		cuaLlumNatural.pop();
+		uint8_t llum = obtenirLlumNaturalCub(bloc.x, bloc.y, bloc.z);
+		posarLlumNatural(bloc + glm::vec3(1, 0, 0), llum);
+		posarLlumNatural(bloc + glm::vec3(-1, 0, 0), llum);
+		posarLlumNatural(bloc + glm::vec3(0, 1, 0), llum, true);
+		posarLlumNatural(bloc + glm::vec3(0, -1, 0), llum, true);
+		posarLlumNatural(bloc + glm::vec3(0, 0, 1), llum);
+		posarLlumNatural(bloc + glm::vec3(0, 0, -1), llum);
+
+	}
+}
+
+
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 {
 	if (x / X < XC && z / Z < YC) {
@@ -140,12 +192,13 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 			else treureLlum(glm::vec3(x, y, z), 0);
 
 			if (chunk->cubTop(x%X, y, z%Z)) {
-				chunk->canviarLlumNaturalCub(x%X, y, z%Z, 15);
+				//chunk->canviarLlumNaturalCub(x%X, y, z%Z, llumNatural);
+				//afegirLlumNatural(glm::vec3(x, y, z));
 			}
 			else {
-				uint8_t llumMaxima = chunk->obtenirLlumNaturalMaxima(x%X,y,z%Z);
-				if(llumMaxima >= 0) chunk->canviarLlumNaturalCub(x % X, y, z % Z, llumMaxima-1);
-				cout << "llum maxima: " << llumMaxima << endl;
+				/*uint8_t llumMaxima = chunk->obtenirLlumNaturalMaxima(x%X,y,z%Z);
+				if(llumMaxima > 0) chunk->canviarLlumNaturalCub(x % X, y, z % Z, llumMaxima-1);
+				cout << "llum maxima: " << llumMaxima << endl;*/
 			}
 		}
 		else {

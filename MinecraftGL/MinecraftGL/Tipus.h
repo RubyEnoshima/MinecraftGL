@@ -8,10 +8,13 @@ enum TIPUS {
 	ROCA = 16,
 	BEDROCK = 17,
 	SORRA = 18,
+	FUSTA = 20,
+	FUSTA_TOP = 21,
 	NEU = 66,
 	GEL = 67,
 	NEU_COSTAT = 68,
 	CRISTAL = 49,
 	ANTORXA = 80,
+	FULLES = 132,
 	LLUM = 168
 };

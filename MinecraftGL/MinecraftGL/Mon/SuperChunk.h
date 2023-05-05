@@ -1,5 +1,6 @@
 #pragma once
 #include "Chunk2.h"
+#include "Generador.h"
 #include "Renderer/Renderer.h"
 #include <queue>
 #include <list>
@@ -25,8 +26,11 @@ public:
 	uint8_t obtenirLlumNaturalCub(int x, int y, int z);
 	uint8_t obtenirLlumArtificialCub(int x, int y, int z);
 
-	void afegirLlum(const glm::vec3 posLlum, bool natural=false);
+	void afegirLlum(const glm::vec3 posLlum);
 	void treureLlum(const glm::vec3 posLlum, uint8_t llumIni);
+
+	void afegirLlumNatural(const glm::vec3 posLlum);
+	void treureLlumNatural(const glm::vec3 posLlum, uint8_t llumIni);
 
 	// Genera un BoundingBox per un cub concret
 	void BoundingBox(int x, int y, int z);
@@ -36,8 +40,11 @@ public:
 	// Renderitza un cub en una posició de manera que cada cara es pugui identificar pel color
 	void renderCub(int x, int y, int z);
 private:
-	void posarLlum(glm::vec3 pos, uint8_t llum, bool natural=false, bool avall=false);
+	void posarLlum(glm::vec3 pos, uint8_t llum);
 	void eliminarLlum(glm::vec3 pos, uint8_t llum);
+
+	void posarLlumNatural(glm::vec3 pos, uint8_t llum, bool avall=false);
+	void eliminarLlumNatural(glm::vec3 pos, uint8_t llum);
 
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;
@@ -52,6 +59,9 @@ private:
 	queue<glm::vec3> cuaLlumNatural;
 
 	uint8_t llumNatural = 15;
+
+	// Generació
+	Generador* generador;
 	//int octaves = 8;
 	//float frequencia = 8.0;
 	//float amplitud = 1.0;

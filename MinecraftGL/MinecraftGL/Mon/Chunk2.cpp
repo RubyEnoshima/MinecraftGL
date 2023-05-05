@@ -198,6 +198,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	if (tipus == GESPA_COSTAT) tipus = GESPA;
 	else if (tipus == NEU_COSTAT) tipus = NEU;
+	else if (tipus == FUSTA) tipus = FUSTA_TOP;
 	// Cara adalt
 	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or chunk[x][y + 1][z].tipus == CRISTAL) {
 		llum = chunk[x][y + 1][z].llum;
@@ -427,19 +428,27 @@ int Chunk2::nCubs() const
 	return elements / 6;
 }
 
-void Chunk2::emplenarChunk(uint8_t llumNatural)
+vector<glm::vec3> Chunk2::emplenarChunk(Generador* generador)
 {
+	vector<glm::vec3> res;
+	glm::vec3 pos;
+	cout << floor(glm::distance(glm::vec3(0,0,0), glm::vec3(0,2,4))) << endl;
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
 
-			int height = Y/2 + (int)(glm::perlin(glm::vec2((float)(i + X * posX) / X, (float)(k + Z * posY) / Z)) * 8);
+			int height = Y/2 + (int)(glm::perlin(glm::vec2((float)(i + X * posX) / X, (float)(k + Z * posY) / Z)) * 7);
 
 			for (int j = 0; j <= height; j++) {
 				uint8_t tipus = TERRA;
 				if (j == height) { // Capa d'adalt
 					tipus = GESPA;
-
 					chunk[i][j][k].top = true;
+
+					res.push_back(glm::vec3(i,j,k));
+
+					float probArbre = (float)(rand()) / (float)(RAND_MAX);
+					generador->marcarArbre(probArbre,glm::vec3(i,j,k));
+					/*if (probArbre >= 0.99f) canviarCub(i, j + 1, k, FUSTA);*/
 				}
 				else if (j < height - 3) tipus = PEDRA;
 				else if (j < 2) tipus = BEDROCK;
@@ -448,16 +457,7 @@ void Chunk2::emplenarChunk(uint8_t llumNatural)
 		}
 	}
 
-	for (int i = 0; i < X; i++) {
-		for (int j = 0; j < Y; j++) {
-			for (int k = 0; k < Z; k++) {
-				if (cubTop(i,j,k))
-				{
-					canviarLlumNaturalCub(i, j+1, k, 15);
-				}
-			}
-		}
-	}
+	return res;
 
 }
 

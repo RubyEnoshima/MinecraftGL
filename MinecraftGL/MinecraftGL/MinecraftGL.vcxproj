@@ -148,6 +148,7 @@
     <ClCompile Include="Jugador\RayCast.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mon\Chunk2.cpp" />
+    <ClCompile Include="Mon\Generador.cpp" />
     <ClCompile Include="Mon\SuperChunk.cpp" />
     <ClCompile Include="Renderer\Framebuffer.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Jugador\Camera.h" />
     <ClInclude Include="Jugador\RayCast.h" />
     <ClInclude Include="Mon\Chunk2.h" />
+    <ClInclude Include="Mon\Generador.h" />
     <ClInclude Include="Mon\SuperChunk.h" />
     <ClInclude Include="Renderer\Framebuffer.h" />
     <ClInclude Include="Renderer\Renderer.h" />

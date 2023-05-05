@@ -13,6 +13,10 @@
 #include "Tipus.h"
 #include "glm/gtx/io.hpp"
 
+#include <random>
+#include <ctime>
+#include "Generador.h"
+
 using namespace std;
 
 #define X 16
@@ -51,7 +55,7 @@ public:
 	int nCubs() const;
 
 	// Genera el chunk amb Perlin noise i posa la llum on toca
-	void emplenarChunk(uint8_t llumNatural);
+	vector<glm::vec3> emplenarChunk(Generador* generador);
 	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
