@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CHUNK2_H
+#define CHUNK2_H
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -15,7 +16,9 @@
 
 #include <random>
 #include <ctime>
-#include "Generador.h"
+class Chunk2;
+#include "SuperChunk.h"
+#include "Blocs/Blocs.h"
 
 using namespace std;
 
@@ -32,7 +35,7 @@ struct Cub {
 class Chunk2
 {
 public:
-	Chunk2(unsigned int _x=0, unsigned int _y=0);
+	Chunk2(unsigned int _x=0, unsigned int _y=0, SuperChunk* _mon=NULL);
 	~Chunk2();
 
 	// Canvia el tipus d'un cub concret
@@ -55,7 +58,7 @@ public:
 	int nCubs() const;
 
 	// Genera el chunk amb Perlin noise i posa la llum on toca
-	vector<glm::vec3> emplenarChunk(Generador* generador);
+	vector<glm::vec3> emplenarChunk();
 	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
@@ -73,14 +76,19 @@ private:
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 	void afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
+	void arbre(int x, int y, int z);
+
 	unsigned int VBO;
 
 	unsigned int posX, posY;
-	Cub chunk[X][Y][Z]; // Es guarda el tipus de cada cub
+	Cub chunk[X][Y][Z];
 
 	Chunk2* veiEsq = NULL;
 	Chunk2* veiDre = NULL;
 	Chunk2* veiUp = NULL;
 	Chunk2* veiBaix = NULL;
+
+	SuperChunk* mon = NULL;
 };
 
+#endif

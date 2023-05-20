@@ -1,11 +1,12 @@
 #include "Chunk2.h"
 
-Chunk2::Chunk2(unsigned int _x, unsigned int _y)
+Chunk2::Chunk2(unsigned int _x, unsigned int _y, SuperChunk* _mon)
 {
 	memset(chunk, 0, sizeof(chunk));
 	glGenBuffers(1, &VBO);
 	posX = _x;
 	posY = _y;
+	mon = _mon;
 }
 
 Chunk2::~Chunk2()
@@ -137,10 +138,12 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	uint8_t llum;
-	if (tipus == GESPA) tipus = GESPA_COSTAT;
-	else if (tipus == NEU) tipus = NEU_COSTAT;
+	uint8_t tipusAux = tipus;
+	/*if (tipus == GESPA) tipus = GESPA_COSTAT;
+	else if (tipus == NEU) tipus = NEU_COSTAT;*/
+	tipus = Blocs::get().costats(tipus);
 	// Cara esq
-	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z)) or (x != 0 and (!chunk[x - 1][y][z].tipus or chunk[x-1][y][z].tipus==CRISTAL))) {
+	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z)) or (x != 0 and (!chunk[x - 1][y][z].tipus or Blocs::get().esTransparent(chunk[x-1][y][z].tipus)))) {
 		if (x == 0) llum = veiEsq->chunk[X - 1][y][z].llum;
 		else llum = chunk[x - 1][y][z].llum;
 
@@ -154,7 +157,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara dre
-	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or chunk[x + 1][y][z].tipus == CRISTAL))) {
+	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or Blocs::get().esTransparent(chunk[x + 1][y][z].tipus)))) {
 		llum = chunk[x + 1][y][z].llum;
 		if (x == X - 1) llum = veiDre->chunk[0][y][z].llum;
 
@@ -167,7 +170,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or chunk[x][y][z + 1].tipus ==CRISTAL))) {
+	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or Blocs::get().esTransparent(chunk[x][y][z + 1].tipus)))) {
 		llum = chunk[x][y][z + 1].llum;
 		if (z == Z - 1) llum = veiUp->chunk[x][y][0].llum;
 		
@@ -182,7 +185,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1)) or (z != 0 and (!chunk[x][y][z - 1].tipus or chunk[x][y][z - 1].tipus ==CRISTAL))) {
+	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1)) or (z != 0 and (!chunk[x][y][z - 1].tipus or Blocs::get().esTransparent(chunk[x][y][z - 1].tipus)))) {
 		llum = chunk[x][y][z - 1].llum;
 		if (z == 0) llum = veiBaix->chunk[x][y][Z - 1].llum;
 		
@@ -196,11 +199,9 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	}
 
-	if (tipus == GESPA_COSTAT) tipus = GESPA;
-	else if (tipus == NEU_COSTAT) tipus = NEU;
-	else if (tipus == FUSTA) tipus = FUSTA_TOP;
+	tipus = Blocs::get().adalt(tipusAux);
 	// Cara adalt
-	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or chunk[x][y + 1][z].tipus == CRISTAL) {
+	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or Blocs::get().esTransparent(chunk[x][y + 1][z].tipus)) {
 		llum = chunk[x][y + 1][z].llum;
 		if (y == Y - 1) llum = 0;
 
@@ -213,10 +214,9 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	}
 
-
-	if (tipus == GESPA || tipus == NEU) tipus = TERRA;
+	tipus = Blocs::get().sota(tipusAux);
 	// Cara sota
-	if (y == 0 or !chunk[x][y - 1][z].tipus or chunk[x][y - 1][z].tipus == CRISTAL) {
+	if (y == 0 or !chunk[x][y - 1][z].tipus or Blocs::get().esTransparent(chunk[x][y - 1][z].tipus)) {
 		llum = chunk[x][y - 1][z].llum;
 		if (y == Y - 1) llum = 0;
 
@@ -229,6 +229,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	}
 
+	tipus = tipusAux;
 }
 
 void Chunk2::afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, bool r, bool g, bool b) {
@@ -311,7 +312,6 @@ void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 }
-
 
 void Chunk2::update()
 {
@@ -428,11 +428,11 @@ int Chunk2::nCubs() const
 	return elements / 6;
 }
 
-vector<glm::vec3> Chunk2::emplenarChunk(Generador* generador)
+vector<glm::vec3> Chunk2::emplenarChunk()
 {
 	vector<glm::vec3> res;
 	glm::vec3 pos;
-	cout << floor(glm::distance(glm::vec3(0,0,0), glm::vec3(0,2,4))) << endl;
+	//cout << floor(glm::distance(glm::vec3(0,0,0), glm::vec3(0,2,4))) << endl;
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
 
@@ -447,8 +447,11 @@ vector<glm::vec3> Chunk2::emplenarChunk(Generador* generador)
 					res.push_back(glm::vec3(i,j,k));
 
 					float probArbre = (float)(rand()) / (float)(RAND_MAX);
-					generador->marcarArbre(probArbre,glm::vec3(i,j,k));
-					/*if (probArbre >= 0.99f) canviarCub(i, j + 1, k, FUSTA);*/
+					
+					if (probArbre >= 0.99f && !mon->existeixCub(i + X * posX, j + 1, k + Z * posY, FUSTA)) {
+						// Construir arbre
+						arbre(i, j + 1, k);
+					}
 				}
 				else if (j < height - 3) tipus = PEDRA;
 				else if (j < 2) tipus = BEDROCK;
@@ -459,6 +462,18 @@ vector<glm::vec3> Chunk2::emplenarChunk(Generador* generador)
 
 	return res;
 
+}
+
+void Chunk2::arbre(int x, int y, int z)
+{
+	// Tronco
+	const int MIN_TRONCO = 3, MAX_TRONCO = 3;
+	int max = MIN_TRONCO + (rand() % MAX_TRONCO);
+	for (int i = 0; i < max; i++)
+	{
+		canviarCub(x, y+i, z, FUSTA);
+	}
+	canviarCub(x, y + max, z, FULLES);
 }
 
 void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)

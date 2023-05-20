@@ -9,7 +9,6 @@ SuperChunk::SuperChunk()
 }
 
 SuperChunk::~SuperChunk() {
-	delete generador;
 	for (int x = 0; x < XC; x++)
 		for (int y = 0; y < YC; y++)
 				delete Chunks[x][y];
@@ -20,13 +19,12 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	srand(time(NULL));
 
 	renderer = _renderer;
-	generador = new Generador(this);
 
 	for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)
 		{
-			Chunks[i][j] = new Chunk2(i,j);
+			Chunks[i][j] = new Chunk2(i,j,this);
 		}
 	}
 	
@@ -44,7 +42,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			if (j + 1 < YC) up = Chunks[i][j + 1];
 			Chunks[i][j]->afegirVeins(left, right, up, down);
 
-			vector<glm::vec3> aux = Chunks[i][j]->emplenarChunk(generador);
+			vector<glm::vec3> aux = Chunks[i][j]->emplenarChunk();
 
 			/*vec.push_back(pair<glm::vec2, vector<glm::vec3>>(glm::vec2(i,j), aux));*/
 		}
@@ -233,7 +231,7 @@ void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 	}
 }
 
-uint8_t SuperChunk::obtenirCub(int x, int y, int z)
+uint8_t SuperChunk::obtenirCub(int x, int y, int z) const
 {
 	if (x / X < XC && z / Z < YC)
 		return Chunks[x / X][z / Z]->obtenirCub(x % X, y, z % Z);
@@ -313,6 +311,22 @@ void SuperChunk::BoundingBox(int x, int y, int z)
 	glDeleteBuffers(1, &ibo_elements);
 	renderer->activaBounding(0);
 
+}
+
+bool SuperChunk::existeixCub(int x, int y, int z, uint8_t tipus) const
+{
+	for (int i = -1; i <= 1; i++)
+	{
+		for (int j = -1; j <= 1; j++)
+		{
+			for (int k = -1; k <= 1; k++)
+			{
+				if (i == 0 && j == 0 && k == 0) continue;
+				if (obtenirCub(x + i, y + j, z + k) == tipus) return true;
+			}
+		}
+	}
+	return false;
 }
 
 void SuperChunk::update()

@@ -1,6 +1,7 @@
-#pragma once
+#ifndef SUPERCHUNK_H
+#define SUPERCHUNK_H
+class SuperChunk;
 #include "Chunk2.h"
-#include "Generador.h"
 #include "Renderer/Renderer.h"
 #include <queue>
 #include <list>
@@ -21,7 +22,7 @@ public:
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
 	// Retorna el tipus del cub
-	uint8_t obtenirCub(int x, int y, int z); 
+	uint8_t obtenirCub(int x, int y, int z) const; 
 	// Retorna la llum del cub
 	uint8_t obtenirLlumNaturalCub(int x, int y, int z);
 	uint8_t obtenirLlumArtificialCub(int x, int y, int z);
@@ -34,6 +35,9 @@ public:
 
 	// Genera un BoundingBox per un cub concret
 	void BoundingBox(int x, int y, int z);
+
+	// True si existeix un cub d'un tipus concret al voltant d'un cub
+	bool existeixCub(int x, int y, int z, uint8_t tipus) const;
 
 	void update();
 	void render();
@@ -60,11 +64,10 @@ private:
 
 	uint8_t llumNatural = 15;
 
-	// Generació
-	Generador* generador;
 	//int octaves = 8;
 	//float frequencia = 8.0;
 	//float amplitud = 1.0;
 	//int seed = 94;
 };
 
+#endif

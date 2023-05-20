@@ -51,7 +51,7 @@
     <ClCompile Include="Jugador\RayCast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mon\Generador.cpp">
+    <ClCompile Include="Blocs\Blocs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,7 +86,10 @@
     <ClInclude Include="Jugador\RayCast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mon\Generador.h">
+    <ClInclude Include="Blocs\Blocs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
