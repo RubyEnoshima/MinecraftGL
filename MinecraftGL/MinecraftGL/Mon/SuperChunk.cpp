@@ -27,7 +27,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			Chunks[i][j] = new Chunk2(i,j,this);
 		}
 	}
-	
+	vector<vector<glm::vec3>> arbrets;
 	for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)
@@ -42,32 +42,19 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			if (j + 1 < YC) up = Chunks[i][j + 1];
 			Chunks[i][j]->afegirVeins(left, right, up, down);
 
-			vector<glm::vec3> aux = Chunks[i][j]->emplenarChunk();
+			arbrets.push_back(Chunks[i][j]->emplenarChunk());
 
-			/*vec.push_back(pair<glm::vec2, vector<glm::vec3>>(glm::vec2(i,j), aux));*/
+			
 		}
 	}
 
-	/*for (const pair<glm::vec2, vector<glm::vec3>> v : vec) {
-		for (const glm::vec3 cubs : v.second) {
-			Chunks[(int)v.first[0]][(int)v.first[1]]->canviarLlumNaturalCub(cubs.x, cubs.y+1, cubs.z, llumNatural);
-			afegirLlumNatural(glm::vec3(cubs.x+v.first[0]*X, cubs.y+1, cubs.z + v.first[1] * Z));
-
+	for (int i = 0; i < arbrets.size(); i++) {
+		for (int j = 0; j < arbrets[i].size(); j++) {
+			glm::vec3 pos = arbrets[i][j];
+			cout << pos << endl;
+			arbre(pos.x,pos.y,pos.z);
 		}
-	}*/
-	/*for (int x = 0; x < X*XC; x++) {
-		for (int z = 0; z < Z*YC; z++) {
-			Chunks[x / X][z / Z]->canviarLlumNaturalCub(x % X, Y - 1, z % Z, llumNatural);
-			afegirLlumNatural(glm::vec3(x, Y - 1, z));
-		}
-	}*/
-	/*Chunks[95/X][94/Z]->canviarLlumNaturalCub(95 % X, Y-1, 94 % Z, llumNatural);
-	afegirLlumNatural(glm::vec3(95,Y-1,94));*/
-	
-	/*Chunks[96 / X][94 / Z]->canviarLlumNaturalCub(96 % X, 67, 94 % Z, llumNatural);
-	afegirLlumNatural(glm::vec3(96, 67, 94));*/
-	/*Chunks[97 / X][94 / Z]->canviarLlumNaturalCub(97 % X, 67, 94 % Z, llumNatural);
-	afegirLlumNatural(glm::vec3(97, 67, 94));*/
+	}
 }
 
 // LLUM ARTIFICIAL
@@ -168,13 +155,15 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 }
 
 
-void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
+void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 {
-	if (x / X < XC && z / Z < YC) {
+	if (x / X < XC && z / Z < YC && (reemplacar || obtenirCub(x % X, y, z % Z) == 0)) {
 		Chunk2* chunk = Chunks[x / X][z / Z];
 		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
-		chunk->canviarCub(x % X, y, z % Z, tipus);
-		cout << x << " " << y << " " << z << endl;
+		chunk->canviarCub(x % X, y, z % Z, tipus, reemplacar);
+		
+		//cout << x << " " << y << " " << z << endl;
+		
 		if (tipus == LLUM) {
 			// Afegim la llum
 			canviarLlumArtificialCub(x, y, z, 14);
@@ -189,15 +178,15 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus)
 			}
 			else treureLlum(glm::vec3(x, y, z), 0);
 
-			if (chunk->cubTop(x%X, y, z%Z)) {
-				//chunk->canviarLlumNaturalCub(x%X, y, z%Z, llumNatural);
-				//afegirLlumNatural(glm::vec3(x, y, z));
-			}
-			else {
-				/*uint8_t llumMaxima = chunk->obtenirLlumNaturalMaxima(x%X,y,z%Z);
-				if(llumMaxima > 0) chunk->canviarLlumNaturalCub(x % X, y, z % Z, llumMaxima-1);
-				cout << "llum maxima: " << llumMaxima << endl;*/
-			}
+			//if (chunk->cubTop(x%X, y, z%Z)) {
+			//	//chunk->canviarLlumNaturalCub(x%X, y, z%Z, llumNatural);
+			//	//afegirLlumNatural(glm::vec3(x, y, z));
+			//}
+			//else {
+			//	/*uint8_t llumMaxima = chunk->obtenirLlumNaturalMaxima(x%X,y,z%Z);
+			//	if(llumMaxima > 0) chunk->canviarLlumNaturalCub(x % X, y, z % Z, llumMaxima-1);
+			//	cout << "llum maxima: " << llumMaxima << endl;*/
+			//}
 		}
 		else {
 			for (const glm::vec3 llum : llistaLlums) {
@@ -365,5 +354,39 @@ void SuperChunk::renderCub(int x, int y, int z)
 
 		Chunks[(x / X)][(z / Z)]->renderCub(x % X, y, z % Z);
 
+	}
+}
+
+void SuperChunk::arbre(int x, int y, int z)
+{
+	// Tronco
+	const int MIN_TRONCO = 5, MAX_TRONCO = 3;
+	int max = MIN_TRONCO + (rand() % MAX_TRONCO);
+	for (int i = 0; i < max; i++)
+	{
+		canviarCub(x, y + i, z, FUSTA);
+	}
+	// Copa del arbol
+	emplenar(x, y + max, z, 1, 1, FULLES, 0, false);
+	int segY = y + max - 1;
+	float probabilitat = 0.3;
+	emplenar(x, segY, z, 1, 1, FULLES, probabilitat, false);
+	segY--;
+	emplenar(x, segY, z, 2, 2, FULLES, probabilitat, false);
+	segY--;
+	emplenar(x, segY, z, 2, 2, FULLES, probabilitat, false);
+}
+
+void SuperChunk::emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat, bool reemplacar) {
+	for (int i = -amplitut; i <= amplitut; i++) {
+		for (int j = -llargada; j <= llargada; j++) {
+			if (abs(i) != amplitut || abs(i) != abs(j) || (float)(rand()) / (float)(RAND_MAX) <= probabilitat) {
+				canviarCub(x + i, y, z + j, tipus, reemplacar);
+			}
+			if (abs(i) != amplitut || abs(i) != abs(j) || (float)(rand()) / (float)(RAND_MAX) <= probabilitat) {
+				canviarCub(x - i, y, z - j, tipus, reemplacar);
+			}
+
+		}
 	}
 }

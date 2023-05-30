@@ -16,5 +16,6 @@ enum TIPUS {
 	CRISTAL = 49,
 	ANTORXA = 80,
 	FULLES = 132,
-	LLUM = 168
+	LLUM = 168,
+	N_TIPUS = 256
 };

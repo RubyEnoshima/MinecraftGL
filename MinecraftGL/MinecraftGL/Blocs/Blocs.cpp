@@ -1,17 +1,22 @@
 #include "Blocs.h"
 
 Blocs::Blocs() {
-    // per tots els tipus de blocs que hi ha
-    for (auto& p : fs::directory_iterator(fs::directory_iterator("./Tipus/"))) {
-        cout << "Carregant blocs..." << endl;
-        ifstream f(p.path());
-        // Utilitzant json llegim tots els tipus de blocs que hi ha
-        json data = json::parse(f);
+    dades = vector<Bloc>(256);
+
+    ifstream arxiuBlocs("./Tipus/blocs.json"); // arxiu json amb tots els tipus de blocs
+    json jsonBlocs = json::parse(arxiuBlocs);
+
+    auto it = jsonBlocs.begin();
+    cout << "Carregant blocs..." << endl;
+
+    // Per tots els blocs que hi hagi a l'arxiu
+    while (it != jsonBlocs.end()) {
+        json data = *it;
         int id = data.value("id", 0);
         string nom = data.value("nom", "");
-        Bloc bloc(nom, id, data.value("transparent",false), data.value("costats",id), data.value("sota",id), data.value("adalt",id));
-        //lowercase(nom);
-        dades.insert({ id, bloc});
+        dades[id] = Bloc(nom, id, data.value("transparent", false), data.value("costats", id), data.value("sota", id), data.value("adalt", id));
+        it++;
     }
+
     cout << "Blocs carregats!" << endl << endl;
 }

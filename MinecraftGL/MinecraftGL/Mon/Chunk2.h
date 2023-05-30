@@ -39,7 +39,7 @@ public:
 	~Chunk2();
 
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus); 
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true); 
 	// Canvia la llum d'un cub concret
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
@@ -75,8 +75,6 @@ private:
 
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 	void afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
-
-	void arbre(int x, int y, int z);
 
 	unsigned int VBO;
 

@@ -17,7 +17,7 @@ public:
 	SuperChunk(Renderer* _renderer);
 
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus); 
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true); 
 	// Canvia quanta llum té un cub
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
@@ -49,6 +49,12 @@ private:
 
 	void posarLlumNatural(glm::vec3 pos, uint8_t llum, bool avall=false);
 	void eliminarLlumNatural(glm::vec3 pos, uint8_t llum);
+
+	// Genera un arbre en una posicio concreta
+	void arbre(int x, int y, int z);
+
+	// Emplena un rectangle amb una amplitut i una llargada en una posició, amb un tipus concret i una probabilitat donada.
+	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true);
 
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;

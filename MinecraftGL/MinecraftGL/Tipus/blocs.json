@@ -1,0 +1,26 @@
+{
+    "gespa": {
+        "nom": "Gespa",
+        "id": 1,
+        "costats": 4,
+        "sota": 3
+    },
+    "pedra": {
+        "nom": "Pedra",
+        "id": 2
+    },
+    "terra": {
+        "nom": "Terra",
+        "id": 3
+    },
+    "fusta": {
+        "nom": "Fusta",
+        "id": 20,
+        "adalt": 21
+    },
+    "fulles": {
+        "nom": "Fulles",
+        "id": 132,
+        "transparent": true
+    }
+}
