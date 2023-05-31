@@ -24,6 +24,7 @@ struct Bloc {
         sota = 0; // Textura per sota del cub
         adalt = 0;
     }
+    
     string nom;
     int id;
     bool transparent; // Per temes de llum i renderitzat
@@ -34,18 +35,12 @@ struct Bloc {
 
 class Blocs {
 public:
-    static Blocs& get() {
-        static Blocs instance;
-        return instance;
-    }
-
-    Bloc getBloc(int id) const{
+    Blocs();
+    ~Blocs();
+    Bloc* getBloc(int id) const{
         return dades.at(id);
     }
     
 private:
-    Blocs();
-    ~Blocs() = default;
-
-    vector<Bloc> dades;
+    vector<Bloc*> dades;
 };

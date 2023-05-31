@@ -53,7 +53,7 @@ private:
 	// Genera un arbre en una posicio concreta
 	void arbre(int x, int y, int z);
 
-	// Emplena un rectangle amb una amplitut i una llargada en una posició, amb un tipus concret i una probabilitat donada.
+	// Emplena un rectangle centrat en una posició, extenent-se en amplitut i llargada, amb un tipus concret i una probabilitat que les cantonades puguin desapareixer.
 	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true);
 
 	Chunk2* Chunks[XC][YC];
@@ -73,7 +73,9 @@ private:
 	//int octaves = 8;
 	//float frequencia = 8.0;
 	//float amplitud = 1.0;
-	//int seed = 94;
+	int semilla = 874;
+
+	Blocs blocs;
 };
 
 #endif

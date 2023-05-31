@@ -48,9 +48,6 @@
     <ClCompile Include="Jugador\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Jugador\RayCast.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Blocs\Blocs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,9 +78,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Jugador\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Jugador\RayCast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Blocs\Blocs.h">

@@ -277,7 +277,6 @@ void Joc::gameLoop() {
 		// Treure el cursor
 		canviarModeMouse(GLFW_CURSOR_DISABLED);
 
-		//SuperChunk sp(&renderer);
 		mon = new SuperChunk(&renderer);
 
 		// Posem el color taronja

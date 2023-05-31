@@ -16,9 +16,9 @@
 
 #include <random>
 #include <ctime>
+#include "Blocs/Blocs.h"
 class Chunk2;
 #include "SuperChunk.h"
-#include "Blocs/Blocs.h"
 
 using namespace std;
 
@@ -35,7 +35,7 @@ struct Cub {
 class Chunk2
 {
 public:
-	Chunk2(unsigned int _x=0, unsigned int _y=0, SuperChunk* _mon=NULL);
+	Chunk2(unsigned int _x=0, unsigned int _y=0, SuperChunk* _mon=NULL, Blocs* _blocs=NULL);
 	~Chunk2();
 
 	// Canvia el tipus d'un cub concret
@@ -87,6 +87,8 @@ private:
 	Chunk2* veiBaix = NULL;
 
 	SuperChunk* mon = NULL;
+
+	Blocs* blocs = NULL;
 };
 
 #endif

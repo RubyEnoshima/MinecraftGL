@@ -147,7 +147,6 @@
     <ClCompile Include="Blocs\Blocs.cpp" />
     <ClCompile Include="Joc.cpp" />
     <ClCompile Include="Jugador\Camera.cpp" />
-    <ClCompile Include="Jugador\RayCast.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mon\Chunk2.cpp" />
     <ClCompile Include="Mon\SuperChunk.cpp" />
@@ -162,7 +161,6 @@
     <ClInclude Include="Joc.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Jugador\Camera.h" />
-    <ClInclude Include="Jugador\RayCast.h" />
     <ClInclude Include="Mon\Chunk2.h" />
     <ClInclude Include="Mon\SuperChunk.h" />
     <ClInclude Include="Renderer\Framebuffer.h" />

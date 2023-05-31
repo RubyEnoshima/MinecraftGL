@@ -12,11 +12,12 @@ SuperChunk::~SuperChunk() {
 	for (int x = 0; x < XC; x++)
 		for (int y = 0; y < YC; y++)
 				delete Chunks[x][y];
+
 }
 
 SuperChunk::SuperChunk(Renderer* _renderer)
 {
-	srand(time(NULL));
+	srand(semilla);
 
 	renderer = _renderer;
 
@@ -24,7 +25,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	{
 		for (int j = 0; j < YC; j++)
 		{
-			Chunks[i][j] = new Chunk2(i,j,this);
+			Chunks[i][j] = new Chunk2(i,j,this,&blocs);
 		}
 	}
 	vector<vector<glm::vec3>> arbrets;
@@ -51,7 +52,6 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	for (int i = 0; i < arbrets.size(); i++) {
 		for (int j = 0; j < arbrets[i].size(); j++) {
 			glm::vec3 pos = arbrets[i][j];
-			cout << pos << endl;
 			arbre(pos.x,pos.y,pos.z);
 		}
 	}
@@ -157,13 +157,13 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 {
-	if (x / X < XC && z / Z < YC && (reemplacar || obtenirCub(x % X, y, z % Z) == 0)) {
+	if (x / X < XC && z / Z < YC && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
 		Chunk2* chunk = Chunks[x / X][z / Z];
 		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
 		chunk->canviarCub(x % X, y, z % Z, tipus, reemplacar);
-		
+
 		//cout << x << " " << y << " " << z << endl;
-		
+
 		if (tipus == LLUM) {
 			// Afegim la llum
 			canviarLlumArtificialCub(x, y, z, 14);
