@@ -30,7 +30,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (action == GLFW_PRESS) {
 		if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
 		{
-			if (key == GLFW_KEY_9) joc->tipusCub = LLUM;
+			if (key == GLFW_KEY_9) joc->tipusCub = TULIPA_TARONJA;
 			else joc->tipusCub = key%48;
 			return;
 		}
@@ -172,7 +172,7 @@ void Joc::PosarCub() {
 	glm::vec3 Costat = ObtenirCostat();
 		
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipusCub);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipusCub); // tipusCub
 		
 }
 

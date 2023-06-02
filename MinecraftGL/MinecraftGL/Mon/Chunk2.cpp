@@ -22,6 +22,8 @@ void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 	chunk[x][y][z].tipus = tipus;
 
 	canviat = true;
+	unCanviat = true;
+	cubCanviat = glm::vec3(x,y,z);
 
 	if (x == 0 && veiEsq) veiEsq->canviat = true;
 	else if (x == X - 1 && veiDre) veiDre->canviat = true;
@@ -138,11 +140,43 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 
 void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
+	Bloc* b = blocs->getBloc(tipus);
 	uint8_t llum;
-	uint8_t tipusAux = tipus;
+
+	// Si es vegetació, la renderitzem amb 4 plans que sempre miren a la mateixa orientació
+	if (b->vegetacio) {
+		// Pla 1
+		afegirVertex(vertices, x, y, z, tipus, 0, 1, 12);
+		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, 12);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, 12);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, 12);
+		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, 12);
+		afegirVertex(vertices, x+1, y + 1, z + 1, tipus, 1, 0, 12);
+
+		afegirVertex(vertices, x+1, y, z+1, tipus, 0, 1, 12); // 1
+		afegirVertex(vertices, x, y, z, tipus, 1, 1, 12); // 2
+		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, 12);
+		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, 12);
+		afegirVertex(vertices, x, y, z, tipus, 1, 1, 12); // 5
+		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, 12);
+		// Pla 2
+		afegirVertex(vertices, x+1, y, z, tipus, 0, 1, 12);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, 12);
+		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, 12);
+		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, 12);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, 12);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, 12);
+
+		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1, 12);
+		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, 12);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, 12);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, 12);
+		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, 12);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, 12);
+		return;
+	}
 	/*if (tipus == GESPA) tipus = GESPA_COSTAT;
 	else if (tipus == NEU) tipus = NEU_COSTAT;*/
-	Bloc* b = blocs->getBloc(tipus);
 	tipus = b->costats;
 	// Cara esq
 	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z)) or (x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x-1][y][z].tipus)->transparent))) {
@@ -231,7 +265,6 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	}
 
-	tipus = tipusAux;
 }
 
 void Chunk2::afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, bool r, bool g, bool b) {
@@ -320,21 +353,20 @@ void Chunk2::update()
 	vector<GLbyte> _vertices;
 
 	//if (unCanviat) {
-
+	//	_vertices = vertices;
 	//	for (int i = -1; i <= 1; i++) {
 	//		for (int j = -1; j <= 1; j++) {
 	//			for (int k = -1; k <= 1; k++) {
-	//				
+
 	//				int posX = cubCanviat.x + i;
 	//				int posY = cubCanviat.y + j;
 	//				int posZ = cubCanviat.z + k;
-	//				uint8_t tipus = chunk[posX][posY][posZ];
+	//				uint8_t tipus = chunk[posX][posY][posZ].tipus;
 	//				//cout << i << endl;
 	//				if (tipus) afegirCub(_vertices, posX, posY, posZ, tipus);
 	//			}
 	//		}
 	//	}
-
 	//}
 	//else {
 		for (int i = 0; i < X; i++) {
@@ -430,9 +462,9 @@ int Chunk2::nCubs() const
 	return elements / 6;
 }
 
-vector<glm::vec3> Chunk2::emplenarChunk()
+vector<pair<int,glm::vec3>> Chunk2::emplenarChunk()
 {
-	vector<glm::vec3> res;
+	vector<pair<int, glm::vec3>> res;
 
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
@@ -446,10 +478,15 @@ vector<glm::vec3> Chunk2::emplenarChunk()
 					chunk[i][j][k].top = true;
 
 					float probArbre = (float)(rand()) / (float)(RAND_MAX);
+					float probFlor = (float)(rand()) / (float)(RAND_MAX);
 					
-					if (probArbre >= 0.99f) {
+					if (probArbre >= probabilitatArbre) {
 						// Marquem l'arbre
-						res.push_back(glm::vec3(i + X * posX,j+1,k + Z * posY));
+						res.push_back({0, glm::vec3(i + X * posX,j + 1,k + Z * posY) });
+					}
+					else if (probFlor >= probabilitatFlor) {
+						// Marquem la flor
+						res.push_back({ 1, glm::vec3(i + X * posX,j + 1,k + Z * posY) });
 					}
 				}
 				else if (j < height - 3) tipus = PEDRA;
@@ -458,6 +495,8 @@ vector<glm::vec3> Chunk2::emplenarChunk()
 			}
 		}
 	}
+
+	unCanviat = false;
 
 	return res;
 

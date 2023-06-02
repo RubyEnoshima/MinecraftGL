@@ -13,10 +13,41 @@
         "nom": "Terra",
         "id": 3
     },
+    "rosa": {
+        "nom": "Rosa",
+        "id": 13,
+        "vegetacio": true,
+        "transparent": true
+    },
+    "dent_de_lleo": {
+        "nom": "Dent de lleó",
+        "id": 14,
+        "vegetacio": true,
+        "transparent": true
+    },
+    "tulipa_taronja": {
+        "nom": "Tulipà taronja",
+        "id": 169,
+        "vegetacio": true,
+        "transparent": true
+    },
+    "esclatasang": {
+        "nom": "Esclatasang",
+        "id": 28,
+        "vegetacio": true,
+        "transparent": true
+    },
+    "xampinyo": {
+        "nom": "Xampinyó",
+        "id": 29,
+        "vegetacio": true,
+        "transparent": true
+    },
     "fusta": {
         "nom": "Fusta",
         "id": 20,
-        "adalt": 21
+        "adalt": 21,
+        "sota": 21
     },
     "fulles": {
         "nom": "Fulles",

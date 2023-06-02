@@ -18,7 +18,7 @@ Blocs::Blocs() {
         json data = *it;
         int id = data.value("id", 0);
         string nom = data.value("nom", "");
-        dades[id] = new Bloc(nom, id, data.value("transparent", false), data.value("costats", id), data.value("sota", id), data.value("adalt", id));
+        dades[id] = new Bloc(nom, id, data.value("transparent", false), data.value("costats", id), data.value("sota", id), data.value("adalt", id), data.value("vegetacio",false));
         it++;
     }
 

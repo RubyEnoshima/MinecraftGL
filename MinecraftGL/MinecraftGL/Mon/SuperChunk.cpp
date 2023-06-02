@@ -28,7 +28,8 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			Chunks[i][j] = new Chunk2(i,j,this,&blocs);
 		}
 	}
-	vector<vector<glm::vec3>> arbrets;
+	vector<glm::vec3> arbrets;
+	vector<glm::vec3> flors;
 	for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)
@@ -42,18 +43,27 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 			if (j - 1 >= 0) down = Chunks[i][j - 1];
 			if (j + 1 < YC) up = Chunks[i][j + 1];
 			Chunks[i][j]->afegirVeins(left, right, up, down);
+			vector<pair<int, glm::vec3>> estructures = Chunks[i][j]->emplenarChunk();
+			for (int i = 0; i < estructures.size(); i++) {
+				int tipus = estructures[i].first;
+				glm::vec3 pos = estructures[i].second;
 
-			arbrets.push_back(Chunks[i][j]->emplenarChunk());
+				vector<int> flors = {ROSA,DENT_DE_LLEO,TULIPA_TARONJA,ESCLATASANG,XAMPINYO};
+				if (tipus == 0) arbrets.push_back(pos);
+				else if (tipus == 1) {
+					int tipusFlor = rand() % flors.size();
+					canviarCub(pos.x, pos.y, pos.z, flors[tipusFlor], false);
+				}
+			}
+			
 
 			
 		}
 	}
 
 	for (int i = 0; i < arbrets.size(); i++) {
-		for (int j = 0; j < arbrets[i].size(); j++) {
-			glm::vec3 pos = arbrets[i][j];
-			arbre(pos.x,pos.y,pos.z);
-		}
+		glm::vec3 pos = arbrets[i];
+		arbre(pos.x,pos.y,pos.z);
 	}
 }
 
@@ -387,6 +397,17 @@ void SuperChunk::emplenar(int x, int y, int z, int amplitut, int llargada, uint8
 				canviarCub(x - i, y, z - j, tipus, reemplacar);
 			}
 
+		}
+	}
+}
+
+void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar)
+{
+	for (int i = x1; i <= x2; i++) {
+		for (int j = y1; j <= y2; j++) {
+			for (int k = z1; k <= z2; k++) {
+				canviarCub(i,j,k,tipus,reemplacar);
+			}
 		}
 	}
 }

@@ -6,8 +6,8 @@ class SuperChunk;
 #include <queue>
 #include <list>
 
-#define XC 12
-#define YC 12
+#define XC 8
+#define YC 8
 
 class SuperChunk
 {
@@ -43,18 +43,24 @@ public:
 	void render();
 	// Renderitza un cub en una posició de manera que cada cara es pugui identificar pel color
 	void renderCub(int x, int y, int z);
+
+	// MÉTODES PER GENERAR CUBS
+	// Emplena un rectangle centrat en una posició, extenent-se en amplitut i llargada, amb un tipus concret i una probabilitat que les cantonades puguin desapareixer.
+	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true);
+
+	// Emplena un àrea delimitada per dos punts amb un tipus determinat
+	void emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar = true);
+
+	// VEGETACIÓ I GENERACIÓ
+	// Genera un arbre en una posicio concreta
+	void arbre(int x, int y, int z);
+
 private:
 	void posarLlum(glm::vec3 pos, uint8_t llum);
 	void eliminarLlum(glm::vec3 pos, uint8_t llum);
 
 	void posarLlumNatural(glm::vec3 pos, uint8_t llum, bool avall=false);
 	void eliminarLlumNatural(glm::vec3 pos, uint8_t llum);
-
-	// Genera un arbre en una posicio concreta
-	void arbre(int x, int y, int z);
-
-	// Emplena un rectangle centrat en una posició, extenent-se en amplitut i llargada, amb un tipus concret i una probabilitat que les cantonades puguin desapareixer.
-	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true);
 
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;

@@ -57,8 +57,8 @@ public:
 
 	int nCubs() const;
 
-	// Genera el chunk amb Perlin noise i posa la llum on toca
-	vector<glm::vec3> emplenarChunk();
+	// Genera el chunk amb Perlin noise i posa la llum on toca. Retorna un vector de posicions amb el nombre de l'estructura generada (0: arbre, 1: amapola)
+	vector<pair<int, glm::vec3>> emplenarChunk();
 	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
@@ -89,6 +89,9 @@ private:
 	SuperChunk* mon = NULL;
 
 	Blocs* blocs = NULL;
+
+	float probabilitatArbre = 0.99;
+	float probabilitatFlor = 0;
 };
 
 #endif
