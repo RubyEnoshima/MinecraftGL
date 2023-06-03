@@ -72,7 +72,7 @@ private:
 	//float amplitud = 1.0;
 	int semilla = 874;
 
-	vector<int> flors = { ROSA,DENT_DE_LLEO,TULIPA_TARONJA,ESCLATASANG,XAMPINYO };
+	const vector<int> flors = { ROSA,DENT_DE_LLEO,TULIPA_TARONJA,ESCLATASANG,XAMPINYO };
 
 	Blocs blocs;
 

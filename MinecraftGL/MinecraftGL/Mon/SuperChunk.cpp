@@ -29,7 +29,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 		}
 	}
 	vector<glm::vec3> arbrets;
-	vector<glm::vec3> flors;
+
 	for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)
