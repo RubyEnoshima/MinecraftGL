@@ -1,4 +1,9 @@
 {
+    "aire":{
+        "nom": "Aire",
+        "id": 0,
+        "transparent": true
+    },
     "gespa": {
         "nom": "Gespa",
         "id": 1,
@@ -52,6 +57,11 @@
     "fulles": {
         "nom": "Fulles",
         "id": 132,
+        "transparent": true
+    },
+    "cristal": {
+        "nom": "Cristal",
+        "id": 49,
         "transparent": true
     }
 }

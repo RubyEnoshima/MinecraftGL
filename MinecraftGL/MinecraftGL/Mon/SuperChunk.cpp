@@ -69,8 +69,8 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 // LLUM ARTIFICIAL
 
 void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum) {
-	// Mirem si és transparent (de moment 0, aire) i si hem de pujar la llum
-	if (obtenirCub(pos.x, pos.y, pos.z) == AIRE && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
+	// Mirem si és transparent i si hem de pujar la llum
+	if (blocs.getBloc(obtenirCub(pos.x, pos.y, pos.z))->transparent && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
 		uint8_t resLlum = llum - 1;
 		canviarLlumArtificialCub(pos.x, pos.y, pos.z, resLlum);
 		cuaLlum.emplace(pos);

@@ -149,38 +149,38 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	Bloc* b = blocs->getBloc(tipus);
-	uint8_t llum;
+	uint8_t llum = chunk[x][y][z].llum;
 
 	// Si es vegetació, la renderitzem amb 4 plans que sempre miren a la mateixa orientació
 	if (b->vegetacio) {
 		// Pla 1
-		afegirVertex(vertices, x, y, z, tipus, 0, 1, 12);
-		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, 12);
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, 12);
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, 12);
-		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, 12);
-		afegirVertex(vertices, x+1, y + 1, z + 1, tipus, 1, 0, 12);
+		afegirVertex(vertices, x, y, z, tipus, 0, 1, llum);
+		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x+1, y + 1, z + 1, tipus, 1, 0, llum);
 
-		afegirVertex(vertices, x+1, y, z+1, tipus, 0, 1, 12); // 1
-		afegirVertex(vertices, x, y, z, tipus, 1, 1, 12); // 2
-		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, 12);
-		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, 12);
-		afegirVertex(vertices, x, y, z, tipus, 1, 1, 12); // 5
-		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, 12);
+		afegirVertex(vertices, x+1, y, z+1, tipus, 0, 1, llum); // 1
+		afegirVertex(vertices, x, y, z, tipus, 1, 1, llum); // 2
+		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, llum);
+		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, llum);
+		afegirVertex(vertices, x, y, z, tipus, 1, 1, llum); // 5
+		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, llum);
 		// Pla 2
-		afegirVertex(vertices, x+1, y, z, tipus, 0, 1, 12);
-		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, 12);
-		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, 12);
-		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, 12);
-		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, 12);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, 12);
+		afegirVertex(vertices, x+1, y, z, tipus, 0, 1, llum);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, llum);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, llum);
 
-		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1, 12);
-		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, 12);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, 12);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, 12);
-		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, 12);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, 12);
+		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1, llum);
+		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, llum);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, llum);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, llum);
+		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, llum);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
 		return;
 	}
 	/*if (tipus == GESPA) tipus = GESPA_COSTAT;
@@ -501,6 +501,7 @@ vector<pair<int,glm::vec3>> Chunk2::emplenarChunk()
 				else if (j < height - 3) tipus = PEDRA;
 				else if (j < 2) tipus = BEDROCK;
 				canviarCub(i, j, k, tipus);
+
 			}
 		}
 	}
