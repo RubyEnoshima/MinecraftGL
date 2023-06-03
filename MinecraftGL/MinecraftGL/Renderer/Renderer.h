@@ -1,16 +1,10 @@
 #pragma once
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "Shaders/ShaderProgram.h"
 #include "Framebuffer.h"
 #include "Textura.h"
 
-#define MAX_SHADERS 3
+#define MAX_SHADERS 2
 
 class Renderer
 {
@@ -46,7 +40,7 @@ public:
 	float aspectRatio() const;
 private:
 
-	unsigned int VAO, shaderActual;
+	unsigned int shaderActual;
 
 	//ShaderProgram shaderBasic;
 	//ShaderProgram shaderPla;

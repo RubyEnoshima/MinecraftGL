@@ -2,7 +2,7 @@
 
 Renderer::~Renderer()
 {
-	glDeleteBuffers(1,&VAO);
+	
 }
 
 int Renderer::crearFinestra()
@@ -45,8 +45,7 @@ int Renderer::crearFinestra()
 
 	centrarFinestra();
 
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	
 
 	return 1;
 }
@@ -70,7 +69,6 @@ int Renderer::carregaShaders()
 {
 	shaders[0] = ShaderProgram("VertexShader.vert", "FragmentShader.frag");
 	shaders[1] = ShaderProgram("VertexPla.vert", "FragmentPla.frag");
-	shaders[2] = ShaderProgram("VertexLlum.vert", "FragmentLlum.frag");
 
 	int totbe = 1, i=0;
 	while (totbe && i<MAX_SHADERS) {
@@ -92,6 +90,7 @@ int Renderer::carregaShaders()
 
 	glUniform1i(obtenirUniform("textura"), 0);
 	glUniform1i(obtenirUniform("lightMap"), 1);
+	//textura.use();
 	//cout << lightMap.textura << " " << textura.textura;
 
 	
@@ -100,19 +99,19 @@ int Renderer::carregaShaders()
 
 void Renderer::usarShader(int i)
 {
-	shaderActual = shaders[i].getProgram();
+	shaderActual = i;
 	//cout << "Usant " << shaderActual << endl;
 	shaders[i].usar();
 }
 
 unsigned int Renderer::obtenirUniform(const char* uniform) const
 {
-	return glGetUniformLocation(shaderActual,uniform);
+	return shaders[shaderActual].obtenirUniform(uniform);
 }
 
 void Renderer::colocarMat4(const string uniform, const glm::mat4 matriu)
 {
-	glUniformMatrix4fv(glGetUniformLocation(shaderActual, uniform.c_str()), 1, GL_FALSE, &matriu[0][0]);
+	shaders[shaderActual].colocarMat4(uniform, matriu);
 }
 
 void Renderer::activaBounding(bool bounding)

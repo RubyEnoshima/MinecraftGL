@@ -51,6 +51,9 @@
     <ClCompile Include="Blocs\Blocs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\SpriteRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Joc.h">
@@ -86,12 +89,15 @@
     <ClInclude Include="json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\SpriteRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\FragmentLlum.frag" />
+    <None Include="Shaders\FragmentSprite.frag" />
     <None Include="Shaders\FragmentShader.frag" />
     <None Include="Shaders\VertexShader.vert" />
-    <None Include="Shaders\VertexLlum.vert" />
+    <None Include="Shaders\VertexSprite.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\VertexPla.vert" />

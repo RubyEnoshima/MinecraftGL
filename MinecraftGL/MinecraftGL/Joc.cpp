@@ -155,7 +155,6 @@ glm::vec3 Joc::ObtenirCostat() {
 
 	bool renderitzat = mon->renderCub(CubActual.x, CubActual.y, CubActual.z);
 	if (!renderitzat) {
-		renderer.usarShader(0);
 		renderer.DibuixarFront();
 		return glm::vec3(-1,-1,-1);
 	}
@@ -167,7 +166,6 @@ glm::vec3 Joc::ObtenirCostat() {
 	glReadPixels(ww / 2, wh / 2, 1, 1, GL_RGB, GL_FLOAT, &color);
 	
 	// Tornem a posar el buffer i el shader per defecte i aixi dibuixem l'escena tal qual
-	renderer.usarShader(0);
 	renderer.DibuixarFront();
 	
 
@@ -235,6 +233,15 @@ void Joc::loop() {
 	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
 	glm::vec3 pos = glm::vec3(0, Y, 0.0f);
 
+	/*Textura sprite("widgets.png");
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, sprite.textura);
+	ShaderProgram shader = ShaderProgram("VertexSprite.vert", "FragmentSprite.frag");
+	glm::mat4 proj = glm::perspective(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 10000.0f);
+	shader.colocarMat4("projection",proj);
+	SpriteRenderer spriteRenderer = SpriteRenderer(shader);*/
+
+
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
@@ -267,6 +274,7 @@ void Joc::loop() {
 
 		view = camera.lookAt();
 		renderer.colocarMat4("view", view);
+		//spriteRenderer.DrawSprite(sprite, glm::vec2(800, 600));
 
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra

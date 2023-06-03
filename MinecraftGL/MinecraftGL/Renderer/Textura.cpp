@@ -21,7 +21,7 @@ Textura::Textura(string _nom)
 
 	}
 	else {
-		cout << "No s'ha pogut carregar la textura" << endl;
+		cout << "No s'ha pogut carregar la textura " << _nom << endl;
 	}
 		// pagina 60
 	stbi_image_free(data);

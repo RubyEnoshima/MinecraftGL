@@ -6,8 +6,8 @@ class SuperChunk;
 #include <queue>
 #include <list>
 
-#define XC 8
-#define YC 8
+#define XC 12
+#define YC 12
 
 struct Ray {
 	glm::vec3 origen;
@@ -110,6 +110,8 @@ private:
 
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;
+
+	unsigned int VAO;
 
 	// GENERACIÓ DE MON
 

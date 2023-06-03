@@ -12,7 +12,7 @@ SuperChunk::~SuperChunk() {
 	for (int x = 0; x < XC; x++)
 		for (int y = 0; y < YC; y++)
 				delete Chunks[x][y];
-
+	glDeleteBuffers(1, &VAO);
 }
 
 SuperChunk::SuperChunk(Renderer* _renderer)
@@ -20,6 +20,8 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	srand(semilla);
 
 	renderer = _renderer;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
 	for (int i = 0; i < XC; i++)
 	{
@@ -63,6 +65,14 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	for (int i = 0; i < arbrets.size(); i++) {
 		glm::vec3 pos = arbrets[i];
 		arbre(pos.x,pos.y,pos.z);
+	}
+
+	for (int i = 0; i < X * XC; i++) {
+		for (int k = 0; k < Z * YC; k++) {
+			int j = Y - 1;
+			while (blocs.getBloc(obtenirCub(i, j, k))->transparent) { canviarLlumNaturalCub(i, j, k, 14); j--; }
+			
+		}
 	}
 }
 
@@ -337,6 +347,8 @@ void SuperChunk::update()
 void SuperChunk::render()
 {	
 	if (renderer) {
+		renderer->usarShader(0);
+		glBindVertexArray(VAO);
 
 		for (int i = 0; i < XC; i++)
 		{
@@ -352,6 +364,7 @@ void SuperChunk::render()
 
 			}
 		}
+		//glBindVertexArray(0);
 	}
 	
 }

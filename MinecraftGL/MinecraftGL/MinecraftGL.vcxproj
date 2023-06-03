@@ -152,6 +152,7 @@
     <ClCompile Include="Mon\SuperChunk.cpp" />
     <ClCompile Include="Renderer\Framebuffer.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Renderer\SpriteRenderer.cpp" />
     <ClCompile Include="Renderer\Textura.cpp" />
     <ClCompile Include="Shaders\ShaderProgram.cpp" />
     <ClCompile Include="stb_image.cpp" />
@@ -165,14 +166,15 @@
     <ClInclude Include="Mon\SuperChunk.h" />
     <ClInclude Include="Renderer\Framebuffer.h" />
     <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Renderer\SpriteRenderer.h" />
     <ClInclude Include="Renderer\Textura.h" />
     <ClInclude Include="Shaders\ShaderProgram.h" />
     <ClInclude Include="Tipus.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\FragmentLlum.frag" />
+    <None Include="Shaders\FragmentSprite.frag" />
     <None Include="Shaders\FragmentShader.frag" />
-    <None Include="Shaders\VertexLlum.vert" />
+    <None Include="Shaders\VertexSprite.vert" />
     <None Include="Shaders\VertexShader.vert" />
   </ItemGroup>
   <ItemGroup>

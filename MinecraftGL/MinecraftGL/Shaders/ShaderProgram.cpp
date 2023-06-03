@@ -106,3 +106,18 @@ int ShaderProgram::getProgram() const
 	return shaderProgram;
 }
 
+unsigned int ShaderProgram::obtenirUniform(const char* uniform) const
+{
+	return glGetUniformLocation(shaderProgram, uniform);
+}
+
+void ShaderProgram::colocarMat4(const string uniform, const glm::mat4 matriu)
+{
+	glUniformMatrix4fv(obtenirUniform(uniform.c_str()), 1, GL_FALSE, &matriu[0][0]);
+}
+
+void ShaderProgram::colocarVec3(const string uniform, const glm::vec3 vector)
+{
+	glUniform3fv(obtenirUniform(uniform.c_str()),1,&vector[0]);
+}
+

@@ -3,6 +3,7 @@
 #include "Mon/SuperChunk.h"
 #include "Renderer/Renderer.h"
 #include "Jugador/Camera.h"
+#include "Renderer/SpriteRenderer.h"
 #include "glm/gtx/io.hpp"
 
 #include <string>
