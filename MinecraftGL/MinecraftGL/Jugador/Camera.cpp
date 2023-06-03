@@ -2,7 +2,8 @@
 
 Camera::Camera()
 {
-	pos = glm::vec3(X*XC/2, altura, Z*YC/2);
+	pos = glm::vec3(X*XC/2, Y/2 + altura, Z*YC/2);
+	altura = Y / 2 + altura;
 	objectiu = glm::vec3(-1.0, 0.0f, -1.0f);
 	direccio = glm::normalize(pos - objectiu);
 	right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), direccio));
@@ -76,6 +77,11 @@ void Camera::girar(GLFWwindow* window) {
 glm::vec3 Camera::obtPos() const
 {
 	return pos;
+}
+
+glm::vec3 Camera::obtDireccio() const
+{
+	return front;
 }
 
 

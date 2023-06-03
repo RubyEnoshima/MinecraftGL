@@ -23,7 +23,11 @@ public:
 	glm::mat4 getProjection() const;
 	glm::mat4 getModel() const;
 	glm::mat4 getView() const;
+
+	// Retorna la posició de la càmera
 	glm::vec3 obtPos() const;
+	// Retorna cap a on mira la càmera
+	glm::vec3 obtDireccio() const;
 
 	glm::mat4 lookAt();
 

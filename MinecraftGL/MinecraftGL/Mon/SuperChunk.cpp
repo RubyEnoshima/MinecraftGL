@@ -345,7 +345,7 @@ void SuperChunk::render()
 				if (Chunks[i][j]) {
 					// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
 					//glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y/2, j * Z - Z * YC / 2));
-					glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X, -Y/2, j * Z));
+					glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X, 0, j * Z));
 					renderer->colocarMat4("model", model);
 					Chunks[i][j]->render();
 				}
@@ -360,7 +360,7 @@ bool SuperChunk::renderCub(int x, int y, int z)
 {
 	if (x / X < XC && z / Z < YC) {
 		// Hem d'aplicar la mateixa transformació que abans
-		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, -Y / 2, z/Z * Z));
+		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, 0, z/Z * Z));
 		renderer->colocarMat4("model", model);
 
 		return Chunks[(x / X)][(z / Z)]->renderCub(x % X, y, z % Z);

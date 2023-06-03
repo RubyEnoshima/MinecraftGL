@@ -109,7 +109,7 @@ void Joc::ObtenirCubMira() {
 	glm::vec4 viewport = glm::vec4(0, 0, ww, wh);
 	glm::vec3 wincoord = glm::vec3(ww / 2, wh / 2, depth);
 	glm::vec3 objcoord = glm::unProject(wincoord, camera.getView(), camera.getProjection(), viewport);
-	CubActual = glm::vec3(floorf(objcoord.x), floorf(objcoord.y) + Y / 2, floorf(objcoord.z));
+	CubActual = glm::vec3(floorf(objcoord.x), floorf(objcoord.y), floorf(objcoord.z));
 	
 	//cout << CubActual << endl;
 }
@@ -118,6 +118,7 @@ void Joc::DestruirCub() {
 	// Si és un cub vàlid
 	if (CubActual.x != -1 && CubActual.y != -1 && CubActual.z != -1)
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
+	cout << camera.obtPos() << " " << CubActual << endl;
 }
 
 glm::vec3 Joc::ObtenirCostat() {
