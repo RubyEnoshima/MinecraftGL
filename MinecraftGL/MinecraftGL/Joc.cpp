@@ -237,10 +237,11 @@ void Joc::loop() {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, sprite.textura);
 	ShaderProgram shader = ShaderProgram("VertexSprite.vert", "FragmentSprite.frag");
-	glm::mat4 proj = glm::perspective(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 10000.0f);
+	glm::mat4 proj = glm::ortho(0.0f, (float)renderer.obtenirTamany().first, (float)renderer.obtenirTamany().second, 0.0f, -1.0f, 1.0f);
 	shader.colocarMat4("projection",proj);
 	SpriteRenderer spriteRenderer = SpriteRenderer(shader);*/
-
+	
+	
 
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
@@ -258,7 +259,6 @@ void Joc::loop() {
 
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 		mon->render();
-		//mon->renderCub(7, 62, 4);
 		renderer.canviarPosLlum(pos);
 
 		glfwPollEvents(); // Processar events
@@ -274,7 +274,7 @@ void Joc::loop() {
 
 		view = camera.lookAt();
 		renderer.colocarMat4("view", view);
-		//spriteRenderer.DrawSprite(sprite, glm::vec2(800, 600));
+		//spriteRenderer.DrawSprite(sprite, glm::vec2(64, 64));
 
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra

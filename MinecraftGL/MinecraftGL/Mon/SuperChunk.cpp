@@ -268,7 +268,7 @@ void SuperChunk::BoundingBox(int x, int y, int z)
 	renderer->activaBounding(1);
 	x -= X*XC-X;
 	z -= Z*YC-Z;
-	
+	glBindVertexArray(VAO);
 	GLfloat vertices[] = {
 	  0.0 + x, 0.0 + y, 0.0 + z, 1.0,
 	  1.0 + x, 0.0 + y, 0.0 + z, 1.0,
@@ -320,6 +320,7 @@ void SuperChunk::BoundingBox(int x, int y, int z)
 	glDeleteBuffers(1, &vbo_vertices);
 	glDeleteBuffers(1, &ibo_elements);
 	renderer->activaBounding(0);
+	glBindVertexArray(0);
 
 }
 
@@ -364,13 +365,14 @@ void SuperChunk::render()
 
 			}
 		}
-		//glBindVertexArray(0);
+		glBindVertexArray(0);
 	}
 	
 }
 
 bool SuperChunk::renderCub(int x, int y, int z)
 {
+	glBindVertexArray(VAO);
 	if (x / X < XC && z / Z < YC) {
 		// Hem d'aplicar la mateixa transformació que abans
 		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, 0, z/Z * Z));
