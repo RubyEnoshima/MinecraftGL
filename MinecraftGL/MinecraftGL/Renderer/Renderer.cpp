@@ -149,7 +149,7 @@ float Renderer::aspectRatio() const
 {
 	int w, h;
 	glfwGetFramebufferSize(window, &w, &h);
-	cout << "Width: " << w << ", height: " << h << endl;
+	//cout << "Width: " << w << ", height: " << h << endl;
 	return (float)w/(float)h;
 }
 

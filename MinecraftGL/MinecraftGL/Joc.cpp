@@ -96,7 +96,21 @@ int Joc::crearFinestra() {
 	return success;
 }
 
-void Joc::ObtenirCubMira() {
+void Joc::ObtenirCubMira() {	
+	// Fent us de raycast
+	//Ray r;
+	//r.origen = camera.obtPos() + camera.obtDireccio();
+	///*r.origen = glm::vec3((int)(r.origen.x), (int)(r.origen.y), (int)(r.origen.z));
+	//cout << r.origen << endl;*/
+	//r.direccion = camera.obtDireccio();
+	//int i = 0; int passes = 10;
+	//while (mon->obtenirCub(r.origen.x, r.origen.y, r.origen.z) == AIRE && i < passes) { r.origen += camera.obtDireccio(); i++; }
+
+	//CubActual = glm::vec3((int)r.origen.x, (int)r.origen.y, (int)r.origen.z);
+	//cout << CubActual << camera.obtPos() << endl;
+	//return;
+
+	// Desprojectant coordenades de pantalla
 	int ww = renderer.obtenirTamany().first;
 	int wh = renderer.obtenirTamany().second;
 	float depth;
@@ -118,7 +132,6 @@ void Joc::DestruirCub() {
 	// Si és un cub vàlid
 	if (CubActual.x != -1 && CubActual.y != -1 && CubActual.z != -1)
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
-	cout << camera.obtPos() << " " << CubActual << endl;
 }
 
 glm::vec3 Joc::ObtenirCostat() {
@@ -174,7 +187,8 @@ glm::vec3 Joc::ObtenirCostat() {
 
 void Joc::PosarCub() {
 	// Si és un cub vàlid
-	if (CubActual.x == -1 || CubActual.y == -1 || CubActual.z == -1) return;
+	if (CubActual.x == -1 || CubActual.y == -1 || CubActual.z == -1 ) return;
+	
 
 	// Obtenim el costat al que estem mirant
 	glm::vec3 Costat = ObtenirCostat();

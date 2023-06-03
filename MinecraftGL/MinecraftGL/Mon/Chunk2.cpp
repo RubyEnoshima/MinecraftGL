@@ -19,11 +19,14 @@ void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 {
 	if ((x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) || (!reemplacar && obtenirCub(x, y, z) != AIRE)) return;
 
-	
+	// Si volem posar vegetacio, ens asegurem que nomes es pot posar on volem
 	if (blocs->getBloc(tipus)->vegetacio) {
 		uint8_t tipusBlocDebaix = obtenirCub(x, y - 1, z);
 		if(tipusBlocDebaix != GESPA && tipusBlocDebaix != TERRA) return;
 	}
+	// Si volem treure el bloc i a sobre tenim vegetacio, també treiem la vegetacio
+	if (tipus == AIRE && blocs->getBloc(obtenirCub(x, y + 1, z))->vegetacio)
+		canviarCub(x, y + 1, z, AIRE);
 
 	chunk[x][y][z].tipus = tipus;
 
@@ -352,6 +355,34 @@ void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t 
 
 }
 
+bool Chunk2::renderCub(int x, int y, int z)
+{
+	vector<GLbyte> _vertices;
+	unsigned int VBO_FLAT;
+
+	afegirCubFlat(_vertices, x, y, z, 0);
+	if (_vertices.empty()) return false;
+	glGenBuffers(1, &VBO_FLAT);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_FLAT);
+	glBufferData(GL_ARRAY_BUFFER, _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_FLAT);
+
+	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glEnableVertexAttribArray(1);
+
+	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+
+	glDeleteBuffers(1, &VBO_FLAT);
+	return true;
+}
+
 void Chunk2::update()
 {
 	vector<GLbyte> _vertices;
@@ -433,34 +464,6 @@ void Chunk2::render()
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
-}
-
-bool Chunk2::renderCub(int x, int y, int z)
-{
-	vector<GLbyte> _vertices;
-	//unsigned int VBO_FLAT;
-
-	afegirCubFlat(_vertices, x, y, z, 0);
-	if (_vertices.empty()) return false;
-	//glGenBuffers(1, &VBO_FLAT);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
-
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO_FLAT);
-
-	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
-	glEnableVertexAttribArray(1);
-
-	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-
-	//glDeleteBuffers(1, &VBO_FLAT);
-	return true;
 }
 
 int Chunk2::nCubs() const

@@ -9,6 +9,11 @@ class SuperChunk;
 #define XC 8
 #define YC 8
 
+struct Ray {
+	glm::vec3 origen;
+	glm::vec3 direccion;
+};
+
 class SuperChunk
 {
 public:
@@ -55,7 +60,48 @@ public:
 	// Genera un arbre en una posicio concreta
 	void arbre(int x, int y, int z);
 
+	glm::vec3 raycast(const Ray& ray,const glm::vec3& pos) const{
+		float minDistance = std::numeric_limits<float>::max();
+		glm::vec3 closestVoxel;
+		int rango = 10;
+		for (int i = -rango; i < rango; i++) {
+			for (int j = -rango; j < rango; j++) {
+				for (int k = -rango; k < rango; k++) {
+					float t = intersectRayVoxel(ray, glm::vec3(pos.x+i, pos.y + j, pos.z + k));
+					if (t > 0 && t < minDistance) {
+						minDistance = t;
+						closestVoxel = glm::vec3(pos.x + i, pos.y + j, pos.z + k);
+					}
+				}
+			}
+		}
+			
+		
+
+		return closestVoxel;
+	}
+
+	float intersectRayVoxel(const Ray& ray, const glm::vec3& voxel) const{
+		if (!obtenirCub(voxel.x, voxel.y, voxel.z)) return -1;
+		glm::vec3 tMin = (voxel - ray.origen) / ray.direccion;
+		glm::vec3 tMax = (voxel + glm::vec3(1.0f) - ray.origen) / ray.direccion;
+
+		glm::vec3 tEnter = glm::min(tMin, tMax);
+		glm::vec3 tExit = glm::max(tMin, tMax);
+
+		float tNear = glm::max(glm::max(tEnter.x, tEnter.y), tEnter.z);
+		float tFar = glm::min(glm::min(tExit.x, tExit.y), tExit.z);
+
+		if (tNear <= tFar && tFar >= 0) {
+			return tNear;
+		}
+		else {
+			return -1.0f;
+		}
+	}
+
 private:
+	
 	void posarLlum(glm::vec3 pos, uint8_t llum);
 	void eliminarLlum(glm::vec3 pos, uint8_t llum);
 
