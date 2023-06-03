@@ -19,6 +19,12 @@ void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 {
 	if ((x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) || (!reemplacar && obtenirCub(x, y, z) != AIRE)) return;
 
+	
+	if (blocs->getBloc(tipus)->vegetacio) {
+		uint8_t tipusBlocDebaix = obtenirCub(x, y - 1, z);
+		if(tipusBlocDebaix != GESPA && tipusBlocDebaix != TERRA) return;
+	}
+
 	chunk[x][y][z].tipus = tipus;
 
 	canviat = true;
@@ -138,6 +144,19 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 }
 
+bool Chunk2::esRenderitzable(const glm::vec3& pos, uint8_t costat, Chunk2* vei) const // 0: dre, 1: esq, 2: up, 3: down, 4: frontal, 5: darr
+{
+	//int posCanviar = costat / 2;
+	//if (pos[posCanviar] == limits[costat] && vei) {
+	//	int i = costat + 1;
+	//	if (costat % 2 != 0) i = costat - 1;
+	//	int voraChunk = limits[i];
+	//	(!vei->obtenirCub(voraChunk, y, z) || blocs->getBloc(vei->obtenirCub(voraChunk, y, z))->transparent)
+	//}
+	//
+	//(x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x - 1][y][z].tipus)->transparent))
+	return false;
+}
 
 void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	Bloc* b = blocs->getBloc(tipus);
@@ -179,7 +198,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	else if (tipus == NEU) tipus = NEU_COSTAT;*/
 	tipus = b->costats;
 	// Cara esq
-	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z)) or (x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x-1][y][z].tipus)->transparent))) {
+	if ((x == 0 and veiEsq and (!veiEsq->obtenirCub(X - 1, y, z) || blocs->getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent)) or (x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x - 1][y][z].tipus)->transparent))) {
 		if (x == 0) llum = veiEsq->chunk[X - 1][y][z].llum;
 		else llum = chunk[x - 1][y][z].llum;
 
@@ -191,9 +210,8 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, llum);
 
 	}
-
 	// Cara dre
-	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or blocs->getBloc(chunk[x+1][y][z].tipus)->transparent))) {
+	if ((x == X - 1 and veiDre and (!veiDre->obtenirCub(0, y, z) || blocs->getBloc(veiDre->obtenirCub(0, y, z))->transparent)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or blocs->getBloc(chunk[x + 1][y][z].tipus)->transparent))) {
 		llum = chunk[x + 1][y][z].llum;
 		if (x == X - 1) llum = veiDre->chunk[0][y][z].llum;
 
@@ -431,12 +449,13 @@ void Chunk2::render()
 	glDisableVertexAttribArray(3);
 }
 
-void Chunk2::renderCub(int x, int y, int z)
+bool Chunk2::renderCub(int x, int y, int z)
 {
 	vector<GLbyte> _vertices;
 	//unsigned int VBO_FLAT;
 
 	afegirCubFlat(_vertices, x, y, z, 0);
+	if (_vertices.empty()) return false;
 	//glGenBuffers(1, &VBO_FLAT);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -449,12 +468,13 @@ void Chunk2::renderCub(int x, int y, int z)
 	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
 	glEnableVertexAttribArray(1);
 
-	glDrawArrays(GL_TRIANGLES, 0, elements);
+	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 
 	//glDeleteBuffers(1, &VBO_FLAT);
+	return true;
 }
 
 int Chunk2::nCubs() const
@@ -480,11 +500,11 @@ vector<pair<int,glm::vec3>> Chunk2::emplenarChunk()
 					float probArbre = (float)(rand()) / (float)(RAND_MAX);
 					float probFlor = (float)(rand()) / (float)(RAND_MAX);
 					
-					if (probArbre >= probabilitatArbre) {
+					if (probArbre < probabilitatArbre) {
 						// Marquem l'arbre
 						res.push_back({0, glm::vec3(i + X * posX,j + 1,k + Z * posY) });
 					}
-					else if (probFlor >= probabilitatFlor) {
+					else if (probFlor < probabilitatFlor) {
 						// Marquem la flor
 						res.push_back({ 1, glm::vec3(i + X * posX,j + 1,k + Z * posY) });
 					}

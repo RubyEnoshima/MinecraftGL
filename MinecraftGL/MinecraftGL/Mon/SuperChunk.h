@@ -6,8 +6,8 @@ class SuperChunk;
 #include <queue>
 #include <list>
 
-#define XC 8
-#define YC 8
+#define XC 2
+#define YC 2
 
 class SuperChunk
 {
@@ -42,7 +42,7 @@ public:
 	void update();
 	void render();
 	// Renderitza un cub en una posició de manera que cada cara es pugui identificar pel color
-	void renderCub(int x, int y, int z);
+	bool renderCub(int x, int y, int z);
 
 	// MÉTODES PER GENERAR CUBS
 	// Emplena un rectangle centrat en una posició, extenent-se en amplitut i llargada, amb un tipus concret i una probabilitat que les cantonades puguin desapareixer.
@@ -64,7 +64,19 @@ private:
 
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;
-	
+
+	// GENERACIÓ DE MON
+
+	//int octaves = 8;
+	//float frequencia = 8.0;
+	//float amplitud = 1.0;
+	int semilla = 874;
+
+	vector<int> flors = { ROSA,DENT_DE_LLEO,TULIPA_TARONJA,ESCLATASANG,XAMPINYO };
+
+	Blocs blocs;
+
+
 	// Propagació de llums "artificials"
 	queue<glm::vec3> llums;
 	queue<glm::vec3> cuaLlum;
@@ -75,13 +87,6 @@ private:
 	queue<glm::vec3> cuaLlumNatural;
 
 	uint8_t llumNatural = 15;
-
-	//int octaves = 8;
-	//float frequencia = 8.0;
-	//float amplitud = 1.0;
-	int semilla = 874;
-
-	Blocs blocs;
 };
 
 #endif

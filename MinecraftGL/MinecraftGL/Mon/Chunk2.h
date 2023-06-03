@@ -16,6 +16,7 @@
 
 #include <random>
 #include <ctime>
+#include <chrono>
 #include "Blocs/Blocs.h"
 class Chunk2;
 #include "SuperChunk.h"
@@ -53,7 +54,7 @@ public:
 
 	void update();
 	void render();
-	void renderCub(int x, int y, int z);
+	bool renderCub(int x, int y, int z);
 
 	int nCubs() const;
 
@@ -76,6 +77,9 @@ private:
 	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 	void afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
+	vector<int> limits = { X - 1, 0, Y - 1, 0, Z - 1, 0 };
+	bool esRenderitzable(const glm::vec3& pos, uint8_t costat,Chunk2* vei) const;
+
 	unsigned int VBO;
 
 	unsigned int posX, posY;
@@ -90,8 +94,9 @@ private:
 
 	Blocs* blocs = NULL;
 
-	float probabilitatArbre = 0.99;
-	float probabilitatFlor = 0;
+	// Probabilitats de generació: 1 == 100%
+	float probabilitatArbre = 0.01;
+	float probabilitatFlor = 1;
 };
 
 #endif

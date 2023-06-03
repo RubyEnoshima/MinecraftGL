@@ -120,7 +120,7 @@ void Joc::DestruirCub() {
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
 }
 
-glm::vec3 Joc::ObtenirCostat() {
+glm::vec3* Joc::ObtenirCostat() {
 
 	// Renderitzem només el cub que estem mirant d'una manera especial
 	renderer.DibuixarDarrera();
@@ -138,7 +138,12 @@ glm::vec3 Joc::ObtenirCostat() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	mon->renderCub(CubActual.x, CubActual.y, CubActual.z);
+	bool renderitzat = mon->renderCub(CubActual.x, CubActual.y, CubActual.z);
+	if (!renderitzat) {
+		renderer.usarShader(0);
+		renderer.DibuixarFront();
+		return NULL;
+	}
 
 	int ww = renderer.obtenirTamany().first;
 	int wh = renderer.obtenirTamany().second;
@@ -151,17 +156,19 @@ glm::vec3 Joc::ObtenirCostat() {
 	renderer.usarShader(0);
 	renderer.DibuixarFront();
 	
+	glm::vec3 res;
 	// Mirem quin costat és pel color que hem obtingut abans
 	if (color[0] > 0) {
-		if (color[2] > 0) return glm::vec3(0,0,-1);
-		if (color[1] > 0) return glm::vec3(0,-1,0);
-		return glm::vec3(0, 0, 1);
+		if (color[2] > 0) res=glm::vec3(0,0,-1);
+		else if (color[1] > 0) res=glm::vec3(0,-1,0);
+		else res=glm::vec3(0, 0, 1);
 	}
-	if (color[1] > 0) {
-		if (color[2] > 0) return glm::vec3(-1,0,0);
-		return glm::vec3(0,1,0);
+	else if (color[1] > 0) {
+		if (color[2] > 0) res=glm::vec3(-1,0,0);
+		else res=glm::vec3(0,1,0);
 	}
-	return glm::vec3(1, 0, 0);
+	else res=glm::vec3(1, 0, 0);
+	return &res;
 }
 
 void Joc::PosarCub() {
@@ -169,11 +176,12 @@ void Joc::PosarCub() {
 	if (CubActual.x == -1 || CubActual.y == -1 || CubActual.z == -1) return;
 
 	// Obtenim el costat al que estem mirant
-	glm::vec3 Costat = ObtenirCostat();
-		
+	glm::vec3* Costat = ObtenirCostat();
+	if (Costat == NULL) return;
+
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipusCub); // tipusCub
-		
+	mon->canviarCub(CubActual.x + Costat->x, CubActual.y + Costat->y, CubActual.z + Costat->z, tipusCub, false);
+
 }
 
 void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {

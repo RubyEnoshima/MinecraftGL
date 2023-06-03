@@ -48,7 +48,6 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 				int tipus = estructures[i].first;
 				glm::vec3 pos = estructures[i].second;
 
-				vector<int> flors = {ROSA,DENT_DE_LLEO,TULIPA_TARONJA,ESCLATASANG,XAMPINYO};
 				if (tipus == 0) arbrets.push_back(pos);
 				else if (tipus == 1) {
 					int tipusFlor = rand() % flors.size();
@@ -168,6 +167,7 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 {
 	if (x / X < XC && z / Z < YC && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
+		cout << x % X << " " << z % Z << endl;
 		Chunk2* chunk = Chunks[x / X][z / Z];
 		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
 		chunk->canviarCub(x % X, y, z % Z, tipus, reemplacar);
@@ -355,16 +355,17 @@ void SuperChunk::render()
 	
 }
 
-void SuperChunk::renderCub(int x, int y, int z)
+bool SuperChunk::renderCub(int x, int y, int z)
 {
 	if (x / X < XC && z / Z < YC) {
 		// Hem d'aplicar la mateixa transformació que abans
 		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, -Y / 2, z/Z * Z));
 		renderer->colocarMat4("model", model);
 
-		Chunks[(x / X)][(z / Z)]->renderCub(x % X, y, z % Z);
+		return Chunks[(x / X)][(z / Z)]->renderCub(x % X, y, z % Z);
 
 	}
+	return false;
 }
 
 void SuperChunk::arbre(int x, int y, int z)

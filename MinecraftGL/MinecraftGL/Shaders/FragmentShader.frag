@@ -19,6 +19,9 @@ uniform sampler2D lightMap;
 
 uniform bool bounding;
 
+float tamanyAlfaX = 16.0;
+float tamanyAlfaY = 16.0;
+
 void main()
 {
 	if(bounding){
@@ -27,7 +30,7 @@ void main()
 	}
 
 	// Textura
-	vec2 posTex = vec2(TexCoord.x+(offsetX/16.0),TexCoord.y+(offsetY/16.0));
+	vec2 posTex = vec2(TexCoord.x+(offsetX/tamanyAlfaX),TexCoord.y+(offsetY/tamanyAlfaY));
 	vec4 colorText = texture(textura, posTex);
 
 	// Funciona per cristal, pero es pot clicar un bloc a través...

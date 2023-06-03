@@ -32,13 +32,13 @@ public:
 	void Culling();
 	void VSync();
 
-	uint8_t tipusCub = LLUM;
+	uint8_t tipusCub = TERRA;
 
 	
 private:
 	// Posa en CubActual el vector del cub al que estem mirant
 	void ObtenirCubMira(); 
-	glm::vec3 ObtenirCostat();
+	glm::vec3* ObtenirCostat();
 
 
 	void canviarModeMouse(int mode);
