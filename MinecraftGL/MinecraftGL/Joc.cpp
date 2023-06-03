@@ -120,10 +120,11 @@ void Joc::DestruirCub() {
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
 }
 
-glm::vec3* Joc::ObtenirCostat() {
+glm::vec3 Joc::ObtenirCostat() {
 
 	// Renderitzem només el cub que estem mirant d'una manera especial
 	renderer.DibuixarDarrera();
+	glClearColor(rgb(0), rgb(0), rgb(0), 1.0f);
 
 	GLenum err;
 	while ((err = glGetError()) == GL_INVALID_OPERATION) {
@@ -142,12 +143,11 @@ glm::vec3* Joc::ObtenirCostat() {
 	if (!renderitzat) {
 		renderer.usarShader(0);
 		renderer.DibuixarFront();
-		return NULL;
+		return glm::vec3(-1,-1,-1);
 	}
 
 	int ww = renderer.obtenirTamany().first;
 	int wh = renderer.obtenirTamany().second;
-
 	// Llegim el color del costat que estem mirant
 	glm::vec3 color;
 	glReadPixels(ww / 2, wh / 2, 1, 1, GL_RGB, GL_FLOAT, &color);
@@ -156,19 +156,19 @@ glm::vec3* Joc::ObtenirCostat() {
 	renderer.usarShader(0);
 	renderer.DibuixarFront();
 	
-	glm::vec3 res;
+
 	// Mirem quin costat és pel color que hem obtingut abans
 	if (color[0] > 0) {
-		if (color[2] > 0) res=glm::vec3(0,0,-1);
-		else if (color[1] > 0) res=glm::vec3(0,-1,0);
-		else res=glm::vec3(0, 0, 1);
+		if (color[2] > 0) return glm::vec3(0,0,-1);
+		if (color[1] > 0) return glm::vec3(0,-1,0);
+		return glm::vec3(0, 0, 1);
 	}
-	else if (color[1] > 0) {
-		if (color[2] > 0) res=glm::vec3(-1,0,0);
-		else res=glm::vec3(0,1,0);
+	if (color[1] > 0) {
+		if (color[2] > 0) return glm::vec3(-1,0,0);
+		return glm::vec3(0,1,0);
 	}
-	else res=glm::vec3(1, 0, 0);
-	return &res;
+	if (color[2] > 0) return glm::vec3(1, 0, 0);
+	return glm::vec3(-1, -1, -1);
 }
 
 void Joc::PosarCub() {
@@ -176,11 +176,11 @@ void Joc::PosarCub() {
 	if (CubActual.x == -1 || CubActual.y == -1 || CubActual.z == -1) return;
 
 	// Obtenim el costat al que estem mirant
-	glm::vec3* Costat = ObtenirCostat();
-	if (Costat == NULL) return;
-
+	glm::vec3 Costat = ObtenirCostat();
+	if (Costat.x==-1 && Costat.y==-1) return;
+	
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat->x, CubActual.y + Costat->y, CubActual.z + Costat->z, tipusCub, false);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipusCub, false);
 
 }
 
@@ -230,7 +230,7 @@ void Joc::loop() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		// Canvia el color del background
+		// Canvia el color del fons
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

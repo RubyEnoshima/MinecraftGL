@@ -167,7 +167,7 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 {
 	if (x / X < XC && z / Z < YC && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
-		cout << x % X << " " << z % Z << endl;
+		//cout << x % X << " " << z % Z << endl;
 		Chunk2* chunk = Chunks[x / X][z / Z];
 		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
 		chunk->canviarCub(x % X, y, z % Z, tipus, reemplacar);
@@ -209,6 +209,7 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 		//chunk->unCanviat = true;
 		//chunk->cubCanviat = glm::vec3(x % X, y, z % Z);
 	}
+	
 	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << x % X << ", " << z % Z << endl;
 }
 

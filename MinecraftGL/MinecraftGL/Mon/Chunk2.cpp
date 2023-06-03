@@ -144,20 +144,6 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 
 }
 
-bool Chunk2::esRenderitzable(const glm::vec3& pos, uint8_t costat, Chunk2* vei) const // 0: dre, 1: esq, 2: up, 3: down, 4: frontal, 5: darr
-{
-	//int posCanviar = costat / 2;
-	//if (pos[posCanviar] == limits[costat] && vei) {
-	//	int i = costat + 1;
-	//	if (costat % 2 != 0) i = costat - 1;
-	//	int voraChunk = limits[i];
-	//	(!vei->obtenirCub(voraChunk, y, z) || blocs->getBloc(vei->obtenirCub(voraChunk, y, z))->transparent)
-	//}
-	//
-	//(x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x - 1][y][z].tipus)->transparent))
-	return false;
-}
-
 void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	Bloc* b = blocs->getBloc(tipus);
 	uint8_t llum;
@@ -212,8 +198,8 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 	// Cara dre
 	if ((x == X - 1 and veiDre and (!veiDre->obtenirCub(0, y, z) || blocs->getBloc(veiDre->obtenirCub(0, y, z))->transparent)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or blocs->getBloc(chunk[x + 1][y][z].tipus)->transparent))) {
-		llum = chunk[x + 1][y][z].llum;
 		if (x == X - 1) llum = veiDre->chunk[0][y][z].llum;
+		else llum = chunk[x + 1][y][z].llum;
 
 		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, llum);
 		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
@@ -224,9 +210,9 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or blocs->getBloc(chunk[x][y][z+1].tipus)->transparent))) {
-		llum = chunk[x][y][z + 1].llum;
+	if ((z == Z - 1 and veiUp and (!veiUp->obtenirCub(x, y, 0) || blocs->getBloc(veiUp->obtenirCub(x, y, 0))->transparent)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or blocs->getBloc(chunk[x][y][z + 1].tipus)->transparent))) {
 		if (z == Z - 1) llum = veiUp->chunk[x][y][0].llum;
+		else llum = chunk[x][y][z + 1].llum;
 		
 		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1, llum);
 		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1, llum);
@@ -239,9 +225,9 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1)) or (z != 0 and (!chunk[x][y][z - 1].tipus or blocs->getBloc(chunk[x][y][z-1].tipus)->transparent))) {
-		llum = chunk[x][y][z - 1].llum;
+	if ((z == 0 and veiBaix and (!veiBaix->obtenirCub(x, y, Z - 1) || blocs->getBloc(veiBaix->obtenirCub(x, y, Z - 1))->transparent)) or (z != 0 and (!chunk[x][y][z - 1].tipus or blocs->getBloc(chunk[x][y][z - 1].tipus)->transparent))) {
 		if (z == 0) llum = veiBaix->chunk[x][y][Z - 1].llum;
+		else llum = chunk[x][y][z - 1].llum;
 		
 		afegirVertex(vertices, x, y, z, tipus, 1, 1, llum);
 		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, llum);
@@ -256,8 +242,8 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	tipus = b->adalt;
 	// Cara adalt
 	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or blocs->getBloc(chunk[x][y + 1][z].tipus)->transparent) {
-		llum = chunk[x][y + 1][z].llum;
 		if (y == Y - 1) llum = 0;
+		else llum = chunk[x][y + 1][z].llum;
 
 		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum);
 		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, llum);
@@ -271,8 +257,8 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	tipus = b->sota;
 	// Cara sota
 	if (y == 0 or !chunk[x][y - 1][z].tipus or blocs->getBloc(chunk[x][y - 1][z].tipus)->transparent) {
-		llum = chunk[x][y - 1][z].llum;
 		if (y == Y - 1) llum = 0;
+		else llum = chunk[x][y - 1][z].llum;
 
 		afegirVertex(vertices, x, y, z, tipus, 0, 0, llum);
 		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, llum);

@@ -6,8 +6,8 @@ class SuperChunk;
 #include <queue>
 #include <list>
 
-#define XC 2
-#define YC 2
+#define XC 8
+#define YC 8
 
 class SuperChunk
 {
