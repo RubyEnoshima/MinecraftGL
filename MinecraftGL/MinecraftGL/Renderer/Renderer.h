@@ -38,12 +38,11 @@ public:
 
 	// Monitor
 	float aspectRatio() const;
+
+	void usarTexturaMon();
 private:
-
+	Textura texturaMon;
 	unsigned int shaderActual;
-
-	//ShaderProgram shaderBasic;
-	//ShaderProgram shaderPla;
 
 	ShaderProgram shaders[MAX_SHADERS];
 

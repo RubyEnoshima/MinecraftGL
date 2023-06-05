@@ -349,6 +349,7 @@ void SuperChunk::render()
 {	
 	if (renderer) {
 		renderer->usarShader(0);
+		renderer->usarTexturaMon();
 		glBindVertexArray(VAO);
 
 		for (int i = 0; i < XC; i++)

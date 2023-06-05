@@ -69,6 +69,7 @@ int Renderer::carregaShaders()
 {
 	shaders[0] = ShaderProgram("VertexShader.vert", "FragmentShader.frag");
 	shaders[1] = ShaderProgram("VertexPla.vert", "FragmentPla.frag");
+	//shaders[2] = ShaderProgram("VertexSprite.vert", "FragmentSprite.frag");
 
 	int totbe = 1, i=0;
 	while (totbe && i<MAX_SHADERS) {
@@ -80,17 +81,17 @@ int Renderer::carregaShaders()
 		usarShader();
 	}
 
-	Textura textura("minecraft_transp.png");
-	Textura lightMap("lightMap.png");
+	//Textura lightMap("lightMap.png");
 	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textura.textura);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, lightMap.textura);
-
+	texturaMon = Textura("minecraft_transp.png");
+	texturaMon.use();
 	glUniform1i(obtenirUniform("textura"), 0);
-	glUniform1i(obtenirUniform("lightMap"), 1);
-	//textura.use();
+
+	/*glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, lightMap.textura);*/
+
+	//glUniform1i(obtenirUniform("lightMap"), 1);
 	//cout << lightMap.textura << " " << textura.textura;
 
 	
@@ -100,7 +101,6 @@ int Renderer::carregaShaders()
 void Renderer::usarShader(int i)
 {
 	shaderActual = i;
-	//cout << "Usant " << shaderActual << endl;
 	shaders[i].usar();
 }
 
@@ -150,6 +150,11 @@ float Renderer::aspectRatio() const
 	glfwGetFramebufferSize(window, &w, &h);
 	//cout << "Width: " << w << ", height: " << h << endl;
 	return (float)w/(float)h;
+}
+
+void Renderer::usarTexturaMon()
+{
+	texturaMon.use();
 }
 
 pair<int, int> Renderer::obtenirTamany() const

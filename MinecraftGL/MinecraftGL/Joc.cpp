@@ -1,6 +1,7 @@
 #include "Joc.h"
 Joc::~Joc() {
 	delete mon;
+	delete _HUD;
 }
 
 void Joc::canviarModeMouse(int mode)
@@ -233,15 +234,9 @@ void Joc::loop() {
 	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
 	glm::vec3 pos = glm::vec3(0, Y, 0.0f);
 
-	/*Textura sprite("widgets.png");
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, sprite.textura);
-	ShaderProgram shader = ShaderProgram("VertexSprite.vert", "FragmentSprite.frag");
-	glm::mat4 proj = glm::ortho(0.0f, (float)renderer.obtenirTamany().first, (float)renderer.obtenirTamany().second, 0.0f, -1.0f, 1.0f);
-	shader.colocarMat4("projection",proj);
-	SpriteRenderer spriteRenderer = SpriteRenderer(shader);*/
 	
-	
+
+	renderer.activaBounding(0);
 
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
@@ -265,17 +260,14 @@ void Joc::loop() {
 
 		// Obtenim el cub al que estem mirant i el senyalem al mon
 		ObtenirCubMira();
-		
-		//cout << CubActual << endl;
-		//renderer.canviarColor(glm::vec4(rgb(0), rgb(0), rgb(0), 1.0f));
 		if(mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
 			mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
 
 
 		view = camera.lookAt();
 		renderer.colocarMat4("view", view);
-		//spriteRenderer.DrawSprite(sprite, glm::vec2(64, 64));
 
+		_HUD->render();
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra
 
@@ -309,6 +301,7 @@ void Joc::gameLoop() {
 		canviarModeMouse(GLFW_CURSOR_DISABLED);
 
 		mon = new SuperChunk(&renderer);
+		_HUD = new HUD(&renderer);
 
 		// Posem el color taronja
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));

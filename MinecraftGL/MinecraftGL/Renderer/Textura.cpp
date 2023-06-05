@@ -1,5 +1,12 @@
 #include "Textura.h"
 
+Textura::Textura()
+{
+	nom = "";
+	data = nullptr;
+	width = height = nrChannels = textura = 0;
+}
+
 Textura::Textura(string _nom)
 {
 	nom = "Textures/"+_nom;
@@ -21,7 +28,7 @@ Textura::Textura(string _nom)
 
 	}
 	else {
-		cout << "No s'ha pogut carregar la textura " << _nom << endl;
+		cout << "ERROR!!! No s'ha pogut carregar la textura " << _nom << endl;
 	}
 		// pagina 60
 	stbi_image_free(data);
@@ -32,7 +39,4 @@ Textura::Textura(string _nom)
 void Textura::use()
 {
 	glBindTexture(GL_TEXTURE_2D, textura);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	//glGenerateMipmap(GL_TEXTURE_2D);
-
 }

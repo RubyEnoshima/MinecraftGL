@@ -3,7 +3,7 @@
 #include "Mon/SuperChunk.h"
 #include "Renderer/Renderer.h"
 #include "Jugador/Camera.h"
-#include "Renderer/SpriteRenderer.h"
+#include "HUD.h"
 #include "glm/gtx/io.hpp"
 
 #include <string>
@@ -41,7 +41,6 @@ private:
 	void ObtenirCubMira(); 
 	glm::vec3 ObtenirCostat();
 
-
 	void canviarModeMouse(int mode);
 
 	void loop();
@@ -59,7 +58,7 @@ private:
 	Camera camera;
 	Renderer renderer;
 	SuperChunk* mon;
-
+	HUD* _HUD;
 	
 };
 

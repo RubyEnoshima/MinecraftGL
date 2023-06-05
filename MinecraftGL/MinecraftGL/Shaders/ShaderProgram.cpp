@@ -23,7 +23,7 @@ int ShaderProgram::carregaShaders() {
 	vertexShaderStream.close(); // Tanquem l'arxiu
 
 	// Compilem el Vertex Shader
-	cout << "Compilant Vertex Shader..." << endl;
+	cout << "Compilant Vertex Shader... ";
 	char const* vertexShaderPunter = vertexShaderCodi.c_str(); // Per compilar no es permeten strings
 	glShaderSource(vertexShader, 1, &vertexShaderPunter, NULL);
 	glCompileShader(vertexShader);
@@ -39,7 +39,7 @@ int ShaderProgram::carregaShaders() {
 		return -1;
 	}
 
-	cout << "Vertex Shader compilat" << endl << endl;
+	cout << "Vertex Shader compilat" << endl;
 
 	// Fragment Shader
 	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -57,7 +57,7 @@ int ShaderProgram::carregaShaders() {
 	fragmentShaderStream.close(); // Tanquem l'arxiu
 
 	// Compilem el Fragment Shader
-	cout << "Compilant Fragment Shader..." << endl;
+	cout << "Compilant Fragment Shader... ";
 	char const* fragmentShaderPunter = fragmentShaderCodi.c_str();
 	glShaderSource(fragmentShader, 1, &fragmentShaderPunter, NULL);
 	glCompileShader(fragmentShader);
@@ -71,7 +71,7 @@ int ShaderProgram::carregaShaders() {
 		return -1;
 	}
 
-	cout << "Fragment Shader compilat" << endl << endl;
+	cout << "Fragment Shader compilat" << endl;
 
 	// Connectem els shaders amb el programa
 	cout << "Fent link dels shaders..." << endl;
@@ -91,7 +91,7 @@ int ShaderProgram::carregaShaders() {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	cout << "Shaders compilats." << endl << endl;
+	cout << "Shaders compilats: {" << vertexShaderSource << ", " << fragmentShaderSource << "}" << endl << endl << endl;
 
 	return 1;
 }
@@ -119,5 +119,10 @@ void ShaderProgram::colocarMat4(const string uniform, const glm::mat4 matriu)
 void ShaderProgram::colocarVec3(const string uniform, const glm::vec3 vector)
 {
 	glUniform3fv(obtenirUniform(uniform.c_str()),1,&vector[0]);
+}
+
+void ShaderProgram::colocarInt(const string uniform, int i)
+{
+	glUniform1i(obtenirUniform(uniform.c_str()),i);
 }
 

@@ -7,8 +7,8 @@ using namespace std;
 class Textura
 {
 public:
+	Textura();
 	Textura(string _nom);
-
 	void use();
 
 	unsigned int textura;

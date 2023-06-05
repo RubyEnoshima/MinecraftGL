@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\GLFW\lib\glad.c" />
     <ClCompile Include="Blocs\Blocs.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Joc.cpp" />
     <ClCompile Include="Jugador\Camera.cpp" />
     <ClCompile Include="main.cpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Blocs\Blocs.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="Joc.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Jugador\Camera.h" />

@@ -6,8 +6,8 @@ class SuperChunk;
 #include <queue>
 #include <list>
 
-#define XC 12
-#define YC 12
+#define XC 8
+#define YC 8
 
 struct Ray {
 	glm::vec3 origen;

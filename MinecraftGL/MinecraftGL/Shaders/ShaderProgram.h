@@ -23,7 +23,7 @@ public:
 	unsigned int obtenirUniform(const char* uniform) const;
 	void colocarMat4(const string uniform, const glm::mat4 matriu);
 	void colocarVec3(const string uniform, const glm::vec3 vector);
-
+	void colocarInt(const string uniform, int i);
 private:
 	// Arxius pels shaders
 	string vertexShaderSource = "VertexShader.vert";

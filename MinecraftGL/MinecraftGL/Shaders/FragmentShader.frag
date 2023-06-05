@@ -15,7 +15,7 @@ uniform vec3 lightColor;
 uniform vec3 lightPos;
 
 uniform sampler2D textura;
-uniform sampler2D lightMap;
+//uniform sampler2D lightMap;
 
 uniform bool bounding;
 
