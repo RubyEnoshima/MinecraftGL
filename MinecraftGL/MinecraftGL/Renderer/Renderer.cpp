@@ -56,6 +56,8 @@ void Renderer::centrarFinestra()
 	int w, h;
 	glfwGetFramebufferSize(window, &w, &h);
 	glfwSetWindowPos(window, (mode->width-w)/2, (mode->height - h) / 2);
+	cout << "Width: " << w << ", height: " << h << endl;
+
 }
 
 
@@ -148,7 +150,6 @@ float Renderer::aspectRatio() const
 {
 	int w, h;
 	glfwGetFramebufferSize(window, &w, &h);
-	//cout << "Width: " << w << ", height: " << h << endl;
 	return (float)w/(float)h;
 }
 

@@ -40,3 +40,8 @@ void Textura::use()
 {
 	glBindTexture(GL_TEXTURE_2D, textura);
 }
+
+glm::vec2 Textura::obtTamany() const
+{
+	return glm::vec2(width, height);
+}

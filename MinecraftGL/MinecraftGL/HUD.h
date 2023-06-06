@@ -8,6 +8,7 @@ public:
 
 	void render();
 private:
+	void iniciaSprites();
 	Textura inventari;
 
 	SpriteRenderer* renderer;
