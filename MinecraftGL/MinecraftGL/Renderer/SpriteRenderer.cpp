@@ -1,13 +1,4 @@
-/*******************************************************************
-** This code is part of Breakout.
-**
-** Breakout is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
 #include "SpriteRenderer.h"
-
 
 SpriteRenderer::SpriteRenderer(ShaderProgram* _shader, Renderer* _renderer)
 {
@@ -51,34 +42,29 @@ Sprite* SpriteRenderer::obtSprite(string nom) const
 void SpriteRenderer::DrawSprite(Sprite* sprite)
 {
     if (!sprite->visible) return;
-    // prepare transformations
     shader->usar();
+
     glm::mat4 model = glm::mat4(1.0f);
-    
-    glm::vec2 tamanyEscalat = sprite->tamany * sprite->escala;
-    glm::vec2 tamanyDividit = glm::vec2(tamanyEscalat.x/2, tamanyEscalat.y/2);
 
-    //model = glm::translate(model, glm::vec3(normalitzarPos(glm::vec2(0), width, height), 0.0f));
-
+    // Movem l'sprite on toqui.
     model = glm::translate(model, glm::vec3(normalitzarPos(sprite->pos, width, height), 0.0f));
 
-    // Fem que l'sprite tingui l'escala exactament igual a la textura
-    model = glm::scale(model, glm::vec3(tamanyEscalat.x / width, tamanyEscalat.y / height, 1.0f));
+    // Fem que l'sprite tingui l'escala exactament igual a la textura. Si no fes això, l'sprite ocuparia un quart de la pantalla.
+    model = glm::scale(model, glm::vec3(sprite->tamany.x / width, sprite->tamany.y / height, 1.0f));
+
+    // Escalem l'sprite
+    model = glm::scale(model, glm::vec3(sprite->escala, 1));
+
     // Centrem l'sprite si mode és true
-    if(sprite->mode) model = glm::translate(model, glm::vec3(normalitzarPos(glm::vec2(0), width, height), 0.0f));
+    if (sprite->centrat) model = glm::translate(model, glm::vec3(normalitzarPos(glm::vec2(width/4,height/4), width, height), 0.0f));
 
-    //model = glm::translate(model, glm::vec3(normalitzarPos(tamanyDividit, sprite->tamany.x, sprite->tamany.y), 0.0f));
-
-
-    // model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f)); 
-
-    // Escalem segons la escala
-    model = glm::scale(model, glm::vec3(sprite->escala,1));
+    // Podriem rotar l'sprite, però de moment no ens interesa
+    //model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f)); 
 
     shader->colocarMat4("model", model);
 
     shader->colocarVec3("spriteColor", sprite->color);
-    shader->colocarInt("image", 1);
+    //shader->colocarInt("image", 1);
     sprite->textura->use();
 
     glBindVertexArray(quadVAO);
@@ -92,6 +78,7 @@ void SpriteRenderer::initRenderData()
     shader->colocarInt("image",1);
 
     unsigned int VBO;
+    // Tots els sprites seran iguals: un quadrat que comença a la cantonada esq sup
     float vertices[] = {
         // pos      // tex
         0.0f, -1.0f, 0.0f, 1.0f, 
@@ -127,12 +114,4 @@ glm::vec2 SpriteRenderer::normalitzarPos(const glm::vec2& pos, int w, int h)
     normalizedCoords.y = (normalizedY * 2.0f) - 1.0f;
 
     return normalizedCoords;
-}
-
-float SpriteRenderer::normalitzarPosUn(float pixel, float tamany)
-{
-    // Normalitzem de 0 a 1
-    float normalized = pixel / tamany;
-
-    return (normalized * 2.0f) - 1.0f;
 }

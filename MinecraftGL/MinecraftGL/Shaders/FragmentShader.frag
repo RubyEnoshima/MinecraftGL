@@ -47,7 +47,7 @@ void main()
 	float resArtificial = pow(llumArtificial / 15f, gamma);
 
 	float intensitatNatural = 0.95; // FER-HO UNIFORM
-	float resNatural = pow(llumNatural / 15f, gamma) * intensitatNatural;
+	float resNatural = 12; //pow(llumNatural / 15f, gamma) * intensitatNatural;
 
 	vec3 colorLlum = vec3(0.95,0.95,0.95);
 	if(resArtificial > resNatural) colorLlum = vec3(1.0,1.0,0.87);

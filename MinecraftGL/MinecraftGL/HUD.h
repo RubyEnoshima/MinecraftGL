@@ -7,8 +7,12 @@ public:
 	~HUD();
 
 	void render();
+	void alternaVisibilitat();
 private:
 	void iniciaSprites();
+
+	bool visible = true;
+
 	Textura inventari;
 
 	SpriteRenderer* renderer;

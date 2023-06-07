@@ -37,7 +37,7 @@ public:
 	// Si fals, no es renderitzarà
 	bool visible = true;
 	// Si fals, es renderitzarà a partir de la cantonada esquerra superior. Si true, es renderitzarà a partir del centre del sprite.
-	bool mode = false; 
+	bool centrat = false; 
 	string nom = "";
 
 	Textura* textura;
@@ -67,7 +67,6 @@ private:
 
 	// Donada una posició en píxels [0-width][0-height], retorna la posició en coordenades pantalla [-1,1][-1,1]
 	glm::vec2 normalitzarPos(const glm::vec2& pos, int w, int h);
-	float normalitzarPosUn(float pixel, float tamany);
 
 	map<string,Sprite*> Sprites;
 	Renderer* renderer;
