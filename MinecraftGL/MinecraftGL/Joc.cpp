@@ -40,8 +40,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_ESCAPE:
 				glfwSetWindowShouldClose(window, true);
 				break;
-			// F1: es canvia entre mode normal i wireframe
-			case GLFW_KEY_F1:
+			// F10: es canvia entre mode normal i wireframe
+			case GLFW_KEY_F10:
 				int mode;
 				glGetIntegerv(GL_POLYGON_MODE, &mode);
 				if (mode == GL_FILL) {
@@ -51,10 +51,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 				}
 				break;
-			// F5: es canvia la posició de la camera
-			case GLFW_KEY_F5:
-				cout << "Cambiar camara" << endl;
-				break;
 			// F2 = Cull/!Cull
 			case GLFW_KEY_F2:
 				joc->Culling();
@@ -62,6 +58,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			// F4: 
 			case GLFW_KEY_F4:
 				joc->VSync();
+				break;
+			// F5: es canvia la posició de la camera
+			case GLFW_KEY_F5:
+				cout << "Cambiar camara" << endl;
+				break;
+			case GLFW_KEY_F1:
+				joc->_HUD->alternaVisibilitat();
 				break;
 		}
 

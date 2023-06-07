@@ -34,6 +34,7 @@ public:
 	void VSync();
 
 	uint8_t tipusCub = TERRA;
+	HUD* _HUD;
 
 	
 private:
@@ -58,7 +59,6 @@ private:
 	Camera camera;
 	Renderer renderer;
 	SuperChunk* mon;
-	HUD* _HUD;
 	
 };
 
