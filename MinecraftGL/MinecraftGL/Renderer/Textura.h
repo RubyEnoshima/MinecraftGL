@@ -10,12 +10,17 @@ class Textura
 public:
 	Textura();
 	Textura(string _nom);
+
 	void use();
 	glm::vec2 obtTamany() const;
-	unsigned int textura;
+
+	bool mapa = false;
 private:
 	string nom;
 	unsigned char* data;
+	unsigned int textura;
+
 	int width, height, nrChannels;
+
 };
 

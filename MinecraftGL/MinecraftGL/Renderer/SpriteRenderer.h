@@ -20,7 +20,7 @@ public:
 		textura = _textura;
 		escala = _escala;
 		rotacio = _rotacio;
-		tamany = _textura->obtTamany();
+		tamany = tamanyMapa = _textura->obtTamany();
 		nom = _nom;
 	};
 	~Sprite() {
@@ -30,7 +30,7 @@ public:
 	// Atributs per renderitzar
 	glm::vec2 pos = glm::vec2(0.0f);
 	glm::vec2 tamany = glm::vec2(0.0f);
-	glm::vec3 color = glm::vec3(1.0f);
+	glm::vec4 color = glm::vec4(1.0f);
 	glm::vec2 escala = glm::vec2(1.0f);
 	float rotacio = 0.0f;
 
@@ -41,6 +41,9 @@ public:
 	string nom = "";
 
 	Textura* textura;
+	
+	glm::vec2 posicioMapa = glm::vec2(0.0f); // Si la textura és un mapa, es pot posar quina posició es vol renderitzar
+	glm::vec2 tamanyMapa = glm::vec2(1.0f); // Si la textura és un mapa, es pot posar quants píxels ocupa l'sprite
 };
 
 class SpriteRenderer
@@ -51,7 +54,7 @@ public:
 
 	// Renderitza tots els sprites afegits que siguin visibles
 	void render();
-	// Afegeix un sprite per tal que es pugui renderitzar. Si ja hi havia un amb el mateix nom, el sobreescriu
+	// Afegeix un sprite per tal que es pugui renderitzar. Si ja hi havia un amb el mateix nom, no s'afegfirà!
 	void afegirSprite(Sprite* sprite);
 	// Retorna un punter a un sprite
 	Sprite* obtSprite(string nom) const;

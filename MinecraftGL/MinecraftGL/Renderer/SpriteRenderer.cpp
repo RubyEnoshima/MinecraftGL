@@ -13,7 +13,7 @@ SpriteRenderer::~SpriteRenderer()
 {
     glDeleteVertexArrays(1, &quadVAO);
     delete shader;
-    for (auto sprite : Sprites)
+    for (pair<string,Sprite*> sprite : Sprites)
     {
         delete sprite.second;
     }
@@ -21,7 +21,7 @@ SpriteRenderer::~SpriteRenderer()
 
 void SpriteRenderer::render()
 {
-    for (auto sprite : Sprites)
+    for (pair<string,Sprite*> sprite : Sprites)
     {
         DrawSprite(sprite.second);
     }
@@ -63,9 +63,15 @@ void SpriteRenderer::DrawSprite(Sprite* sprite)
 
     shader->colocarMat4("model", model);
 
-    shader->colocarVec3("spriteColor", sprite->color);
-    //shader->colocarInt("image", 1);
+    shader->colocarVec4("spriteColor", sprite->color);
+    
     sprite->textura->use();
+    // Si la textura és un mapa de sprites, li podem dir quin volem
+    {
+        shader->colocarVec2("posicioSprite", sprite->posicioMapa);
+        shader->colocarVec2("tamanySprite", sprite->tamanyMapa);
+        shader->colocarVec2("tamanyTextura", sprite->textura->obtTamany());
+    }
 
     glBindVertexArray(quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -19,8 +19,8 @@ uniform sampler2D textura;
 
 uniform bool bounding;
 
-float tamanyAlfaX = 16.0;
-float tamanyAlfaY = 16.0;
+float tamanyMapaX = 16.0;
+float tamanyMapaY = 16.0;
 
 void main()
 {
@@ -30,7 +30,7 @@ void main()
 	}
 
 	// Textura
-	vec2 posTex = vec2(TexCoord.x+(offsetX/tamanyAlfaX),TexCoord.y+(offsetY/tamanyAlfaY));
+	vec2 posTex = vec2(TexCoord.x+(offsetX/tamanyMapaX),TexCoord.y+(offsetY/tamanyMapaY));
 	vec4 colorText = texture(textura, posTex);
 
 	// Funciona per cristal, pero es pot clicar un bloc a través...

@@ -4,11 +4,18 @@ in vec2 TexCoords;
 out vec4 color;
 
 uniform sampler2D image;
-uniform vec3 spriteColor;
+uniform vec4 spriteColor;
+
+uniform vec2 posicioSprite;
+uniform vec2 tamanyTextura;
+uniform vec2 tamanySprite;
 
 void main()
 {
-	vec4 colorText = texture(image, TexCoords);
+	vec2 posTex = TexCoords * (tamanySprite / tamanyTextura) + (posicioSprite / tamanyTextura);
+	vec4 colorText = texture(image, posTex);
+
 	if(colorText.a == 0) discard;
-	color = vec4(spriteColor, 1.0) * colorText;
+
+	color = vec4(spriteColor) * colorText;
 }
