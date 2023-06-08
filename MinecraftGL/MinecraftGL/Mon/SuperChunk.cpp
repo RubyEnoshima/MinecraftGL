@@ -69,11 +69,24 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 
 	for (int i = 0; i < X * XC; i++) {
 		for (int k = 0; k < Z * YC; k++) {
-			int j = Y - 1;
-			while (blocs.getBloc(obtenirCub(i, j, k))->transparent) { canviarLlumNaturalCub(i, j, k, 14); j--; }
-			
+			calculaLlumNatural(i,k);
+
 		}
 	}
+}
+
+void SuperChunk::calculaLlumNatural(int x, int z)
+{
+	int j = Y - 1;
+	uint8_t llum = 15;
+	while (blocs.getBloc(obtenirCub(x, j, z))->transparent) {
+		uint8_t tipus = obtenirCub(x, j, z);
+		if (tipus != AIRE && !blocs.getBloc(obtenirCub(x, j, z))->vegetacio) llum--;
+		//else llum = 15;
+		canviarLlumNaturalCub(x, j, z, llum);
+		j--;
+	}
+	
 }
 
 // LLUM ARTIFICIAL
@@ -174,7 +187,7 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 }
 
 
-void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
+void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador)
 {
 	if (x / X < XC && z / Z < YC && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
 		//cout << x % X << " " << z % Z << endl;
@@ -198,6 +211,7 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 			}
 			else treureLlum(glm::vec3(x, y, z), 0);
 
+
 			//if (chunk->cubTop(x%X, y, z%Z)) {
 			//	//chunk->canviarLlumNaturalCub(x%X, y, z%Z, llumNatural);
 			//	//afegirLlumNatural(glm::vec3(x, y, z));
@@ -215,6 +229,8 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar)
 				afegirLlum(llum);
 			}
 		}
+
+		if(jugador) calculaLlumNatural(x, z);
 
 		//chunk->unCanviat = true;
 		//chunk->cubCanviat = glm::vec3(x % X, y, z % Z);

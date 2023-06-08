@@ -135,7 +135,7 @@ void Joc::ObtenirCubMira() {
 void Joc::DestruirCub() {
 	// Si és un cub vàlid
 	if (CubActual.x != -1 && CubActual.y != -1 && CubActual.z != -1)
-		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0);
+		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0, true, true);
 }
 
 glm::vec3 Joc::ObtenirCostat() {
@@ -197,7 +197,7 @@ void Joc::PosarCub() {
 	if (Costat.x==-1 && Costat.y==-1) return;
 	
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipusCub, false);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipusCub, false, true);
 
 }
 

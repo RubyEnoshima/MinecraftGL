@@ -21,8 +21,10 @@ public:
 	~SuperChunk();
 	SuperChunk(Renderer* _renderer);
 
+	void calculaLlumNatural(int x, int z);
+
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true); 
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false); 
 	// Canvia quanta llum té un cub
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);

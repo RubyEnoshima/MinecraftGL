@@ -22,6 +22,8 @@ uniform bool bounding;
 float tamanyMapaX = 16.0;
 float tamanyMapaY = 16.0;
 
+flat in int costat;
+
 void main()
 {
 	if(bounding){
@@ -47,7 +49,7 @@ void main()
 	float resArtificial = pow(llumArtificial / 15f, gamma);
 
 	float intensitatNatural = 0.95; // FER-HO UNIFORM
-	float resNatural = 12; //pow(llumNatural / 15f, gamma) * intensitatNatural;
+	float resNatural = pow(llumNatural / 15f, gamma) * intensitatNatural;
 
 	vec3 colorLlum = vec3(0.95,0.95,0.95);
 	if(resArtificial > resNatural) colorLlum = vec3(1.0,1.0,0.87);
@@ -57,8 +59,9 @@ void main()
 	vec3 LlumFinal = colorLlum*suma*0.9;
 
 	vec4 brillantor = vec4(0.95,0.95,0.95,1);
+	vec4 ombres = vec4(1.0,0.8,0.6,0.2);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
 
 	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
-	color = vec4( (ambient + LlumFinal) * colorText.xyz, colorText.w)*brillantor;
+	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat], colorText.w)*brillantor;
 
 }
