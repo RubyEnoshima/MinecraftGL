@@ -24,6 +24,8 @@ float tamanyMapaY = 16.0;
 
 flat in int costat;
 
+in vec3 colorTint;
+
 void main()
 {
 	if(bounding){
@@ -44,7 +46,7 @@ void main()
 	vec3 ambient = ambientStrength * lightColor;
 
 	// Iluminació
-	float gamma = 0.95 / 0.75;
+	float gamma = 0.9 / 0.75;
 
 	float resArtificial = pow(llumArtificial / 15f, gamma);
 
@@ -58,10 +60,10 @@ void main()
 	if(suma > 1) suma = 1;
 	vec3 LlumFinal = colorLlum*suma*0.9;
 
-	vec4 brillantor = vec4(0.95,0.95,0.95,1);
-	vec4 ombres = vec4(1.0,0.8,0.6,0.2);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
+	vec4 brillantor = vec4(0.99,0.99,0.99,1);
+	vec4 ombres = vec4(1.0,0.8,0.55,0.3);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
 
 	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
-	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat], colorText.w)*brillantor;
+	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat] * colorTint, colorText.w)*brillantor;
 
 }

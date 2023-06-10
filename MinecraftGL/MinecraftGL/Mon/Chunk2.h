@@ -13,34 +13,39 @@
 #include <vector>
 #include "Tipus.h"
 #include "glm/gtx/io.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 #include <random>
 #include <ctime>
 #include <chrono>
 #include "Blocs/Blocs.h"
-class Chunk2;
-#include "SuperChunk.h"
+#include "Recursos.h"
 
 using namespace std;
 
 #define X 16
-#define Y 128 // 102 se empieza a ver raruno
+#define Y 128
 #define Z 16
 
+struct Vertex {
+
+};
+
 struct Cub {
-	uint8_t tipus;
-	uint8_t llum;
+	uint8_t tipus = 0;
+	uint8_t llum = 0;
+	glm::vec3* color = Recursos::obtColor("Blanc");
 	bool top = false;
 };
 
 class Chunk2
 {
 public:
-	Chunk2(unsigned int _x=0, unsigned int _y=0, SuperChunk* _mon=NULL, Blocs* _blocs=NULL);
+	Chunk2(unsigned int _x=0, unsigned int _y=0, Blocs* _blocs=NULL);
 	~Chunk2();
 
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true); 
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, glm::vec3* color = Recursos::obtColor("Blanc")); 
 	// Canvia la llum d'un cub concret
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
@@ -71,15 +76,15 @@ public:
 	bool unCanviat = false;
 	glm::vec3 cubCanviat;
 private:
-	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2, uint8_t costat = 0);
+	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2, uint8_t costat = 0, glm::vec3* color = Recursos::obtColor("Blanc"));
 	void afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, bool r=1, bool g=1, bool b=1);
 
-	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
+	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, glm::vec3* _color);
 	void afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
 	unsigned int VBO;
 
-	int nVertexTipus = 9;
+	int nVertexTipus = 12;
 
 	unsigned int posX, posY;
 	Cub chunk[X][Y][Z];
@@ -89,7 +94,7 @@ private:
 	Chunk2* veiUp = NULL;
 	Chunk2* veiBaix = NULL;
 
-	SuperChunk* mon = NULL;
+	//SuperChunk* mon = NULL;
 
 	Blocs* blocs = NULL;
 

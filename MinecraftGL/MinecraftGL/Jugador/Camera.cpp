@@ -12,9 +12,13 @@ Camera::Camera()
 	mirar();
 }
 
-void Camera::setProjection(const glm::mat4& _projection)
+void Camera::setProjection(float _fov, float _aspectRatio, float _near, float _far)
 {
-	projection = _projection;
+	projection = glm::perspective(_fov, _aspectRatio, _near, _far);
+	fov = _fov;
+	aspect = _aspectRatio;
+	near = _near;
+	far = _far;
 }
 
 void Camera::setModel(const glm::mat4& _model)

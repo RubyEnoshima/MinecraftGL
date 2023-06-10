@@ -1,10 +1,11 @@
 #ifndef SUPERCHUNK_H
 #define SUPERCHUNK_H
-class SuperChunk;
+
 #include "Chunk2.h"
 #include "Renderer/Renderer.h"
 #include <queue>
 #include <list>
+#include <set>
 
 #define XC 8
 #define YC 8
@@ -21,15 +22,19 @@ public:
 	~SuperChunk();
 	SuperChunk(Renderer* _renderer);
 
-	void calculaLlumNatural(int x, int z);
+	
+
 
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false); 
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false, glm::vec3* color = Recursos::obtColor("Blanc"));
 	// Canvia quanta llum té un cub
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
 	// Retorna el tipus del cub
-	uint8_t obtenirCub(int x, int y, int z) const; 
+	uint8_t obtenirCub(int x, int y, int z) const;
+
+	// ILUMINACIO
+
 	// Retorna la llum del cub
 	uint8_t obtenirLlumNaturalCub(int x, int y, int z);
 	uint8_t obtenirLlumArtificialCub(int x, int y, int z);
@@ -39,6 +44,8 @@ public:
 
 	void afegirLlumNatural(const glm::vec3 posLlum);
 	void treureLlumNatural(const glm::vec3 posLlum, uint8_t llumIni);
+
+	void calculaLlumNatural(int x, int z);
 
 	// Genera un BoundingBox per un cub concret
 	void BoundingBox(int x, int y, int z);
@@ -53,10 +60,10 @@ public:
 
 	// MÉTODES PER GENERAR CUBS
 	// Emplena un rectangle centrat en una posició, extenent-se en amplitut i llargada, amb un tipus concret i una probabilitat que les cantonades puguin desapareixer.
-	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true);
+	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true, glm::vec3* color = Recursos::obtColor("Blanc"));
 
 	// Emplena un àrea delimitada per dos punts amb un tipus determinat
-	void emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar = true);
+	void emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar = true, glm::vec3* color = Recursos::obtColor("Blanc"));
 
 	// VEGETACIÓ I GENERACIÓ
 	// Genera un arbre en una posicio concreta
@@ -137,6 +144,9 @@ private:
 	queue<glm::vec3> cuaLlumNatural;
 
 	uint8_t llumNatural = 15;
+
+	glm::vec3 posicions[6] = { glm::vec3(-1,0,0),glm::vec3(0,-1,0),glm::vec3(0,0,-1),glm::vec3(1,0,0),glm::vec3(0,1,0),glm::vec3(0,0,1) };
+
 };
 
 #endif

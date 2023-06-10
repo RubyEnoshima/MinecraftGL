@@ -17,7 +17,7 @@ class Camera
 public:
 	Camera(); 
 
-	void setProjection(const glm::mat4& _projection);
+	void setProjection(float _fov, float _aspectRatio, float _near, float _far);
 	void setModel(const glm::mat4& _model);
 
 	glm::mat4 getProjection() const;
@@ -68,5 +68,8 @@ private:
 	glm::mat4 projection;
 	glm::mat4 model;
 
+	float fov;
+	float aspect;
+	float near, far;
 };
 

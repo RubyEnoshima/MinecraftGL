@@ -10,10 +10,8 @@ void Joc::canviarModeMouse(int mode)
 }
 
 void Joc::canviarProjeccio() {
-	glm::mat4 projection;
-	projection = glm::perspective(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 10000.0f);
-	camera.setProjection(projection);
-	renderer.colocarMat4("projection", projection);
+	camera.setProjection(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 1000.0f);
+	renderer.colocarMat4("projection", camera.getProjection());
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

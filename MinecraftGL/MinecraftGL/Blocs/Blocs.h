@@ -3,12 +3,13 @@
 #include <fstream>
 #include <iostream>
 #include <json.hpp>
+#include <glm/glm.hpp>
 
 using json = nlohmann::json;
 using namespace std;
 
 struct Bloc {
-    Bloc(string _nom,int _id,bool _trans,int _cost,int _sota,int _adalt,bool _vegetal){
+    Bloc(string _nom,int _id,bool _trans,int _cost,int _sota,int _adalt,bool _vegetal,const glm::vec3& _color){
         nom = _nom;
         id = _id;
         transparent = _trans;
@@ -16,6 +17,7 @@ struct Bloc {
         sota = _sota;
         adalt = _adalt;
         vegetacio = _vegetal;
+        color = _color;
     }
     Bloc() {
         nom = "";
@@ -25,6 +27,7 @@ struct Bloc {
         sota = 0; 
         adalt = 0;
         vegetacio = false;
+        color = glm::vec3(1.0f);
     }
     
     string nom;
@@ -34,6 +37,7 @@ struct Bloc {
     int costats; // Textura que s'ha d'utiltizar als costats del cub
     int sota; // Textura per sota del cub
     int adalt;
+    glm::vec3 color;
 };
 
 class Blocs {

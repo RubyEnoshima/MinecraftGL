@@ -6,6 +6,7 @@ layout (location = 1) in float aLlum;
 layout (location = 2) in vec2 aTexCoord;
 layout (location = 3) in vec2 aOffset;
 layout (location = 4) in float aCostat;
+layout (location = 5) in vec3 aColor;
 
 // Iluminació
 //out vec3 normals;
@@ -19,6 +20,8 @@ flat out int offsetX;
 flat out int offsetY;
 
 flat out int costat;
+
+out vec3 colorTint;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -41,4 +44,5 @@ void main()
 	llumNatural = (int(aLlum) >> 4) & 0xF;
 
 	costat = int(aCostat);
+	colorTint = aColor;
 }

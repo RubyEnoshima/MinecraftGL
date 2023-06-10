@@ -7,6 +7,11 @@ Textura::Textura()
 	width = height = nrChannels = textura = 0;
 }
 
+Textura::~Textura()
+{
+	//glDeleteTextures(1, &textura);
+}
+
 Textura::Textura(string _nom)
 {
 	nom = "Textures/"+_nom;

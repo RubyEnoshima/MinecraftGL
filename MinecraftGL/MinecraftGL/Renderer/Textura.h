@@ -9,6 +9,7 @@ class Textura
 {
 public:
 	Textura();
+	~Textura();
 	Textura(string _nom);
 
 	void use();
