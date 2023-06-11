@@ -242,16 +242,6 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 			}
 			else treureLlum(glm::vec3(x, y, z), 0);
 
-
-			//if (chunk->cubTop(x%X, y, z%Z)) {
-			//	//chunk->canviarLlumNaturalCub(x%X, y, z%Z, llumNatural);
-			//	//afegirLlumNatural(glm::vec3(x, y, z));
-			//}
-			//else {
-			//	/*uint8_t llumMaxima = chunk->obtenirLlumNaturalMaxima(x%X,y,z%Z);
-			//	if(llumMaxima > 0) chunk->canviarLlumNaturalCub(x % X, y, z % Z, llumMaxima-1);
-			//	cout << "llum maxima: " << llumMaxima << endl;*/
-			//}
 		}
 		else {
 			// NO ES EFICIENT!!!

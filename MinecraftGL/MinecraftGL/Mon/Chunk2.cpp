@@ -95,51 +95,6 @@ uint8_t Chunk2::obtenirLlumArtificialCub(int x, int y, int z) const
 	return chunk[x][y][z].llum & 0xF; // Retornem els ultims 4
 }
 
-uint8_t Chunk2::obtenirLlumNaturalMaxima(int x, int y, int z) const
-{
-	// MIRAR SI FUNCIONA BÉ
-	uint8_t res = 0;
-	uint8_t llum;
-	// Esq
-	if (x - 1 < 0 && veiEsq && veiEsq->obtenirCub(X - 1, y, z) == AIRE) {
-		llum = veiEsq->obtenirLlumNaturalCub(X - 1, y, z);
-		if (llum > res) res = llum;
-	}
-	else if (x - 1 >= 0) {
-		llum = obtenirLlumNaturalCub(x - 1, y, z);
-		if (llum > res) res = llum;
-	}
-	// Dre
-	if (x + 1 >= X && veiDre && veiDre->obtenirCub(0, y, z) == AIRE) {
-		llum = veiDre->obtenirLlumNaturalCub(0, y, z);
-		if (llum > res) res = llum;
-	}
-	else if (x + 1 < X) {
-		llum = obtenirLlumNaturalCub(x + 1, y, z);
-		if (llum > res) res = llum;
-	}
-	// Davant
-	if (z + 1 >= Z && veiBaix && veiBaix->obtenirCub(x, y, 0) == AIRE) {
-		llum = veiBaix->obtenirLlumNaturalCub(x, y, 0);
-		if (llum > res) res = llum;
-	}
-	else if (z + 1 < Z) {
-		llum = obtenirLlumNaturalCub(x, y, z + 1);
-		if (llum > res) res = llum;
-	}
-	// Darrera 
-	if (z - 1 < 0 && veiUp && veiUp->obtenirCub(x, y, Z - 1) == AIRE) {
-		llum = veiUp->obtenirLlumNaturalCub(x, y, Z - 1);
-		if (llum > res) res = llum;
-	}
-	else if (z - 1 >= 0) {
-		obtenirLlumNaturalCub(x, y, z - 1);
-		if (llum > res) res = llum;
-	}
-	return res;
-}
-
-
 void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum, uint8_t costat, glm::vec3* color) {
 	// Posicio
 	vertices.push_back(x);
@@ -161,9 +116,21 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 	vertices.push_back(costat);
 
 	// Color
+	// MALAMENT!!! NO PODEM PASSAR FLOATS!!
 	vertices.push_back(color->r);
 	vertices.push_back(color->g);
 	vertices.push_back(color->b);
+
+	GLint res = 0;
+	res |= (x << 28);
+	res |= (y << 24);
+	res |= (z << 20);
+	res |= (costat << 18);
+	res |= (u << 17);
+	res |= (v << 16);
+	res |= (llum << 8);
+	res |= tipus;
+	cout << std::bitset<4>(res >> 28) << endl;
 }
 
 void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, glm::vec3* _color) {
