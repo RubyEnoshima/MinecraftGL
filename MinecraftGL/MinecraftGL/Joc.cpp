@@ -29,7 +29,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (action == GLFW_PRESS) {
 		if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
 		{
-			if (key == GLFW_KEY_9) joc->tipusCub = LLUM;
+			if (key == GLFW_KEY_9) joc->tipusCub = TULIPA_TARONJA;
 			else joc->tipusCub = key%48;
 			return;
 		}
