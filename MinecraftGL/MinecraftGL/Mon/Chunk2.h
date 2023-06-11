@@ -20,7 +20,7 @@
 #include <chrono>
 #include "Blocs/Blocs.h"
 #include "Recursos.h"
-#include <bitset>
+
 using namespace std;
 
 #define X 16
@@ -54,6 +54,8 @@ public:
 	// Retorna la llum del cub
 	uint8_t obtenirLlumNaturalCub(int x, int y, int z) const;
 	uint8_t obtenirLlumArtificialCub(int x, int y, int z) const;
+
+	uint8_t obtenirLlumNaturalMaxima(int x, int y, int z) const;
 
 	void update();
 	void render();
