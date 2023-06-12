@@ -73,6 +73,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 
 		}
 	}
+	carregat = true;
 }
 
 void SuperChunk::calculaLlumNatural(int x, int z)
@@ -85,39 +86,49 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 		canviarLlumNaturalCub(x, j, z, llum);
 		j--;
 	}
+
+	if (!carregat) return;
+
 	queue<glm::vec3> cua;
-	glm::vec3 pos;
+	cua.emplace(glm::vec3(x,j+1,z));
 	Bloc* b;
 	
 	while (j >= 0) {
 		uint8_t tipus = obtenirCub(x, j, z);
 		b = blocs.getBloc(obtenirCub(x, j, z));
-		pos = glm::vec3(x, j, z);
-		if (b->transparent) cua.emplace(pos);
+		if (b->transparent) cua.emplace(glm::vec3(x, j, z));
 		j--;
 	}
+
+	glm::vec3 pos;
 	set<string> visitades;
 	while (!cua.empty()) {
 		pos = cua.front();
 		cua.pop();
 		visitades.insert(glm::to_string(pos));
-		uint8_t max = 1;
+		uint8_t max = 1, llumActual = obtenirLlumNaturalCub(pos.x,pos.y,pos.z);
+		vector<pair<glm::vec3,uint8_t>> colindantes;
 		for (int i = 0; i < 6; i++) {
 			glm::vec3 actual = glm::vec3(pos.x + posicions[i].x, pos.y + posicions[i].y, pos.z + posicions[i].z);
+
 			if (!blocs.getBloc(obtenirCub(actual.x, actual.y, actual.z))->transparent) continue;
+
 			llum = obtenirLlumNaturalCub(actual.x,actual.y,actual.z);
-			//cout << llum << endl;
-			if (llum == 0 && visitades.find(glm::to_string(actual)) == visitades.end()) cua.emplace(actual);
+
+			if ((llum < llumActual || llum == 0) && visitades.find(glm::to_string(actual)) == visitades.end()) cua.emplace(actual);
+			else if (llum > llumActual) colindantes.push_back({ actual,llum });
 			if (llum > max) {
 				max = llum;
 			}
 				
 			
 		}
+	
+		for (pair<glm::vec3,uint8_t> actual : colindantes) {
+			if(actual.second < max) cua.emplace(actual.first);
+		}
 		canviarLlumNaturalCub(pos.x, pos.y, pos.z, max-1);
-		//cout << max - 1 << endl;
 	}
-	//if(pos!=NULL) delete pos;
 }
 
 // LLUM ARTIFICIAL
