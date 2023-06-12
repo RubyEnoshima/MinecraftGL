@@ -110,7 +110,8 @@ public:
 	}
 
 private:
-	
+	bool carregat = false;
+
 	void posarLlum(glm::vec3 pos, uint8_t llum);
 	void eliminarLlum(glm::vec3 pos, uint8_t llum);
 

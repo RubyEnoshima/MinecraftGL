@@ -53,7 +53,7 @@ void main()
 	float intensitatNatural = 0.95; // FER-HO UNIFORM
 	float resNatural = pow(llumNatural / 15f, gamma) * intensitatNatural;
 
-	vec3 colorLlum = vec3(0.95,0.95,0.95);
+	vec3 colorLlum = vec3(0.98,0.98,0.98);
 	if(resArtificial > resNatural) colorLlum = vec3(1.0,1.0,0.87);
 
 	float suma = resArtificial+resNatural;
@@ -61,7 +61,7 @@ void main()
 	vec3 LlumFinal = colorLlum*suma*0.9;
 
 	vec4 brillantor = vec4(0.99,0.99,0.99,1);
-	vec4 ombres = vec4(1.0,0.8,0.55,0.3);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
+	vec4 ombres = vec4(1.0,0.8,0.6,0.3);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
 
 	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
 	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat] * colorTint, colorText.w)*brillantor;
