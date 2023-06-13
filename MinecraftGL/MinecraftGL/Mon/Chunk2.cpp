@@ -30,7 +30,7 @@ Chunk2::~Chunk2()
 	}
 }
 
-void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, glm::vec3* color)
+void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, char* color)
 {
 	if ((x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) || (!reemplacar && obtenirCub(x, y, z) != AIRE)) return;
 
@@ -95,52 +95,7 @@ uint8_t Chunk2::obtenirLlumArtificialCub(int x, int y, int z) const
 	return chunk[x][y][z].llum & 0xF; // Retornem els ultims 4
 }
 
-uint8_t Chunk2::obtenirLlumNaturalMaxima(int x, int y, int z) const
-{
-	// MIRAR SI FUNCIONA BÉ
-	uint8_t res = 0;
-	uint8_t llum;
-	// Esq
-	if (x - 1 < 0 && veiEsq && veiEsq->obtenirCub(X - 1, y, z) == AIRE) {
-		llum = veiEsq->obtenirLlumNaturalCub(X - 1, y, z);
-		if (llum > res) res = llum;
-	}
-	else if (x - 1 >= 0) {
-		llum = obtenirLlumNaturalCub(x - 1, y, z);
-		if (llum > res) res = llum;
-	}
-	// Dre
-	if (x + 1 >= X && veiDre && veiDre->obtenirCub(0, y, z) == AIRE) {
-		llum = veiDre->obtenirLlumNaturalCub(0, y, z);
-		if (llum > res) res = llum;
-	}
-	else if (x + 1 < X) {
-		llum = obtenirLlumNaturalCub(x + 1, y, z);
-		if (llum > res) res = llum;
-	}
-	// Davant
-	if (z + 1 >= Z && veiBaix && veiBaix->obtenirCub(x, y, 0) == AIRE) {
-		llum = veiBaix->obtenirLlumNaturalCub(x, y, 0);
-		if (llum > res) res = llum;
-	}
-	else if (z + 1 < Z) {
-		llum = obtenirLlumNaturalCub(x, y, z + 1);
-		if (llum > res) res = llum;
-	}
-	// Darrera 
-	if (z - 1 < 0 && veiUp && veiUp->obtenirCub(x, y, Z - 1) == AIRE) {
-		llum = veiUp->obtenirLlumNaturalCub(x, y, Z - 1);
-		if (llum > res) res = llum;
-	}
-	else if (z - 1 >= 0) {
-		obtenirLlumNaturalCub(x, y, z - 1);
-		if (llum > res) res = llum;
-	}
-	return res;
-}
-
-
-void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum, uint8_t costat, glm::vec3* color) {
+void Chunk2::afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum, uint8_t costat, const char* color) {
 	// Posicio
 	vertices.push_back(x);
 	vertices.push_back(y);
@@ -161,15 +116,16 @@ void Chunk2::afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z
 	vertices.push_back(costat);
 
 	// Color
-	vertices.push_back(color->r);
-	vertices.push_back(color->g);
-	vertices.push_back(color->b);
+	glm::vec3* _color = Recursos::obtColor(color);
+	vertices.push_back(_color->r);
+	vertices.push_back(_color->g);
+	vertices.push_back(_color->b);
 }
 
-void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, glm::vec3* _color) {
+void Chunk2::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus,const char* _color) {
 	Bloc* b = blocs->getBloc(tipus);
 	uint8_t llum = chunk[x][y][z].llum;
-	glm::vec3* color = _color;
+	const char* color = _color;
 	// Si es vegetació, la renderitzem amb 4 plans que sempre miren a la mateixa orientació
 	if (b->vegetacio) {
 		// Pla 1
@@ -267,10 +223,9 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		if (y == Y - 1) llum = 0;
 		else llum = chunk[x][y + 1][z].llum;
 
-		/*if (tipus == GESPA) {
-			cout << 2;
-			color = Recursos::obtColor("VerdGespa");
-		}*/
+		if (tipus == GESPA) {
+			color = "VerdGespa";
+		}
 
 		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum, 0, color);
 		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, llum, 0, color);
@@ -278,7 +233,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum, 0, color);
 		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, llum, 0, color);
 		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 1, llum, 0, color);
-
+		color = _color;
 	}
 
 	tipus = b->sota;
@@ -298,7 +253,7 @@ void Chunk2::afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 }
 
-void Chunk2::afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, bool r, bool g, bool b) {
+void Chunk2::afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, bool r, bool g, bool b) {
 	// Posicio
 	vertices.push_back(x);
 	vertices.push_back(y);
@@ -309,7 +264,7 @@ void Chunk2::afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8
 	vertices.push_back(b);
 }
 
-void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
+void Chunk2::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	// Cara esq
 	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z].tipus)) {
 		afegirVertexFlat(vertices, x, y, z, 0);
@@ -381,7 +336,7 @@ void Chunk2::afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t 
 
 bool Chunk2::renderCub(int x, int y, int z)
 {
-	vector<GLbyte> _vertices;
+	vector<GLubyte> _vertices;
 	unsigned int VBO_FLAT;
 
 	afegirCubFlat(_vertices, x, y, z, 0);
@@ -393,9 +348,9 @@ bool Chunk2::renderCub(int x, int y, int z)
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_FLAT);
 
-	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)0);
+	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLubyte), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glVertexAttribPointer(1, 3, GL_BYTE, GL_FALSE, 6 * sizeof(GLubyte), (void*)(3 * sizeof(GLubyte)));
 	glEnableVertexAttribArray(1);
 
 	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
@@ -409,7 +364,7 @@ bool Chunk2::renderCub(int x, int y, int z)
 
 void Chunk2::update()
 {
-	vector<GLbyte> _vertices;
+	vector<GLubyte> _vertices;
 
 	for (int i = 0; i < X; i++) {
 		for (int j = 0; j < Y; j++) {
@@ -439,17 +394,17 @@ void Chunk2::render()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 
-	glVertexAttribPointer(0, 3, GL_BYTE, GL_FALSE, nVertexTipus * sizeof(GLbyte), (void*)0);
+	glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_FALSE, 12 * sizeof(GLubyte), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 1, GL_BYTE, GL_FALSE, nVertexTipus * sizeof(GLbyte), (void*)(3 * sizeof(GLbyte)));
+	glVertexAttribPointer(1, 1, GL_UNSIGNED_BYTE, GL_FALSE, 12 * sizeof(GLubyte), (void*)(3 * sizeof(GLubyte)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_BYTE, GL_FALSE, nVertexTipus * sizeof(GLbyte), (void*)(4 * sizeof(GLbyte)));
+	glVertexAttribPointer(2, 2, GL_UNSIGNED_BYTE, GL_FALSE, 12 * sizeof(GLubyte), (void*)(4 * sizeof(GLubyte)));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(3, 2, GL_BYTE, GL_FALSE, nVertexTipus * sizeof(GLbyte), (void*)(6 * sizeof(GLbyte)));
+	glVertexAttribPointer(3, 2, GL_UNSIGNED_BYTE, GL_FALSE, 12 * sizeof(GLubyte), (void*)(6 * sizeof(GLubyte)));
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(4, 1, GL_BYTE, GL_FALSE, nVertexTipus * sizeof(GLbyte), (void*)(8 * sizeof(GLbyte)));
+	glVertexAttribPointer(4, 1, GL_UNSIGNED_BYTE, GL_FALSE, 12 * sizeof(GLubyte), (void*)(8 * sizeof(GLubyte)));
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(5, 3, GL_BYTE, GL_FALSE, nVertexTipus * sizeof(GLbyte), (void*)(9 * sizeof(GLbyte)));
+	glVertexAttribPointer(5, 3, GL_UNSIGNED_BYTE, GL_FALSE, 12 * sizeof(GLubyte), (void*)(9 * sizeof(GLubyte)));
 	glEnableVertexAttribArray(5);
 	
 
@@ -479,7 +434,6 @@ vector<pair<int,glm::vec3>> Chunk2::emplenarChunk()
 
 			for (int j = 0; j <= height; j++) {
 				uint8_t tipus = TERRA;
-				glm::vec3* color = Recursos::obtColor("Blanc");
 				if (j == height) { // Capa d'adalt
 					tipus = GESPA;
 					//color = glm::vec3(0.8f, 0.8f, 0.5f);
@@ -497,7 +451,7 @@ vector<pair<int,glm::vec3>> Chunk2::emplenarChunk()
 				}
 				else if (j < height - 3) tipus = PEDRA;
 				else if (j < 2) tipus = BEDROCK;
-				canviarCub(i, j, k, tipus,true, color);
+				canviarCub(i, j, k, tipus, true, (char *)"Blanc");
 
 			}
 		}
