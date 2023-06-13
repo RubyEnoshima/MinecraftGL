@@ -42,15 +42,15 @@ void main()
 
 
 	// Ambient, per tal que la foscor no sigui tan fosca
-	float ambientStrength = 0.12;
+	float ambientStrength = 0.1;
 	vec3 ambient = ambientStrength * lightColor;
 
 	// Iluminació
-	float gamma = 0.9 / 0.75;
+	float gamma = 0.8 / 0.75;
 
 	float resArtificial = pow(llumArtificial / 15f, gamma);
 
-	float intensitatNatural = 0.95; // FER-HO UNIFORM
+	float intensitatNatural = 0.9; // FER-HO UNIFORM
 	float resNatural = pow(llumNatural / 15f, gamma) * intensitatNatural;
 
 	vec3 colorLlum = vec3(0.98,0.98,0.98);
@@ -61,7 +61,7 @@ void main()
 	vec3 LlumFinal = colorLlum*suma*0.9;
 
 	vec4 brillantor = vec4(0.99,0.99,0.99,1);
-	vec4 ombres = vec4(1.0,0.8,0.6,0.3);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
+	vec4 ombres = vec4(1.0,0.75,0.45,0.2);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
 
 	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
 	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat] * colorTint, colorText.w)*brillantor;

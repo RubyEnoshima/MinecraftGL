@@ -229,9 +229,9 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 }
 
 
-void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador, glm::vec3* color)
+void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador, char* color)
 {
-	if (x / X < XC && z / Z < YC && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
+	if (esValid(x,y,z) && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
 		//cout << x % X << " " << z % Z << endl;
 		Chunk2* chunk = Chunks[x / X][z / Z];
 		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
@@ -285,7 +285,7 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 
 void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 {
-	if (x / X < XC && z / Z < YC) {
+	if (esValid(x,y,z)) {
 		Chunk2* chunk = Chunks[x / X][z / Z];
 		chunk->canviarLlumNaturalCub(x % X, y, z % Z, llum);
 
@@ -294,7 +294,7 @@ void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 
 void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 {
-	if (x / X < XC && z / Z < YC) {
+	if (esValid(x,y,z)) {
 		Chunk2* chunk = Chunks[x / X][z / Z];
 		chunk->canviarLlumArtificialCub(x % X, y, z % Z, llum);
 
@@ -303,21 +303,21 @@ void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 
 uint8_t SuperChunk::obtenirCub(int x, int y, int z) const
 {
-	if (x / X < XC && z / Z < YC)
+	if (esValid(x,y,z))
 		return Chunks[x / X][z / Z]->obtenirCub(x % X, y, z % Z);
 	return 0;
 }
 
 uint8_t SuperChunk::obtenirLlumNaturalCub(int x, int y, int z)
 {
-	if (x / X < XC && z / Z < YC)
+	if (esValid(x,y,z))
 		return Chunks[x / X][z / Z]->obtenirLlumNaturalCub(x % X, y, z % Z);
 	return 0;
 }
 
 uint8_t SuperChunk::obtenirLlumArtificialCub(int x, int y, int z)
 {
-	if (x / X < XC && z / Z < YC)
+	if (esValid(x,y,z))
 		return Chunks[x / X][z / Z]->obtenirLlumArtificialCub(x % X, y, z % Z);
 	return 0;
 }
@@ -434,7 +434,7 @@ void SuperChunk::render()
 bool SuperChunk::renderCub(int x, int y, int z)
 {
 	glBindVertexArray(VAO);
-	if (x / X < XC && z / Z < YC) {
+	if (esValid(x,y,z)) {
 		// Hem d'aplicar la mateixa transformació que abans
 		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, 0, z/Z * Z));
 		renderer->colocarMat4("model", model);
@@ -454,7 +454,7 @@ void SuperChunk::arbre(int x, int y, int z)
 	{
 		canviarCub(x, y + i, z, FUSTA);
 	}
-	glm::vec3 *color = Recursos::obtColor("VerdFulles");
+	char* color = (char*)"VerdFulles";
 	// Copa del arbol
 	emplenar(x, y + max, z, 1, 1, FULLES, 0, false,color);
 	int segY = y + max - 1;
@@ -466,7 +466,7 @@ void SuperChunk::arbre(int x, int y, int z)
 	emplenar(x, segY, z, 2, 2, FULLES, probabilitat, false,color);
 }
 
-void SuperChunk::emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat, bool reemplacar, glm::vec3* color) {
+void SuperChunk::emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat, bool reemplacar, char* color) {
 	for (int i = -amplitut; i <= amplitut; i++) {
 		for (int j = -llargada; j <= llargada; j++) {
 			if (abs(i) != amplitut || abs(i) != abs(j) || (float)(rand()) / (float)(RAND_MAX) <= probabilitat) {
@@ -480,7 +480,7 @@ void SuperChunk::emplenar(int x, int y, int z, int amplitut, int llargada, uint8
 	}
 }
 
-void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar, glm::vec3* color)
+void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar, char* color)
 {
 	for (int i = x1; i <= x2; i++) {
 		for (int j = y1; j <= y2; j++) {
@@ -489,4 +489,26 @@ void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, ui
 			}
 		}
 	}
+}
+
+vector<glm::vec3> SuperChunk::obtenirColindants(const glm::vec3& pos, bool transparents) const
+{
+	vector<glm::vec3> res;
+	for (int i = 0; i < 6; i++) {
+		glm::vec3 act = glm::vec3(pos.x+posicions[i].x, pos.y + posicions[i].y, pos.z + posicions[i].z);
+		bool valid = esValid(act);
+		if(valid && !transparents || valid && blocs.getBloc(obtenirCub(act.x,act.y,act.z))->transparent) res.push_back(act);
+	}
+	return res;
+}
+
+bool SuperChunk::esValid(int x, int y, int z) const
+{
+	return x>=0 && x / X < XC && y>=0 && y<Y && z>=0 && z / Z < YC;
+
+}
+
+bool SuperChunk::esValid(const glm::vec3& pos) const
+{
+	return esValid(pos.x,pos.y,pos.z);
 }

@@ -7,8 +7,8 @@
 #include <list>
 #include <set>
 
-#define XC 8
-#define YC 8
+#define XC 16
+#define YC 16
 
 struct Ray {
 	glm::vec3 origen;
@@ -26,7 +26,7 @@ public:
 
 
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false, glm::vec3* color = Recursos::obtColor("Blanc"));
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false, char* color = (char *)"Blanc");
 	// Canvia quanta llum té un cub
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
@@ -60,10 +60,10 @@ public:
 
 	// MÉTODES PER GENERAR CUBS
 	// Emplena un rectangle centrat en una posició, extenent-se en amplitut i llargada, amb un tipus concret i una probabilitat que les cantonades puguin desapareixer.
-	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true, glm::vec3* color = Recursos::obtColor("Blanc"));
+	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true, char* color = (char*)"Blanc");
 
 	// Emplena un àrea delimitada per dos punts amb un tipus determinat
-	void emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar = true, glm::vec3* color = Recursos::obtColor("Blanc"));
+	void emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar = true, char* color = (char*)"Blanc");
 
 	// VEGETACIÓ I GENERACIÓ
 	// Genera un arbre en una posicio concreta
@@ -117,6 +117,11 @@ private:
 
 	void posarLlumNatural(glm::vec3 pos, uint8_t llum, bool avall=false);
 	void eliminarLlumNatural(glm::vec3 pos, uint8_t llum);
+
+	// Retorna tots els cubs valids (transparents)
+	vector<glm::vec3> obtenirColindants(const glm::vec3& pos, bool transparents=false) const;
+	bool esValid(int x, int y, int z) const;
+	bool esValid(const glm::vec3& pos) const;
 
 	Chunk2* Chunks[XC][YC];
 	Renderer* renderer;

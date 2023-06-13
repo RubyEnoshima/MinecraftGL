@@ -34,7 +34,7 @@ struct Vertex {
 struct Cub {
 	uint8_t tipus = 0;
 	uint8_t llum = 0;
-	glm::vec3* color = Recursos::obtColor("Blanc");
+	char* color;
 	bool top = false;
 };
 
@@ -45,7 +45,7 @@ public:
 	~Chunk2();
 
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, glm::vec3* color = Recursos::obtColor("Blanc")); 
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, char* color = (char*)"Blanc"); 
 	// Canvia la llum d'un cub concret
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
@@ -54,8 +54,6 @@ public:
 	// Retorna la llum del cub
 	uint8_t obtenirLlumNaturalCub(int x, int y, int z) const;
 	uint8_t obtenirLlumArtificialCub(int x, int y, int z) const;
-
-	uint8_t obtenirLlumNaturalMaxima(int x, int y, int z) const;
 
 	void update();
 	void render();
@@ -69,22 +67,20 @@ public:
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
 
-	vector<GLbyte> vertices;
+	vector<GLubyte> vertices;
 	unsigned int elements = 0;
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
 	bool unCanviat = false;
 	glm::vec3 cubCanviat;
 private:
-	void afegirVertex(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2, uint8_t costat = 0, glm::vec3* color = Recursos::obtColor("Blanc"));
-	void afegirVertexFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, bool r=1, bool g=1, bool b=1);
+	void afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2, uint8_t costat = 0, const char* color = "Blanc");
+	void afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, bool r=1, bool g=1, bool b=1);
 
-	void afegirCub(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, glm::vec3* _color);
-	void afegirCubFlat(vector<GLbyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
+	void afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, const char* _color);
+	void afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
 	unsigned int VBO;
-
-	int nVertexTipus = 12;
 
 	unsigned int posX, posY;
 	Cub chunk[X][Y][Z];
