@@ -95,66 +95,66 @@ glm::mat4 Camera::lookAt()
 	return view;
 }
 
-void Camera::moure(float deltaTime, GLFWwindow* window)
-{
-	// Córrer
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
-		velocitatAct = velocitat * 2.0f;
-	}
-	else velocitatAct = velocitat;
+//void Camera::moure(float deltaTime, GLFWwindow* window)
+//{
+//	// Córrer
+//	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
+//		velocitatAct = velocitat * 2.0f;
+//	}
+//	else velocitatAct = velocitat;
+//
+//	if (glfwGetKey(window, GLFW_KEY_W)) {
+//		moureDavant(deltaTime);
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_S)) {
+//		moureDarrera(deltaTime);
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_A)) {
+//		moureEsquerra(deltaTime);
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_D)) {
+//		moureDreta(deltaTime);
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+//		moureAmunt(deltaTime);
+//	}
+//	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
+//		moureAvall(deltaTime);
+//	}
+//}
 
-	if (glfwGetKey(window, GLFW_KEY_W)) {
-		moureDavant(deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_S)) {
-		moureDarrera(deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_A)) {
-		moureEsquerra(deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D)) {
-		moureDreta(deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
-		moureAmunt(deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
-		moureAvall(deltaTime);
-	}
+void Camera::moureDreta(float deltaTime, float vel)
+{
+	pos += glm::normalize(glm::cross(front, cameraUp)) * vel * deltaTime;
 }
 
-void Camera::moureDreta(float deltaTime)
+void Camera::moureEsquerra(float deltaTime, float vel)
 {
-	pos += glm::normalize(glm::cross(front, cameraUp)) * velocitatAct * deltaTime;
+	pos -= glm::normalize(glm::cross(front, cameraUp)) * vel * deltaTime;
 }
 
-void Camera::moureEsquerra(float deltaTime)
+void Camera::moureDavant(float deltaTime, float vel)
 {
-	pos -= glm::normalize(glm::cross(front, cameraUp)) * velocitatAct * deltaTime;
-}
-
-void Camera::moureDavant(float deltaTime)
-{
-	pos += velocitatAct * deltaTime * glm::normalize(glm::vec3(front.x*2,0,front.z*2));
+	pos += vel * deltaTime * glm::normalize(glm::vec3(front.x * 2, 0, front.z * 2));
 	pos.y = altura;
 }
 
-void Camera::moureDarrera(float deltaTime)
+void Camera::moureDarrera(float deltaTime, float vel)
 {
-	pos -= velocitatAct * deltaTime * glm::normalize(glm::vec3(front.x * 2, 0, front.z * 2));
+	pos -= vel * deltaTime * glm::normalize(glm::vec3(front.x * 2, 0, front.z * 2));
 	pos.y = altura;
 
 }
 
-void Camera::moureAmunt(float deltaTime)
+void Camera::moureAmunt(float deltaTime, float vel)
 {
-	pos.y += velocitatAct * deltaTime;
+	pos.y += vel * deltaTime;
 	altura = pos.y;
 }
 
-void Camera::moureAvall(float deltaTime)
+void Camera::moureAvall(float deltaTime, float vel)
 {
-	pos.y -= velocitatAct * deltaTime;
+	pos.y -= vel * deltaTime;
 	altura = pos.y;
 
 }

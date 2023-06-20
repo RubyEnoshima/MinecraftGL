@@ -27,7 +27,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	{
 		for (int j = 0; j < YC; j++)
 		{
-			Chunks[i][j] = new Chunk2(i,j,&blocs);
+			Chunks[i][j] = new Chunk(i,j,&blocs);
 		}
 	}
 	vector<glm::vec3> arbrets;
@@ -36,10 +36,10 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	{
 		for (int j = 0; j < YC; j++)
 		{
-			Chunk2* up = NULL;
-			Chunk2* left = NULL;
-			Chunk2* right = NULL;
-			Chunk2* down = NULL;
+			Chunk* up = NULL;
+			Chunk* left = NULL;
+			Chunk* right = NULL;
+			Chunk* down = NULL;
 			if (i - 1 >= 0) left = Chunks[i - 1][j];
 			if (i + 1 < XC) right = Chunks[i + 1][j];
 			if (j - 1 >= 0) down = Chunks[i][j - 1];
@@ -233,7 +233,7 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 {
 	if (esValid(x,y,z) && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
 		//cout << x % X << " " << z % Z << endl;
-		Chunk2* chunk = Chunks[x / X][z / Z];
+		Chunk* chunk = Chunks[x / X][z / Z];
 		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
 		chunk->canviarCub(x % X, y, z % Z, tipus, reemplacar, color);
 
@@ -286,7 +286,7 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 {
 	if (esValid(x,y,z)) {
-		Chunk2* chunk = Chunks[x / X][z / Z];
+		Chunk* chunk = Chunks[x / X][z / Z];
 		chunk->canviarLlumNaturalCub(x % X, y, z % Z, llum);
 
 	}
@@ -295,7 +295,7 @@ void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 {
 	if (esValid(x,y,z)) {
-		Chunk2* chunk = Chunks[x / X][z / Z];
+		Chunk* chunk = Chunks[x / X][z / Z];
 		chunk->canviarLlumArtificialCub(x % X, y, z % Z, llum);
 
 	}

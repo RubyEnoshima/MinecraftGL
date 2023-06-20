@@ -1,6 +1,6 @@
-#include "Chunk2.h"
+#include "Chunk.h"
 
-Chunk2::Chunk2(unsigned int _x, unsigned int _y, Blocs* _blocs)
+Chunk::Chunk(unsigned int _x, unsigned int _y, Blocs* _blocs)
 {
 	memset(chunk, 0, sizeof(chunk));
 	/*for (int i = 0; i < X; i++) {
@@ -17,7 +17,7 @@ Chunk2::Chunk2(unsigned int _x, unsigned int _y, Blocs* _blocs)
 	blocs = _blocs;
 }
 
-Chunk2::~Chunk2()
+Chunk::~Chunk()
 {
 	glDeleteBuffers(1, &VBO);
 	for (int i = 0; i < X; i++) {
@@ -30,7 +30,7 @@ Chunk2::~Chunk2()
 	}
 }
 
-void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, char* color)
+void Chunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, char* color)
 {
 	if ((x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) || (!reemplacar && obtenirCub(x, y, z) != AIRE)) return;
 
@@ -56,14 +56,14 @@ void Chunk2::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, cha
 	else if (z == Z - 1 && veiUp) veiUp->canviat = true;
 }
 
-uint8_t Chunk2::obtenirCub(int x, int y, int z) const
+uint8_t Chunk::obtenirCub(int x, int y, int z) const
 {
 	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return 0;
 
 	return chunk[x][y][z].tipus;
 }
 
-void Chunk2::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
+void Chunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 {
 	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return;
 
@@ -72,7 +72,7 @@ void Chunk2::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 
 }
 
-void Chunk2::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
+void Chunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 {
 	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return;
 
@@ -81,21 +81,21 @@ void Chunk2::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 
 }
 
-uint8_t Chunk2::obtenirLlumNaturalCub(int x, int y, int z) const
+uint8_t Chunk::obtenirLlumNaturalCub(int x, int y, int z) const
 {
 	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return 0;
 
 	return (chunk[x][y][z].llum >> 4) & 0xF; // Retornem els primers 4 bits
 }
 
-uint8_t Chunk2::obtenirLlumArtificialCub(int x, int y, int z) const
+uint8_t Chunk::obtenirLlumArtificialCub(int x, int y, int z) const
 {
 	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return 0;
 
 	return chunk[x][y][z].llum & 0xF; // Retornem els ultims 4
 }
 
-void Chunk2::afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum, uint8_t costat, const char* color) {
+void Chunk::afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum, uint8_t costat, const char* color) {
 	// Posicio
 	vertices.push_back(x);
 	vertices.push_back(y);
@@ -122,7 +122,7 @@ void Chunk2::afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t 
 	vertices.push_back(_color->b);
 }
 
-void Chunk2::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus,const char* _color) {
+void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus,const char* _color) {
 	Bloc* b = blocs->getBloc(tipus);
 	uint8_t llum = chunk[x][y][z].llum;
 	const char* color = _color;
@@ -253,7 +253,7 @@ void Chunk2::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, 
 
 }
 
-void Chunk2::afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, bool r, bool g, bool b) {
+void Chunk::afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, bool r, bool g, bool b) {
 	// Posicio
 	vertices.push_back(x);
 	vertices.push_back(y);
@@ -264,7 +264,7 @@ void Chunk2::afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int
 	vertices.push_back(b);
 }
 
-void Chunk2::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
+void Chunk::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	// Cara esq
 	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z].tipus)) {
 		afegirVertexFlat(vertices, x, y, z, 0);
@@ -334,7 +334,7 @@ void Chunk2::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t
 
 }
 
-bool Chunk2::renderCub(int x, int y, int z)
+bool Chunk::renderCub(int x, int y, int z)
 {
 	vector<GLubyte> _vertices;
 	unsigned int VBO_FLAT;
@@ -362,7 +362,7 @@ bool Chunk2::renderCub(int x, int y, int z)
 	return true;
 }
 
-void Chunk2::update()
+void Chunk::update()
 {
 	vector<GLubyte> _vertices;
 
@@ -387,7 +387,7 @@ void Chunk2::update()
 	canviat = false;
 }
 
-void Chunk2::render()
+void Chunk::render()
 {
 	if (canviat) update();
 
@@ -418,12 +418,12 @@ void Chunk2::render()
 	glDisableVertexAttribArray(5);
 }
 
-int Chunk2::nCubs() const
+int Chunk::nCubs() const
 {
 	return elements / 6;
 }
 
-vector<pair<int,glm::vec3>> Chunk2::emplenarChunk()
+vector<pair<int,glm::vec3>> Chunk::emplenarChunk()
 {
 	vector<pair<int, glm::vec3>> res;
 
@@ -464,7 +464,7 @@ vector<pair<int,glm::vec3>> Chunk2::emplenarChunk()
 }
 
 
-void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)
+void Chunk::afegirVeins(Chunk* left, Chunk* right, Chunk* up, Chunk* down)
 {
 	veiEsq = left;
 	veiDre = right;
@@ -473,7 +473,7 @@ void Chunk2::afegirVeins(Chunk2* left, Chunk2* right, Chunk2* up, Chunk2* down)
 
 }
 
-bool Chunk2::cubTop(int8_t x, int8_t y, int8_t z) const
+bool Chunk::cubTop(int8_t x, int8_t y, int8_t z) const
 {
 	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return false;
 	if (y == Y - 1) return true;

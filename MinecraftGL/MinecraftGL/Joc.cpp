@@ -2,6 +2,7 @@
 Joc::~Joc() {
 	delete mon;
 	delete _HUD;
+	delete jugador;
 }
 
 void Joc::canviarModeMouse(int mode)
@@ -10,8 +11,8 @@ void Joc::canviarModeMouse(int mode)
 }
 
 void Joc::canviarProjeccio() {
-	camera.setProjection(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 1000.0f);
-	renderer.colocarMat4("projection", camera.getProjection());
+	jugador->obtCamera()->setProjection(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 1000.0f);
+	renderer.colocarMat4("projection", jugador->obtCamera()->getProjection());
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -34,6 +35,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			return;
 		}
 		switch (key) {
+			case GLFW_KEY_LEFT_CONTROL:
+				joc->jugador->correr();
+				break;
+			case GLFW_KEY_W: case GLFW_KEY_A: case GLFW_KEY_S: case GLFW_KEY_D: case GLFW_KEY_SPACE: case GLFW_KEY_LEFT_SHIFT:
+				//joc->jugador->moure(joc->deltaTime, key);
+				joc->tecles[key] = true;
+				break;
 			// ESC: es tanca la finestra i tanca el joc
 			case GLFW_KEY_ESCAPE:
 				glfwSetWindowShouldClose(window, true);
@@ -67,7 +75,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 
 	}
-
+	else if (action == GLFW_RELEASE) {
+		switch (key)
+		{
+			case GLFW_KEY_W: case GLFW_KEY_A: case GLFW_KEY_S: case GLFW_KEY_D: case GLFW_KEY_SPACE: case GLFW_KEY_LEFT_SHIFT:
+				//joc->jugador->moure(joc->deltaTime, key);
+				joc->tecles[key] = false;
+				break;
+			case GLFW_KEY_LEFT_CONTROL:
+				joc->jugador->caminar();
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 void Joc::Culling() {
@@ -86,6 +107,15 @@ void Joc::VSync() {
 
 }
 
+void Joc::moure()
+{
+	for (auto tecla : tecles) {
+		if (tecla.second) {
+			jugador->moure(deltaTime, tecla.first);
+		}
+	}
+}
+
 int Joc::crearFinestra() {
 	int success = renderer.crearFinestra();
 	if (success) {
@@ -101,15 +131,15 @@ int Joc::crearFinestra() {
 void Joc::ObtenirCubMira() {	
 	// Fent us de raycast
 	//Ray r;
-	//r.origen = camera.obtPos() + camera.obtDireccio();
+	//r.origen = jugador->obtCamera()->obtPos() + jugador->obtCamera()->obtDireccio();
 	///*r.origen = glm::vec3((int)(r.origen.x), (int)(r.origen.y), (int)(r.origen.z));
 	//cout << r.origen << endl;*/
-	//r.direccion = camera.obtDireccio();
+	//r.direccion = jugador->obtCamera()->obtDireccio();
 	//int i = 0; int passes = 10;
-	//while (mon->obtenirCub(r.origen.x, r.origen.y, r.origen.z) == AIRE && i < passes) { r.origen += camera.obtDireccio(); i++; }
+	//while (mon->obtenirCub(r.origen.x, r.origen.y, r.origen.z) == AIRE && i < passes) { r.origen += jugador->obtCamera()->obtDireccio(); i++; }
 
 	//CubActual = glm::vec3((int)r.origen.x, (int)r.origen.y, (int)r.origen.z);
-	//cout << CubActual << camera.obtPos() << endl;
+	//cout << CubActual << jugador->obtCamera()->obtPos() << endl;
 	//return;
 
 	// Desprojectant coordenades de pantalla
@@ -124,7 +154,7 @@ void Joc::ObtenirCubMira() {
 
 	glm::vec4 viewport = glm::vec4(0, 0, ww, wh);
 	glm::vec3 wincoord = glm::vec3(ww / 2, wh / 2, depth);
-	glm::vec3 objcoord = glm::unProject(wincoord, camera.getView(), camera.getProjection(), viewport);
+	glm::vec3 objcoord = glm::unProject(wincoord, jugador->obtCamera()->getView(), jugador->obtCamera()->getProjection(), viewport);
 	CubActual = glm::vec3(floorf(objcoord.x), floorf(objcoord.y), floorf(objcoord.z));
 	
 	//cout << CubActual << endl;
@@ -150,8 +180,8 @@ glm::vec3 Joc::ObtenirCostat() {
 
 	// Canviem el shader que fem servir per un mes senzill
 	renderer.usarShader(1);
-	renderer.colocarMat4("view", camera.lookAt());
-	renderer.colocarMat4("projection", camera.getProjection());
+	renderer.colocarMat4("view", jugador->obtCamera()->lookAt());
+	renderer.colocarMat4("projection", jugador->obtCamera()->getProjection());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -217,7 +247,7 @@ void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
 void Joc::loop() {
 	// Matriu model
 	glm::mat4 model = glm::mat4(1.0f);
-	camera.setModel(model);
+	jugador->obtCamera()->setModel(model);
 	renderer.colocarMat4("model", model);
 	/*model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
 	  model = glm::scale(model, glm::vec3(j,j,j));*/
@@ -242,8 +272,8 @@ void Joc::loop() {
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
-		camera.moure(deltaTime, window);
-		camera.girar(window);
+		//jugador->obtCamera()->moure(deltaTime, window);
+		jugador->obtCamera()->girar(window);
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -258,6 +288,7 @@ void Joc::loop() {
 		renderer.canviarPosLlum(pos);
 
 		glfwPollEvents(); // Processar events
+		moure();
 
 		// Obtenim el cub al que estem mirant i el senyalem al mon
 		ObtenirCubMira();
@@ -265,7 +296,7 @@ void Joc::loop() {
 			mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
 
 
-		view = camera.lookAt();
+		view = jugador->obtCamera()->lookAt();
 		renderer.colocarMat4("view", view);
 
 		_HUD->render();
@@ -303,6 +334,7 @@ void Joc::gameLoop() {
 
 		mon = new SuperChunk(&renderer);
 		_HUD = new HUD(&renderer);
+		jugador = new Jugador(new Camera());
 
 		// Posem el color taronja
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));

@@ -27,7 +27,7 @@
     <ClCompile Include="stb_image.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mon\Chunk2.cpp">
+    <ClCompile Include="Mon\Chunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mon\SuperChunk.cpp">
@@ -60,6 +60,9 @@
     <ClCompile Include="Recursos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Jugador\Jugador.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Joc.h">
@@ -68,7 +71,7 @@
     <ClInclude Include="Tipus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mon\Chunk2.h">
+    <ClInclude Include="Mon\Chunk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mon\SuperChunk.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Recursos.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Jugador\Jugador.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

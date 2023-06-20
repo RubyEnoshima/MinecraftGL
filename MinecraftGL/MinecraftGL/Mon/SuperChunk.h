@@ -1,14 +1,14 @@
 #ifndef SUPERCHUNK_H
 #define SUPERCHUNK_H
 
-#include "Chunk2.h"
+#include "Chunk.h"
 #include "Renderer/Renderer.h"
 #include <queue>
 #include <list>
 #include <set>
 
-#define XC 16
-#define YC 16
+#define XC 3
+#define YC 3
 
 struct Ray {
 	glm::vec3 origen;
@@ -21,9 +21,6 @@ public:
 	SuperChunk();
 	~SuperChunk();
 	SuperChunk(Renderer* _renderer);
-
-	
-
 
 	// Canvia el tipus d'un cub concret
 	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false, char* color = (char *)"Blanc");
@@ -123,7 +120,9 @@ private:
 	bool esValid(int x, int y, int z) const;
 	bool esValid(const glm::vec3& pos) const;
 
-	Chunk2* Chunks[XC][YC];
+	Chunk* Chunks[XC][YC];
+	vector<Chunk*> ChunksLista;
+
 	Renderer* renderer;
 
 	unsigned int VAO;

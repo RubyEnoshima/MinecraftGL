@@ -31,23 +31,19 @@ public:
 
 	glm::mat4 lookAt();
 
-	void moure(float deltaTime, GLFWwindow* window);
+	//void moure(float deltaTime, GLFWwindow* window);
 	void girar(GLFWwindow* window);
 
-	
+	void moureDreta(float deltaTime, float vel);
+	void moureEsquerra(float deltaTime, float vel);
+	void moureDavant(float deltaTime, float vel);
+	void moureDarrera(float deltaTime, float vel);
+	void moureAmunt(float deltaTime, float vel);
+	void moureAvall(float deltaTime, float vel);
 private:
-	void moureDreta(float deltaTime);
-	void moureEsquerra(float deltaTime);
-	void moureDavant(float deltaTime);
-	void moureDarrera(float deltaTime);
-	void moureAmunt(float deltaTime);
-	void moureAvall(float deltaTime);
+	const float sensibilitat = 0.1f;
 
 	void mirar();
-
-	float velocitatAct;
-	float velocitat = 3.75f;
-	const float sensibilitat = 0.1f;
 	float lastX, lastY;
 
 	float yaw = -90.0f;

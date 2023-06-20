@@ -148,8 +148,9 @@
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Joc.cpp" />
     <ClCompile Include="Jugador\Camera.cpp" />
+    <ClCompile Include="Jugador\Jugador.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mon\Chunk2.cpp" />
+    <ClCompile Include="Mon\Chunk.cpp" />
     <ClCompile Include="Mon\SuperChunk.cpp" />
     <ClCompile Include="Recursos.cpp" />
     <ClCompile Include="Renderer\Framebuffer.cpp" />
@@ -165,7 +166,8 @@
     <ClInclude Include="Joc.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Jugador\Camera.h" />
-    <ClInclude Include="Mon\Chunk2.h" />
+    <ClInclude Include="Jugador\Jugador.h" />
+    <ClInclude Include="Mon\Chunk.h" />
     <ClInclude Include="Mon\SuperChunk.h" />
     <ClInclude Include="Recursos.h" />
     <ClInclude Include="Renderer\Framebuffer.h" />
