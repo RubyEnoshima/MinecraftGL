@@ -38,11 +38,11 @@ struct Cub {
 	bool top = false;
 };
 
-class Chunk2
+class Chunk
 {
 public:
-	Chunk2(unsigned int _x=0, unsigned int _y=0, Blocs* _blocs=NULL);
-	~Chunk2();
+	Chunk(unsigned int _x=0, unsigned int _y=0, Blocs* _blocs=NULL);
+	~Chunk();
 
 	// Canvia el tipus d'un cub concret
 	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, char* color = (char*)"Blanc"); 
@@ -63,7 +63,7 @@ public:
 
 	// Genera el chunk amb Perlin noise i posa la llum on toca. Retorna un vector de posicions amb el nombre de l'estructura generada (0: arbre, 1: amapola)
 	vector<pair<int, glm::vec3>> emplenarChunk();
-	void afegirVeins(Chunk2* left=NULL, Chunk2* right= NULL, Chunk2* up = NULL, Chunk2* down = NULL);
+	void afegirVeins(Chunk* left=NULL, Chunk* right= NULL, Chunk* up = NULL, Chunk* down = NULL);
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
 
@@ -85,10 +85,10 @@ private:
 	unsigned int posX, posY;
 	Cub chunk[X][Y][Z];
 
-	Chunk2* veiEsq = NULL;
-	Chunk2* veiDre = NULL;
-	Chunk2* veiUp = NULL;
-	Chunk2* veiBaix = NULL;
+	Chunk* veiEsq = NULL;
+	Chunk* veiDre = NULL;
+	Chunk* veiUp = NULL;
+	Chunk* veiBaix = NULL;
 
 	//SuperChunk* mon = NULL;
 
