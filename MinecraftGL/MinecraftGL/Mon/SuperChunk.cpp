@@ -3,15 +3,19 @@
 SuperChunk::SuperChunk()
 {
 	renderer = nullptr;
-	for (int x = 0; x < XC; x++)
-		for (int y = 0; y < YC; y++)
-			Chunks[x][y] = nullptr;
+	for (int x = 0; x < SIZE; x++)
+		for (int y = 0; y < SIZE; y++)
+			Chunks[glm::vec2(x, y)] = nullptr;
 }
 
 SuperChunk::~SuperChunk() {
-	for (int x = 0; x < XC; x++)
+	/*for (int x = 0; x < XC; x++)
 		for (int y = 0; y < YC; y++)
-				delete Chunks[x][y];
+				delete Chunks[x][y];*/
+	for (auto chunk : Chunks)
+	{
+		delete chunk.second;
+	}
 	glDeleteBuffers(1, &VAO);
 }
 
@@ -23,29 +27,35 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	for (int i = 0; i < XC; i++)
+	/*for (int i = 0; i < XC; i++)
 	{
 		for (int j = 0; j < YC; j++)
 		{
 			Chunks[i][j] = new Chunk(i,j,&blocs);
 		}
+	}*/
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			Chunks[glm::vec2(i,j)] = new Chunk(i, j, &blocs);
+		}
 	}
 	vector<glm::vec3> arbrets;
 
-	for (int i = 0; i < XC; i++)
+	for (int i = 0; i < SIZE; i++)
 	{
-		for (int j = 0; j < YC; j++)
+		for (int j = 0; j < SIZE; j++)
 		{
+			glm::vec2 pos(i,j);
 			Chunk* up = NULL;
 			Chunk* left = NULL;
 			Chunk* right = NULL;
 			Chunk* down = NULL;
-			if (i - 1 >= 0) left = Chunks[i - 1][j];
-			if (i + 1 < XC) right = Chunks[i + 1][j];
-			if (j - 1 >= 0) down = Chunks[i][j - 1];
-			if (j + 1 < YC) up = Chunks[i][j + 1];
-			Chunks[i][j]->afegirVeins(left, right, up, down);
-			vector<pair<int, glm::vec3>> estructures = Chunks[i][j]->emplenarChunk();
+			if (i - 1 >= 0) left = Chunks[glm::vec2(i - 1,j)];
+			if (i + 1 < SIZE) right = Chunks[glm::vec2(i + 1, j)];
+			if (j - 1 >= 0) down = Chunks[glm::vec2(i, j - 1)];
+			if (j + 1 < SIZE) up = Chunks[glm::vec2(i,j + 1)];
+			Chunks[pos]->afegirVeins(left, right, up, down);
+			vector<pair<int, glm::vec3>> estructures = Chunks[pos]->emplenarChunk();
 			for (int i = 0; i < estructures.size(); i++) {
 				int tipus = estructures[i].first;
 				glm::vec3 pos = estructures[i].second;
@@ -67,8 +77,8 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 		arbre(pos.x,pos.y,pos.z);
 	}
 
-	for (int i = 0; i < X * XC; i++) {
-		for (int k = 0; k < Z * YC; k++) {
+	for (int i = 0; i < X * SIZE; i++) {
+		for (int k = 0; k < Z * SIZE; k++) {
 			calculaLlumNatural(i,k);
 
 		}
@@ -233,7 +243,7 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 {
 	if (esValid(x,y,z) && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
 		//cout << x % X << " " << z % Z << endl;
-		Chunk* chunk = Chunks[x / X][z / Z];
+		Chunk* chunk = Chunks[BlocChunk(x,z)];
 		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
 		chunk->canviarCub(x % X, y, z % Z, tipus, reemplacar, color);
 
@@ -252,17 +262,6 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 				llistaLlums.remove(glm::vec3(x, y, z));
 			}
 			else treureLlum(glm::vec3(x, y, z), 0);
-
-
-			//if (chunk->cubTop(x%X, y, z%Z)) {
-			//	//chunk->canviarLlumNaturalCub(x%X, y, z%Z, llumNatural);
-			//	//afegirLlumNatural(glm::vec3(x, y, z));
-			//}
-			//else {
-			//	/*uint8_t llumMaxima = chunk->obtenirLlumNaturalMaxima(x%X,y,z%Z);
-			//	if(llumMaxima > 0) chunk->canviarLlumNaturalCub(x % X, y, z % Z, llumMaxima-1);
-			//	cout << "llum maxima: " << llumMaxima << endl;*/
-			//}
 		}
 		else {
 			// NO ES EFICIENT!!!
@@ -276,8 +275,8 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 
 		if(jugador) calculaLlumNatural(x, z);
 
-		//chunk->unCanviat = true;
-		//chunk->cubCanviat = glm::vec3(x % X, y, z % Z);
+		//chunk.unCanviat = true;
+		//chunk.cubCanviat = glm::vec3(x % X, y, z % Z);
 	}
 	//cout << *color << " " << (int)tipus << endl;
 	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << x % X << ", " << z % Z << endl;
@@ -286,7 +285,7 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 {
 	if (esValid(x,y,z)) {
-		Chunk* chunk = Chunks[x / X][z / Z];
+		Chunk* chunk = Chunks[BlocChunk(x,z)];
 		chunk->canviarLlumNaturalCub(x % X, y, z % Z, llum);
 
 	}
@@ -295,7 +294,7 @@ void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 {
 	if (esValid(x,y,z)) {
-		Chunk* chunk = Chunks[x / X][z / Z];
+		Chunk* chunk = Chunks[BlocChunk(x,z)];
 		chunk->canviarLlumArtificialCub(x % X, y, z % Z, llum);
 
 	}
@@ -303,22 +302,22 @@ void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 
 uint8_t SuperChunk::obtenirCub(int x, int y, int z) const
 {
-	if (esValid(x,y,z))
-		return Chunks[x / X][z / Z]->obtenirCub(x % X, y, z % Z);
+	if (esValid(x, y, z))
+		return Chunks[BlocChunk(x,z)]->obtenirCub(x % X, y, z % Z);
 	return 0;
 }
 
 uint8_t SuperChunk::obtenirLlumNaturalCub(int x, int y, int z)
 {
 	if (esValid(x,y,z))
-		return Chunks[x / X][z / Z]->obtenirLlumNaturalCub(x % X, y, z % Z);
+		return Chunks[BlocChunk(x,z)]->obtenirLlumNaturalCub(x % X, y, z % Z);
 	return 0;
 }
 
 uint8_t SuperChunk::obtenirLlumArtificialCub(int x, int y, int z)
 {
 	if (esValid(x,y,z))
-		return Chunks[x / X][z / Z]->obtenirLlumArtificialCub(x % X, y, z % Z);
+		return Chunks[BlocChunk(x,z)]->obtenirLlumArtificialCub(x % X, y, z % Z);
 	return 0;
 }
 
@@ -326,8 +325,8 @@ void SuperChunk::BoundingBox(int x, int y, int z)
 {
 	if (!obtenirCub(x, y, z)) return;
 	renderer->activaBounding(1);
-	x -= X*XC-X;
-	z -= Z*YC-Z;
+	x -= X*SIZE-X;
+	z -= Z*SIZE-Z;
 	glBindVertexArray(VAO);
 	GLfloat vertices[] = {
 	  0.0 + x, 0.0 + y, 0.0 + z, 1.0,
@@ -412,19 +411,22 @@ void SuperChunk::render()
 		renderer->usarTexturaMon();
 		glBindVertexArray(VAO);
 
-		for (int i = 0; i < XC; i++)
+		/*for (int i = 0; i < XC; i++)
 		{
 			for (int j = 0; j < YC; j++)
 			{
 				if (Chunks[i][j]) {
-					// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
-					//glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y/2, j * Z - Z * YC / 2));
-					glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X, 0, j * Z));
-					renderer->colocarMat4("model", model);
-					Chunks[i][j]->render();
+					;
 				}
 
 			}
+		}*/
+		for (auto chunk : Chunks) {
+			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
+			//glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y/2, j * Z - Z * YC / 2));
+			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
+			renderer->colocarMat4("model", model);
+			chunk.second->render();
 		}
 		glBindVertexArray(0);
 	}
@@ -439,7 +441,7 @@ bool SuperChunk::renderCub(int x, int y, int z)
 		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, 0, z/Z * Z));
 		renderer->colocarMat4("model", model);
 
-		return Chunks[(x / X)][(z / Z)]->renderCub(x % X, y, z % Z);
+		return Chunks[BlocChunk(x,z)]->renderCub(x % X, y, z % Z);
 
 	}
 	return false;
@@ -504,11 +506,22 @@ vector<glm::vec3> SuperChunk::obtenirColindants(const glm::vec3& pos, bool trans
 
 bool SuperChunk::esValid(int x, int y, int z) const
 {
-	return x>=0 && x / X < XC && y>=0 && y<Y && z>=0 && z / Z < YC;
+	//return x>=0 && x / X < XC && y>=0 && y<Y && z>=0 && z / Z < YC;
+	return Chunks.count(BlocChunk(x, z)) > 0;
 
 }
 
 bool SuperChunk::esValid(const glm::vec3& pos) const
 {
 	return esValid(pos.x,pos.y,pos.z);
+}
+
+glm::vec2 SuperChunk::BlocChunk(const glm::vec3& pos) const
+{
+	return BlocChunk(pos.x,pos.z);
+}
+
+glm::vec2 SuperChunk::BlocChunk(int x, int z) const
+{
+	return glm::vec2(floor(x / X), floor(z / Z));
 }
