@@ -7,8 +7,22 @@
 #include <list>
 #include <set>
 
-#define XC 3
-#define YC 3
+//#define XC 3
+//#define YC 3
+
+#define SIZE 8
+
+const struct CompararVec2 {
+	bool operator()(const glm::vec2& a, const glm::vec2& b) const {
+		if (a.x < b.x) {
+			return true;
+		}
+		if (a.x > b.x) {
+			return false;
+		}
+		return a.y < b.y;
+	}
+};
 
 struct Ray {
 	glm::vec3 origen;
@@ -117,11 +131,18 @@ private:
 
 	// Retorna tots els cubs valids (transparents)
 	vector<glm::vec3> obtenirColindants(const glm::vec3& pos, bool transparents=false) const;
+
 	bool esValid(int x, int y, int z) const;
 	bool esValid(const glm::vec3& pos) const;
 
-	Chunk* Chunks[XC][YC];
-	vector<Chunk*> ChunksLista;
+	// Ens diu en quin chunk es troba un bloc
+	glm::vec2 BlocChunk(const glm::vec3& pos) const;
+	glm::vec2 BlocChunk(int x, int z) const;
+
+	//Chunk* Chunks[XC][YC];
+
+
+	mutable map<glm::vec2,Chunk*,CompararVec2> Chunks;
 
 	Renderer* renderer;
 
