@@ -6,11 +6,15 @@
 #include <queue>
 #include <list>
 #include <set>
+#include <mutex>
 
 //#define XC 3
 //#define YC 3
 
-#define SIZE 8
+//#define SIZE 11
+#define DISTANCIA 3
+
+#define DEBUG true // La llum natural no es calcularà
 
 const struct CompararVec2 {
 	bool operator()(const glm::vec2& a, const glm::vec2& b) const {
@@ -36,6 +40,12 @@ public:
 	~SuperChunk();
 	SuperChunk(Renderer* _renderer);
 
+	void comprovarChunks(const glm::vec2& chunkJugador);
+	void descarregarChunks();
+	void carregarChunks();
+
+	void generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets);
+
 	// Canvia el tipus d'un cub concret
 	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false, char* color = (char *)"Blanc");
 	// Canvia quanta llum té un cub
@@ -56,6 +66,7 @@ public:
 	void afegirLlumNatural(const glm::vec3 posLlum);
 	void treureLlumNatural(const glm::vec3 posLlum, uint8_t llumIni);
 
+	void calculaLlumNatural(const glm::vec2& pos);
 	void calculaLlumNatural(int x, int z);
 
 	// Genera un BoundingBox per un cub concret
@@ -80,6 +91,7 @@ public:
 	// Genera un arbre en una posicio concreta
 	void arbre(int x, int y, int z);
 
+	// RAYCAST
 	glm::vec3 raycast(const Ray& ray,const glm::vec3& pos) const{
 		float minDistance = std::numeric_limits<float>::max();
 		glm::vec3 closestVoxel;
@@ -172,7 +184,12 @@ private:
 	uint8_t llumNatural = 15;
 
 	glm::vec3 posicions[6] = { glm::vec3(-1,0,0),glm::vec3(0,-1,0),glm::vec3(0,0,-1),glm::vec3(1,0,0),glm::vec3(0,1,0),glm::vec3(0,0,1) };
-
+	
+	// GESTIÓ DE CHUNKS
+	mutable std::recursive_mutex loadedChunksMutex;
+	queue<glm::vec2> chunksDescarregar;
+	queue<glm::vec2> chunksCarregar;
+	bool esCarregat(const glm::vec2& pos) const;
 };
 
 #endif

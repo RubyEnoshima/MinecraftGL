@@ -265,7 +265,15 @@ void Joc::loop() {
 	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
 	glm::vec3 pos = glm::vec3(0, Y, 0.0f);
 
-	
+	thread t([&]() {
+		
+		while (!glfwWindowShouldClose(window)) {
+			mon->comprovarChunks(jugador->chunkActual());
+			mon->descarregarChunks();
+			mon->carregarChunks();
+			
+		}
+	});
 
 	renderer.activaBounding(0);
 
@@ -312,7 +320,10 @@ void Joc::loop() {
 
 		}
 		fps++;
+
 	}
+
+	t.join();
 }
 
 void Joc::gameLoop() {

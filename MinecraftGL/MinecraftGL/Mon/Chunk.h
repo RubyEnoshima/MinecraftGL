@@ -60,6 +60,7 @@ public:
 	bool renderCub(int x, int y, int z);
 
 	int nCubs() const;
+	glm::vec2 obtPos() const;
 
 	// Genera el chunk amb Perlin noise i posa la llum on toca. Retorna un vector de posicions amb el nombre de l'estructura generada (0: arbre, 1: amapola)
 	vector<pair<int, glm::vec3>> emplenarChunk();
@@ -72,6 +73,10 @@ public:
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
 	bool unCanviat = false;
+
+	bool descarregant = false;
+	bool preparat = false;
+
 	glm::vec3 cubCanviat;
 private:
 	void afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2, uint8_t costat = 0, const char* color = "Blanc");
@@ -80,7 +85,7 @@ private:
 	void afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, const char* _color);
 	void afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
-	unsigned int VBO;
+	unsigned int VBO = -1;
 
 	unsigned int posX, posY;
 	Cub chunk[X][Y][Z];

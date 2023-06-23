@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <map>
+
 using namespace std;
 class Recursos
 {
@@ -11,7 +12,7 @@ public:
 	}
 	typedef map<string, glm::vec3> MapColors;
 	static MapColors COLORS;
-
+	
 private:
 	Recursos() { 
 	}
