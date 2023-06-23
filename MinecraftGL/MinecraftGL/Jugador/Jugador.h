@@ -21,7 +21,7 @@ public:
 	// Retorna la posició del jugador respecte al chunk actual
 	glm::vec2 chunkActual() const;
 private:
-	const float velocitat = 5;
+	const float velocitat = 7.5;
 	float velocitatAct = velocitat;
 
 	int mode = ESPECTADOR; // Veure adalt la llista de modes

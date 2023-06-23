@@ -7,6 +7,8 @@
 #include "glm/gtx/io.hpp"
 
 #include <string>
+#include <thread>
+#include <mutex>
 
 #define rgb renderer.rgb
 
@@ -65,7 +67,6 @@ private:
 	//Camera camera;
 	Renderer renderer;
 	SuperChunk* mon;
-	
 	
 };
 

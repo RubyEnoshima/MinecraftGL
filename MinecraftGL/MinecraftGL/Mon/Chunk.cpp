@@ -10,7 +10,6 @@ Chunk::Chunk(unsigned int _x, unsigned int _y, Blocs* _blocs)
 			}
 		}
 	}*/
-	glGenBuffers(1, &VBO);
 	posX = _x;
 	posY = _y;
 	//mon = _mon;
@@ -20,14 +19,11 @@ Chunk::Chunk(unsigned int _x, unsigned int _y, Blocs* _blocs)
 Chunk::~Chunk()
 {
 	glDeleteBuffers(1, &VBO);
-	for (int i = 0; i < X; i++) {
-		for (int j = 0; j < Y; j++) {
-			for (int k = 0; k < Z; k++) {
-				//delete chunk[i][j][k].color;
-				//delete chunk[i][j][k];
-			}
-		}
-	}
+	if (veiUp)veiUp->veiBaix = NULL;
+	if (veiBaix)veiBaix->veiUp = NULL;
+	if (veiEsq)veiEsq->veiDre = NULL;
+	if (veiDre)veiDre->veiEsq = NULL;
+
 }
 
 void Chunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, char* color)
@@ -162,7 +158,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	else if (tipus == NEU) tipus = NEU_COSTAT;*/
 	tipus = b->costats;
 	// Cara esq
-	if ((x == 0 and veiEsq and (!veiEsq->obtenirCub(X - 1, y, z) || blocs->getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent)) or (x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x - 1][y][z].tipus)->transparent))) {
+	if ((x == 0 and veiEsq != NULL and (!veiEsq->obtenirCub(X - 1, y, z) || blocs->getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent)) or (x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x - 1][y][z].tipus)->transparent))) {
 		if (x == 0) llum = veiEsq->chunk[X - 1][y][z].llum;
 		else llum = chunk[x - 1][y][z].llum;
 
@@ -175,7 +171,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	}
 	// Cara dre
-	if ((x == X - 1 and veiDre and (!veiDre->obtenirCub(0, y, z) || blocs->getBloc(veiDre->obtenirCub(0, y, z))->transparent)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or blocs->getBloc(chunk[x + 1][y][z].tipus)->transparent))) {
+	if ((x == X - 1 and veiDre != NULL and (!veiDre->obtenirCub(0, y, z) || blocs->getBloc(veiDre->obtenirCub(0, y, z))->transparent)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or blocs->getBloc(chunk[x + 1][y][z].tipus)->transparent))) {
 		if (x == X - 1) llum = veiDre->chunk[0][y][z].llum;
 		else llum = chunk[x + 1][y][z].llum;
 
@@ -188,7 +184,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp and (!veiUp->obtenirCub(x, y, 0) || blocs->getBloc(veiUp->obtenirCub(x, y, 0))->transparent)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or blocs->getBloc(chunk[x][y][z + 1].tipus)->transparent))) {
+	if ((z == Z - 1 and veiUp != NULL and (!veiUp->obtenirCub(x, y, 0) || blocs->getBloc(veiUp->obtenirCub(x, y, 0))->transparent)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or blocs->getBloc(chunk[x][y][z + 1].tipus)->transparent))) {
 		if (z == Z - 1) llum = veiUp->chunk[x][y][0].llum;
 		else llum = chunk[x][y][z + 1].llum;
 		
@@ -203,7 +199,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix and (!veiBaix->obtenirCub(x, y, Z - 1) || blocs->getBloc(veiBaix->obtenirCub(x, y, Z - 1))->transparent)) or (z != 0 and (!chunk[x][y][z - 1].tipus or blocs->getBloc(chunk[x][y][z - 1].tipus)->transparent))) {
+	if ((z == 0 and veiBaix != NULL and (!veiBaix->obtenirCub(x, y, Z - 1) || blocs->getBloc(veiBaix->obtenirCub(x, y, Z - 1))->transparent)) or (z != 0 and (!chunk[x][y][z - 1].tipus or blocs->getBloc(chunk[x][y][z - 1].tipus)->transparent))) {
 		if (z == 0) llum = veiBaix->chunk[x][y][Z - 1].llum;
 		else llum = chunk[x][y][z - 1].llum;
 		
@@ -364,6 +360,7 @@ bool Chunk::renderCub(int x, int y, int z)
 
 void Chunk::update()
 {
+	if(VBO == -1) glGenBuffers(1, &VBO);
 	vector<GLubyte> _vertices;
 
 	for (int i = 0; i < X; i++) {
@@ -389,6 +386,7 @@ void Chunk::update()
 
 void Chunk::render()
 {
+	if (!preparat) return;
 	if (canviat) update();
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -421,6 +419,11 @@ void Chunk::render()
 int Chunk::nCubs() const
 {
 	return elements / 6;
+}
+
+glm::vec2 Chunk::obtPos() const
+{
+	return glm::vec2(posX,posY);
 }
 
 vector<pair<int,glm::vec3>> Chunk::emplenarChunk()
@@ -470,7 +473,10 @@ void Chunk::afegirVeins(Chunk* left, Chunk* right, Chunk* up, Chunk* down)
 	veiDre = right;
 	veiUp = up;
 	veiBaix = down;
-
+	if (left) left->veiDre = this;
+	if (right) right->veiEsq = this;
+	if (up) up->veiBaix = this;
+	if (down) down->veiUp = this;
 }
 
 bool Chunk::cubTop(int8_t x, int8_t y, int8_t z) const

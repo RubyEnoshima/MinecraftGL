@@ -37,7 +37,7 @@ void Jugador::moure(float deltaTime, int tecla)
 
 void Jugador::correr()
 {
-	velocitatAct = velocitat * 2.5f;
+	velocitatAct = velocitat * 1.5f;
 }
 
 void Jugador::caminar()
