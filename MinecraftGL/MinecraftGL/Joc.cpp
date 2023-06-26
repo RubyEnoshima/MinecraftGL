@@ -267,11 +267,34 @@ void Joc::loop() {
 
 	thread t([&]() {
 		
+		auto start = std::chrono::high_resolution_clock::now();
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration;
 		while (!glfwWindowShouldClose(window)) {
 			mon->comprovarChunks(jugador->chunkActual());
+
+			end = std::chrono::high_resolution_clock::now();
+			duration = end - start;
+			mon->tempsCarrega += duration.count();
+			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now();}
+
+			mon->eliminaCarregats();
+			end = std::chrono::high_resolution_clock::now();
+			duration = end - start;
+			mon->tempsCarrega += duration.count();
+			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }
+
 			mon->descarregarChunks();
+			end = std::chrono::high_resolution_clock::now();
+			duration = end - start;
+			mon->tempsCarrega += duration.count();
+			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }
+
 			mon->carregarChunks();
-			
+			end = std::chrono::high_resolution_clock::now();
+			duration = end - start;
+			mon->tempsCarrega += duration.count();
+			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }
 		}
 	});
 
@@ -280,6 +303,7 @@ void Joc::loop() {
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
+		auto start = std::chrono::high_resolution_clock::now();
 		//jugador->obtCamera()->moure(deltaTime, window);
 		jugador->obtCamera()->girar(window);
 
@@ -292,7 +316,9 @@ void Joc::loop() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
+		auto start2 = std::chrono::high_resolution_clock::now();
 		mon->render();
+		auto end2 = std::chrono::high_resolution_clock::now();
 		renderer.canviarPosLlum(pos);
 
 		glfwPollEvents(); // Processar events
@@ -317,10 +343,16 @@ void Joc::loop() {
 			//cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
 			glfwSetWindowTitle(window, ("MinecraftGL - FPS: " + to_string(fps)).c_str());
 			fps = 0; // Resetejem el comptador
-
+			
 		}
+		//mon->potGenerar = true;
 		fps++;
-
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration = end - start;
+		if (duration.count() > 0.01) {
+			std::chrono::duration<double> duration2 = end2 - start2;
+			cout << "En fer un frame he trigat " << duration.count() << " i en renderitzar, " << duration2.count() << endl;
+		}
 	}
 
 	t.join();

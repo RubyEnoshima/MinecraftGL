@@ -7,6 +7,10 @@ using namespace std;
 class Recursos
 {
 public:
+	static enum TIPUS_MON {
+		NORMAL = 0,
+		PLA = 1
+	};
 	static glm::vec3* obtColor(string color) {
 		return &COLORS[color];
 	}

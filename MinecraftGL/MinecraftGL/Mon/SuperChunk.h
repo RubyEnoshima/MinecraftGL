@@ -4,6 +4,7 @@
 #include "Chunk.h"
 #include "Renderer/Renderer.h"
 #include <queue>
+#include <deque>
 #include <list>
 #include <set>
 #include <mutex>
@@ -12,7 +13,8 @@
 //#define YC 3
 
 //#define SIZE 11
-#define DISTANCIA 3
+#define DISTANCIA 12
+#define NCHUNKS 2
 
 #define DEBUG true // La llum natural no es calcularà
 
@@ -43,6 +45,9 @@ public:
 	void comprovarChunks(const glm::vec2& chunkJugador);
 	void descarregarChunks();
 	void carregarChunks();
+	void eliminaCarregats();
+	float tempsCarrega = 0;
+
 
 	void generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets);
 
@@ -132,7 +137,11 @@ public:
 		}
 	}
 
+	bool potGenerar = true;
+
 private:
+	int tipusMon = Recursos::NORMAL;
+
 	bool carregat = false;
 
 	void posarLlum(glm::vec3 pos, uint8_t llum);
@@ -150,9 +159,6 @@ private:
 	// Ens diu en quin chunk es troba un bloc
 	glm::vec2 BlocChunk(const glm::vec3& pos) const;
 	glm::vec2 BlocChunk(int x, int z) const;
-
-	//Chunk* Chunks[XC][YC];
-
 
 	mutable map<glm::vec2,Chunk*,CompararVec2> Chunks;
 
@@ -187,9 +193,13 @@ private:
 	
 	// GESTIÓ DE CHUNKS
 	mutable std::recursive_mutex loadedChunksMutex;
-	queue<glm::vec2> chunksDescarregar;
-	queue<glm::vec2> chunksCarregar;
+	mutable std::recursive_mutex cuaMutex;
+	deque<Chunk*> chunksDescarregar;
+	deque<glm::vec2> chunksCarregar;
+	deque<pair<glm::vec2,Chunk*>> ChunksReady;
+
 	bool esCarregat(const glm::vec2& pos) const;
+	bool existeixCua(const deque<glm::vec2>& cua, const glm::vec2& e) const;
 };
 
 #endif

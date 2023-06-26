@@ -63,7 +63,7 @@ public:
 	glm::vec2 obtPos() const;
 
 	// Genera el chunk amb Perlin noise i posa la llum on toca. Retorna un vector de posicions amb el nombre de l'estructura generada (0: arbre, 1: amapola)
-	vector<pair<int, glm::vec3>> emplenarChunk();
+	vector<pair<int, glm::vec3>> emplenarChunk(int tipus);
 	void afegirVeins(Chunk* left=NULL, Chunk* right= NULL, Chunk* up = NULL, Chunk* down = NULL);
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
@@ -101,7 +101,7 @@ private:
 
 	// Probabilitats de generació: 1 == 100%
 	float probabilitatArbre = 0.025;
-	float probabilitatFlor = 0.25;
+	float probabilitatFlor = 0;
 };
 
 #endif
