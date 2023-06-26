@@ -426,14 +426,15 @@ glm::vec2 Chunk::obtPos() const
 	return glm::vec2(posX,posY);
 }
 
-vector<pair<int,glm::vec3>> Chunk::emplenarChunk()
+vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus)
 {
 	vector<pair<int, glm::vec3>> res;
-
+	const int W = 500, H = 500;
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
 
-			int height = Y/2 + (int)(glm::perlin(glm::vec2((float)(i + X * posX) / X, (float)(k + Z * posY) / Z)) * 7);
+			int height = Y / 2;
+			if(tipus == Recursos::NORMAL) height = Y/2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 7);
 
 			for (int j = 0; j <= height; j++) {
 				uint8_t tipus = TERRA;

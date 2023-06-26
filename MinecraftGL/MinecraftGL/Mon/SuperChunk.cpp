@@ -78,6 +78,8 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 	//cout << "Jugador: " << chunkJugador;
 	vector<glm::vec2> descarregar;
 	for (auto chunk : Chunks) {
+		//std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+
 		if (chunk.second) {
 			if (chunk.second->descarregant) continue;
 			int distanciaX = abs(chunkJugador.x - chunk.first.x);
@@ -85,7 +87,7 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 			//cout << "\t" << chunk.first << ": " << distanciaX << " " << distanciaY;
 			if (distanciaX + distanciaY > DISTANCIA) {
 				//cout << " {DESCARTAT}";
-				chunksDescarregar.emplace(chunk.first);
+				chunksDescarregar.push_back(chunk.second);
 				descarregar.push_back(chunk.first);
 				chunk.second->descarregant = true;
 			}
@@ -93,72 +95,109 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 		}
 		//cout << endl;
 	}
+
+	for (auto chunk : descarregar) {
+		std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+
+		Chunks.erase(chunk);
+
+	}
+
 	//if (chunksDescarregar.size() > 0) {
 		// MIRAR AL VOLTANT DEL JUGADOR Y POSAR EN CUA CHUNKS NOUS
 		for (int i = -DISTANCIA; i <= DISTANCIA; i++) {
 			for (int j = -DISTANCIA; j <= DISTANCIA; j++) {
 				if (abs(i) + abs(j) > DISTANCIA) continue;
 				glm::vec2 nouChunk = chunkJugador + glm::vec2(i,j);
-				if (!esCarregat(nouChunk))chunksCarregar.emplace(nouChunk);
+				if (!esCarregat(nouChunk) && !existeixCua(chunksCarregar, nouChunk))chunksCarregar.push_back(nouChunk);
+				
 			}
 		}
-		/*for (auto chunk : descarregar) {
-			glm::vec2 nouChunk = chunk - chunkJugador;
-			if (!esCarregat(nouChunk)) chunksCarregar.emplace(nouChunk);
-		}*/
 	//}
 	//cout << "--------" << endl;
-
 
 }
 
 void SuperChunk::descarregarChunks()
 {
-	if (chunksDescarregar.size() > 0) {
-		std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
-		glm::vec2 pos = chunksDescarregar.front();
-		chunksDescarregar.pop();
-		cout << "Descarregant chunk " << pos << endl;
-		delete Chunks[pos];
-		Chunks.erase(pos);
+	if (!chunksDescarregar.empty()) {
+		auto start = std::chrono::high_resolution_clock::now();
+		for (int i = 0; i < NCHUNKS; i++) {
+			if (chunksDescarregar.empty()) break;
+			//std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+			//loadedChunksMutex.lock();
+			std::lock_guard<std::recursive_mutex> lock(cuaMutex);
+			Chunk* c = chunksDescarregar.back();
+			chunksDescarregar.pop_back();
+			//cout << "Descarregant chunk " << pos << endl;
+			delete c;
+			/*Chunks.erase(pos);*/
+			//loadedChunksMutex.unlock();
+		}
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration = end - start;
+		//cout << "En eliminar " << NCHUNKS << " chunks he trigat " << duration.count() << endl;
 	}
 
 }
 
 void SuperChunk::carregarChunks()
 {
-	if (chunksCarregar.size() > 0) {
-		std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
-		glm::vec2 pos = chunksCarregar.front();
-		chunksCarregar.pop();
-		if (!esCarregat(pos)) {
-			cout << "Carregant chunk " << pos << endl;
-			vector<glm::vec3> arbrets;
-			generarChunk(pos, arbrets);
-			/*for (int i = 0; i < arbrets.size(); i++) {
-				glm::vec3 posArbre = arbrets[i];
-				arbre(posArbre.x, posArbre.y, posArbre.z);
-			}*/
+	if (!chunksCarregar.empty() && potGenerar) {
+		auto start = std::chrono::high_resolution_clock::now();
+		//std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+		for (int i = 0; i < NCHUNKS; i++) {
+			if (chunksCarregar.empty()) break;
+			std::lock_guard<std::recursive_mutex> lock(cuaMutex);
+			glm::vec2 pos = chunksCarregar.back();
+			chunksCarregar.pop_back();
+			if (!esCarregat(pos)) {
+				//cout << "Carregant chunk " << pos << endl;
+				vector<glm::vec3> arbrets;
+				generarChunk(pos, arbrets);
+				/*for (int i = 0; i < arbrets.size(); i++) {
+					glm::vec3 posArbre = arbrets[i];
+					arbre(posArbre.x, posArbre.y, posArbre.z);
+				}*/
 
-			calculaLlumNatural(pos);
+				
+
+				//potGenerar = false;
+			}
+
 		}
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> duration = end - start;
+		//cout << "En crear " << NCHUNKS << " chunks he trigat " << duration.count() << endl;
+	}
+}
+
+void SuperChunk::eliminaCarregats()
+{
+	for (int i = 0; i < NCHUNKS; i++) {
+		if (ChunksReady.empty()) break;
+		std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+
+		Chunks[ChunksReady.back().first] = ChunksReady.back().second;
+		ChunksReady.back().second->canviat = true;
+		ChunksReady.pop_back();
 	}
 }
 
 void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 {
-	Chunks[pos] = new Chunk(pos.x, pos.y, &blocs);
+	Chunk* nou = new Chunk(pos.x, pos.y, &blocs);
 	Chunk* up = NULL;
 	Chunk* left = NULL;
-	Chunk* right = NULL;
+	Chunk* right = NULL; 
 	Chunk* down = NULL;
 	if (esCarregat(glm::vec2(pos.x-1,pos.y))) left = Chunks[glm::vec2(pos.x - 1, pos.y)];
 	if (esCarregat(glm::vec2(pos.x + 1, pos.y))) right = Chunks[glm::vec2(pos.x + 1, pos.y)];
 	if (esCarregat(glm::vec2(pos.x, pos.y - 1))) down = Chunks[glm::vec2(pos.x, pos.y - 1)];
 	if (esCarregat(glm::vec2(pos.x, pos.y + 1))) up = Chunks[glm::vec2(pos.x, pos.y + 1)];
-	Chunks[pos]->afegirVeins(left, right, up, down);
-	vector<pair<int, glm::vec3>> estructures = Chunks[pos]->emplenarChunk();
-	for (int i = 0; i < estructures.size(); i++) {
+	nou->afegirVeins(left, right, up, down);
+	vector<pair<int, glm::vec3>> estructures = nou->emplenarChunk(tipusMon);
+	/*for (int i = 0; i < estructures.size(); i++) {
 		int tipus = estructures[i].first;
 		glm::vec3 pos = estructures[i].second;
 
@@ -167,7 +206,10 @@ void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 			int tipusFlor = rand() % flors.size();
 			canviarCub(pos.x, pos.y, pos.z, flors[tipusFlor], false);
 		}
-	}
+	}*/
+	calculaLlumNatural(pos);
+	nou->preparat = true;
+	ChunksReady.push_back({pos,nou});
 }
 
 void SuperChunk::calculaLlumNatural(const glm::vec2& pos)
@@ -177,7 +219,6 @@ void SuperChunk::calculaLlumNatural(const glm::vec2& pos)
 			calculaLlumNatural(i + pos.x * X, j + pos.y * Z);
 		}
 	}
-	Chunks[pos]->preparat = true;
 }
 
 void SuperChunk::calculaLlumNatural(int x, int z)
@@ -505,21 +546,26 @@ void SuperChunk::update()
 void SuperChunk::render()
 {	
 	if (renderer) {
-		
+
 		renderer->usarShader(0);
 		renderer->usarTexturaMon();
 		glBindVertexArray(VAO);
 
-		std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
-
+		//loadedChunksMutex.lock();
+		auto start = std::chrono::high_resolution_clock::now();
 		for (auto chunk : Chunks) {
-			if (chunk.second->descarregant) continue;
+			auto end = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double> duration = end - start;
+			if (chunk.second == NULL or chunk.second->descarregant) continue;
+			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
 			//glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y/2, j * Z - Z * YC / 2));
 			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
 			renderer->colocarMat4("model", model);
 			chunk.second->render();
 		}
+		tempsCarrega = 0;
+		//loadedChunksMutex.unlock();
 		glBindVertexArray(0);
 	}
 	
@@ -527,7 +573,7 @@ void SuperChunk::render()
 
 bool SuperChunk::renderCub(int x, int y, int z)
 {
-		glBindVertexArray(VAO);
+	glBindVertexArray(VAO);
 	if (esValid(x,y,z)) {
 		// Hem d'aplicar la mateixa transformació que abans
 		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, 0, z/Z * Z));
@@ -621,4 +667,11 @@ glm::vec2 SuperChunk::BlocChunk(int x, int z) const
 bool SuperChunk::esCarregat(const glm::vec2& pos) const
 {
 	return Chunks.count(pos) > 0 && Chunks[pos] != NULL;
+}
+
+bool SuperChunk::existeixCua(const deque<glm::vec2>& cua, const glm::vec2& e) const
+{
+	std::lock_guard<std::recursive_mutex> lock(cuaMutex);
+	deque<glm::vec2>::const_iterator it = find(cua.begin(), cua.end(), e);
+	return it != cua.end();
 }

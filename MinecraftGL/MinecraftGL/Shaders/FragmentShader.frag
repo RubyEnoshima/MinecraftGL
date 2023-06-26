@@ -1,5 +1,8 @@
 #version 330 core
 
+const vec4 fogcolor = vec4(0.6, 0.8, 1.0, 1.0);
+const float fogdensity = .0001;
+
 out vec4 color;
 
 // Iluminació
@@ -65,5 +68,7 @@ void main()
 
 	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
 	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat] * colorTint, colorText.w)*brillantor;
-
+	float z = gl_FragCoord.z / gl_FragCoord.w;
+	float fog = clamp(exp(0.75-fogdensity * z * z), 0.0, 1);
+	color = mix(fogcolor, color, fog);
 }
