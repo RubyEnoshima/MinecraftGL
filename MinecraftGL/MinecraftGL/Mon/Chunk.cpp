@@ -358,10 +358,11 @@ bool Chunk::renderCub(int x, int y, int z)
 	return true;
 }
 
-void Chunk::update()
+void Chunk::crearVertexs()
 {
-	if(VBO == -1) glGenBuffers(1, &VBO);
-	vector<GLubyte> _vertices;
+	if (!canviat) return;
+	vector<GLubyte> vertices;
+	//_vertices.clear();
 
 	for (int i = 0; i < X; i++) {
 		for (int j = 0; j < Y; j++) {
@@ -369,17 +370,24 @@ void Chunk::update()
 				uint8_t tipus = chunk[i][j][k].tipus;
 				if (tipus) {
 					//if (tipus == LLUM) llum = 12;
-					afegirCub(_vertices, i, j, k, tipus, chunk[i][j][k].color);
-				} 
+					afegirCub(vertices, i, j, k, tipus, chunk[i][j][k].color);
+				}
 			}
 		}
 	}
 
-	elements = _vertices.size();
-	vertices = _vertices;
+	elements = vertices.size();
+	_vertices = vertices;
+}
 
+void Chunk::update()
+{
+	if(VBO == 0) glGenBuffers(1, &VBO);
+	if (elements == 0) return;
+	//crearVertexs();
+	
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, elements, vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, elements, _vertices.data(), GL_STATIC_DRAW);
 
 	canviat = false;
 }
@@ -390,7 +398,6 @@ void Chunk::render()
 	if (canviat) update();
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
 
 	glVertexAttribPointer(0, 3, GL_UNSIGNED_BYTE, GL_FALSE, 12 * sizeof(GLubyte), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -434,7 +441,7 @@ vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus)
 		for (int k = 0; k < Z; k++) {
 
 			int height = Y / 2;
-			if(tipus == Recursos::NORMAL) height = Y/2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 7);
+			if(tipus == Recursos::NORMAL) height = Y/2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 15);
 
 			for (int j = 0; j <= height; j++) {
 				uint8_t tipus = TERRA;

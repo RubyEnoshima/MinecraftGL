@@ -19,56 +19,13 @@ SuperChunk::~SuperChunk() {
 
 SuperChunk::SuperChunk(Renderer* _renderer)
 {
-		srand(semilla);
+	srand(semilla);
 
 	renderer = _renderer;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	/*for (int i = 0; i < XC; i++)
-	{
-		for (int j = 0; j < YC; j++)
-		{
-			Chunks[i][j] = new Chunk(i,j,&blocs);
-		}
-	}*/
-	/*for (int i = 0; i < SIZE; i++) {
-		for (int j = 0; j < SIZE; j++) {
-			Chunks[glm::vec2(i,j)] = new Chunk(i, j, &blocs);
-		}
-	}*/
 	vector<glm::vec3> arbrets;
-
-	/*for (int i = 0; i < SIZE; i++)
-	{
-		for (int j = 0; j < SIZE; j++)
-		{
-			generarChunk(glm::vec2(i,j),arbrets);
-		}
-	}*/
-
-	/*for (int i = -DISTANCIA; i <= DISTANCIA; i++) {
-		for (int j = -DISTANCIA; j <= DISTANCIA; j++) {
-			if (abs(i) + abs(j) > DISTANCIA) continue;
-			generarChunk(glm::vec2(i, j), arbrets);
-		}
-	}
-
-	for (int i = 0; i < arbrets.size(); i++) {
-		glm::vec3 pos = arbrets[i];
-		arbre(pos.x,pos.y,pos.z);
-	}
-
-	for (auto chunk : Chunks) {
-		calculaLlumNatural(chunk.first);
-	}*/
-
-	/*for (int i = 0; i < X * SIZE; i++) {
-		for (int k = 0; k < Z * SIZE; k++) {
-			calculaLlumNatural(i,k);
-
-		}
-	}*/
 
 	carregat = true;
 }
@@ -116,6 +73,19 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 	//}
 	//cout << "--------" << endl;
 
+}
+
+void SuperChunk::update(const glm::vec2& chunkJugador)
+{
+	for (int i = -DISTANCIA+1; i < DISTANCIA; i++) {
+		for (int j = -DISTANCIA+1; j < DISTANCIA; j++) {
+			if (abs(i) + abs(j) > DISTANCIA) continue;
+			glm::vec2 chunk = chunkJugador + glm::vec2(i, j);
+			if (esCarregat(chunk)) {
+				Chunks[chunk]->crearVertexs();
+			}
+		}
+	}
 }
 
 void SuperChunk::descarregarChunks()
@@ -174,14 +144,13 @@ void SuperChunk::carregarChunks()
 
 void SuperChunk::eliminaCarregats()
 {
-	for (int i = 0; i < NCHUNKS; i++) {
+	/*for (int i = 0; i < NCHUNKS; i++) {
 		if (ChunksReady.empty()) break;
 		std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 
 		Chunks[ChunksReady.back().first] = ChunksReady.back().second;
-		ChunksReady.back().second->canviat = true;
 		ChunksReady.pop_back();
-	}
+	}*/
 }
 
 void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
@@ -209,7 +178,7 @@ void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 	}*/
 	calculaLlumNatural(pos);
 	nou->preparat = true;
-	ChunksReady.push_back({pos,nou});
+	Chunks[pos] = nou;
 }
 
 void SuperChunk::calculaLlumNatural(const glm::vec2& pos)
@@ -464,8 +433,10 @@ void SuperChunk::BoundingBox(int x, int y, int z)
 {
 	if (!obtenirCub(x, y, z)) return;
 	renderer->activaBounding(1);
-	x -= X*DISTANCIA*2-X;
-	z -= Z*DISTANCIA*2-Z;
+	/*x -= X*DISTANCIA-X;
+	z -= Z*DISTANCIA-Z;*/
+	//cout << x << " " << y << " " << z << endl;
+	x = X/2; z = Z/2;
 	glBindVertexArray(VAO);
 	GLfloat vertices[] = {
 	  0.0 + x, 0.0 + y, 0.0 + z, 1.0,
@@ -538,11 +509,6 @@ bool SuperChunk::existeixCub(int x, int y, int z, uint8_t tipus) const
 	return false;
 }
 
-void SuperChunk::update()
-{
-	
-}
-
 void SuperChunk::render()
 {	
 	if (renderer) {
@@ -552,10 +518,7 @@ void SuperChunk::render()
 		glBindVertexArray(VAO);
 
 		//loadedChunksMutex.lock();
-		auto start = std::chrono::high_resolution_clock::now();
 		for (auto chunk : Chunks) {
-			auto end = std::chrono::high_resolution_clock::now();
-			std::chrono::duration<double> duration = end - start;
 			if (chunk.second == NULL or chunk.second->descarregant) continue;
 			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc

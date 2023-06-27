@@ -13,8 +13,8 @@
 //#define YC 3
 
 //#define SIZE 11
-#define DISTANCIA 12
-#define NCHUNKS 2
+#define DISTANCIA 25
+#define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // La llum natural no es calcularà
 
@@ -46,6 +46,8 @@ public:
 	void descarregarChunks();
 	void carregarChunks();
 	void eliminaCarregats();
+	void update(const glm::vec2& chunkJugador);
+
 	float tempsCarrega = 0;
 
 
@@ -80,7 +82,6 @@ public:
 	// True si existeix un cub d'un tipus concret al voltant d'un cub
 	bool existeixCub(int x, int y, int z, uint8_t tipus) const;
 
-	void update();
 	void render();
 	// Renderitza un cub en una posició de manera que cada cara es pugui identificar pel color
 	bool renderCub(int x, int y, int z);
