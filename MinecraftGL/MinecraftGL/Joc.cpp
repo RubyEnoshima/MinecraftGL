@@ -272,32 +272,31 @@ void Joc::loop() {
 		std::chrono::duration<double> duration;
 		while (!glfwWindowShouldClose(window)) {
 			mon->comprovarChunks(jugador->chunkActual());
-
-			end = std::chrono::high_resolution_clock::now();
+			/*end = std::chrono::high_resolution_clock::now();
 			duration = end - start;
 			mon->tempsCarrega += duration.count();
-			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now();}
+			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now();}*/
 
 			mon->eliminaCarregats();
-			end = std::chrono::high_resolution_clock::now();
+			/*end = std::chrono::high_resolution_clock::now();
 			duration = end - start;
 			mon->tempsCarrega += duration.count();
-			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }
+			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }*/
 
 			mon->descarregarChunks();
-			end = std::chrono::high_resolution_clock::now();
+			/*end = std::chrono::high_resolution_clock::now();
 			duration = end - start;
 			mon->tempsCarrega += duration.count();
-			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }
+			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }*/
 
 			mon->carregarChunks();
-			end = std::chrono::high_resolution_clock::now();
+			/*end = std::chrono::high_resolution_clock::now();
 			duration = end - start;
 			mon->tempsCarrega += duration.count();
-			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }
+			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }*/
 		}
 	});
-
+	thread t2([&]() {while (!glfwWindowShouldClose(window)) { mon->update(jugador->chunkActual()); } });
 	renderer.activaBounding(0);
 
 	// El loop del joc, mentre no es tanqui la finestra...
@@ -356,6 +355,7 @@ void Joc::loop() {
 	}
 
 	t.join();
+	t2.join();
 }
 
 void Joc::gameLoop() {

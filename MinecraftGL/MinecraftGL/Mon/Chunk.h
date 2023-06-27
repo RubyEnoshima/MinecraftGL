@@ -55,6 +55,7 @@ public:
 	uint8_t obtenirLlumNaturalCub(int x, int y, int z) const;
 	uint8_t obtenirLlumArtificialCub(int x, int y, int z) const;
 
+	void crearVertexs();
 	void update();
 	void render();
 	bool renderCub(int x, int y, int z);
@@ -68,7 +69,7 @@ public:
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
 
-	vector<GLubyte> vertices;
+	vector<GLubyte> _vertices;
 	unsigned int elements = 0;
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
@@ -76,6 +77,7 @@ public:
 
 	bool descarregant = false;
 	bool preparat = false;
+	bool actualitzat = false;
 
 	glm::vec3 cubCanviat;
 private:
@@ -85,7 +87,7 @@ private:
 	void afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, const char* _color);
 	void afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
-	unsigned int VBO = -1;
+	unsigned int VBO = 0;
 
 	unsigned int posX, posY;
 	Cub chunk[X][Y][Z];
