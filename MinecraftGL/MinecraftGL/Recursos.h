@@ -16,7 +16,7 @@ public:
 	}
 	typedef map<string, glm::vec3> MapColors;
 	static MapColors COLORS;
-	
+	bool start = false;
 private:
 	Recursos() { 
 	}

@@ -74,10 +74,12 @@ public:
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
 	bool unCanviat = false;
+	uint8_t veiCanviat = -1; 
 
 	bool descarregant = false;
 	bool preparat = false;
-	bool actualitzat = false;
+	bool carregat = false;
+	bool generat = false;
 
 	glm::vec3 cubCanviat;
 private:
@@ -89,7 +91,7 @@ private:
 
 	unsigned int VBO = 0;
 
-	unsigned int posX, posY;
+	int posX, posY;
 	Cub chunk[X][Y][Z];
 
 	Chunk* veiEsq = NULL;

@@ -23,7 +23,13 @@ Chunk::~Chunk()
 	if (veiBaix)veiBaix->veiUp = NULL;
 	if (veiEsq)veiEsq->veiDre = NULL;
 	if (veiDre)veiDre->veiEsq = NULL;
-
+	/*for (int i = 0; i < X; i++) {
+		for (int j = 0; j < Y; j++) {
+			for (int k = 0; k < Z; k++) {
+				delete chunk[i][j][k];
+			}
+		}
+	}*/
 }
 
 void Chunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, char* color)
@@ -154,8 +160,9 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
 		return;
 	}
-	/*if (tipus == GESPA) tipus = GESPA_COSTAT;
-	else if (tipus == NEU) tipus = NEU_COSTAT;*/
+	if (x == 0 && z == 14 && y == 70 && posX == 0 && posY==-2) {
+		cout << "chicri";
+	}
 	tipus = b->costats;
 	// Cara esq
 	if ((x == 0 and veiEsq != NULL and (!veiEsq->obtenirCub(X - 1, y, z) || blocs->getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent)) or (x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x - 1][y][z].tipus)->transparent))) {
@@ -169,6 +176,10 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum, 1, color);
 		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, llum, 1, color);
 
+		if (carregat && veiCanviat == 0) {
+			veiCanviat = -1;
+			return;
+		}
 	}
 	// Cara dre
 	if ((x == X - 1 and veiDre != NULL and (!veiDre->obtenirCub(0, y, z) || blocs->getBloc(veiDre->obtenirCub(0, y, z))->transparent)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or blocs->getBloc(chunk[x + 1][y][z].tipus)->transparent))) {
@@ -181,6 +192,11 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum, 1, color);
 		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 0, 0, llum, 1, color);
 		afegirVertex(vertices, x + 1, y, z + 1, tipus, 0, 1, llum, 1, color);
+		
+		if (carregat && veiCanviat == 1) {
+			veiCanviat = -1;
+			return;
+		}
 	}
 
 	// Cara frontal
@@ -196,6 +212,10 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x + 1, y, z + 1, tipus, 1, 1, llum, 2, color);
 		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 0, llum, 2, color);
 
+		if (carregat && veiCanviat == 2) {
+			veiCanviat = -1;
+			return;
+		}
 	}
 
 	// Cara darrera
@@ -211,6 +231,10 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x + 1, y + 1, z, tipus, 0, 0, llum, 2, color);
 		afegirVertex(vertices, x + 1, y, z, tipus, 0, 1, llum, 2, color);
 
+		if (carregat && veiCanviat == 3) {
+			veiCanviat = -1;
+			return;
+		}
 	}
 
 	tipus = b->adalt;
@@ -246,7 +270,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x, y, z + 1, tipus, 1, 0, llum, 3, color);
 
 	}
-
+	
 }
 
 void Chunk::afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, bool r, bool g, bool b) {
@@ -360,9 +384,8 @@ bool Chunk::renderCub(int x, int y, int z)
 
 void Chunk::crearVertexs()
 {
-	if (!canviat) return;
+	if (!canviat || generat || descarregant) return;
 	vector<GLubyte> vertices;
-	//_vertices.clear();
 
 	for (int i = 0; i < X; i++) {
 		for (int j = 0; j < Y; j++) {
@@ -378,23 +401,39 @@ void Chunk::crearVertexs()
 
 	elements = vertices.size();
 	_vertices = vertices;
+	generat = true;
+	if (!carregat) {
+		if (veiEsq) { veiEsq->canviat = true; }
+		if (veiDre) { veiDre->canviat = true; }
+		if (veiUp) { veiUp->canviat = true; }
+		if (veiBaix) { veiBaix->canviat = true; }
+		carregat = true;
+	}
+
+	/*if (veiEsq) {
+		veiEsq->veiCanviat = 1; veiEsq->canviat = true;
+	}
+	if (veiDre) { veiDre->veiCanviat = 0; veiDre->canviat = true;}
+	if (veiUp) { veiUp->veiCanviat = 3; veiUp->canviat = true; }
+	if (veiBaix) { veiBaix->veiCanviat = 2; veiBaix->canviat = true; }*/
 }
 
 void Chunk::update()
 {
 	if(VBO == 0) glGenBuffers(1, &VBO);
-	if (elements == 0) return;
+	if (!generat || elements == 0) return;
 	//crearVertexs();
 	
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, elements, _vertices.data(), GL_STATIC_DRAW);
 
 	canviat = false;
+	generat = false;
 }
 
 void Chunk::render()
 {
-	if (!preparat) return;
+	if (!preparat || !carregat) return;
 	if (canviat) update();
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -481,10 +520,10 @@ void Chunk::afegirVeins(Chunk* left, Chunk* right, Chunk* up, Chunk* down)
 	veiDre = right;
 	veiUp = up;
 	veiBaix = down;
-	if (left) left->veiDre = this;
-	if (right) right->veiEsq = this;
-	if (up) up->veiBaix = this;
-	if (down) down->veiUp = this;
+	if (left) { left->veiDre = this; /*left->canviat = true;*/ }
+	if (right) { right->veiEsq = this; /*right->canviat = true;*/}
+	if (up) { up->veiBaix = this; /*up->canviat = true;*/ }
+	if (down) { down->veiUp = this; /*down->canviat = true;*/ }
 }
 
 bool Chunk::cubTop(int8_t x, int8_t y, int8_t z) const

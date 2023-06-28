@@ -32,6 +32,7 @@ int Renderer::crearFinestra()
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		cout << "No s'ha pogut iniciar GLAD" << endl;
+		glfwTerminate(); // Termina el context GLFW
 		return -1;
 	}
 
@@ -45,7 +46,14 @@ int Renderer::crearFinestra()
 
 	centrarFinestra();
 
-	
+	int iconwidth, iconheight, nrChannels;
+	string path = "Textures/icon.png";
+	unsigned char* img = stbi_load(path.c_str(), &iconwidth, &iconheight, &nrChannels, 4);
+	GLFWimage icon;
+	icon.width = iconwidth;
+	icon.height = iconheight;
+	icon.pixels = img;
+	glfwSetWindowIcon(window, 1, &icon);
 
 	return 1;
 }

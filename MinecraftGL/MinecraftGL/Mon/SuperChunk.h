@@ -13,8 +13,8 @@
 //#define YC 3
 
 //#define SIZE 11
-#define DISTANCIA 25
-#define NCHUNKS 5 // Quants chunks pot processar en un sol frame
+#define DISTANCIA 8
+#define NCHUNKS 3 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // La llum natural no es calcularà
 
@@ -151,6 +151,7 @@ private:
 	void posarLlumNatural(glm::vec3 pos, uint8_t llum, bool avall=false);
 	void eliminarLlumNatural(glm::vec3 pos, uint8_t llum);
 
+	// FUNCIONS PER BLOCS
 	// Retorna tots els cubs valids (transparents)
 	vector<glm::vec3> obtenirColindants(const glm::vec3& pos, bool transparents=false) const;
 
@@ -160,6 +161,7 @@ private:
 	// Ens diu en quin chunk es troba un bloc
 	glm::vec2 BlocChunk(const glm::vec3& pos) const;
 	glm::vec2 BlocChunk(int x, int z) const;
+	int Mon2Chunk(int n, int m) const; // Converteix una coordenada en mon (podria ser -79, 980...) a coordenada de chunk (-79 => 1, 980 => 4)
 
 	mutable map<glm::vec2,Chunk*,CompararVec2> Chunks;
 
@@ -194,6 +196,7 @@ private:
 	
 	// GESTIÓ DE CHUNKS
 	mutable std::recursive_mutex loadedChunksMutex;
+	mutable std::recursive_mutex descarregarMutex;
 	mutable std::recursive_mutex cuaMutex;
 	deque<Chunk*> chunksDescarregar;
 	deque<glm::vec2> chunksCarregar;
