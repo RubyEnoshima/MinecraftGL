@@ -54,7 +54,7 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 	}
 
 	for (auto chunk : descarregar) {
-		std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+		std::lock_guard<std::recursive_mutex> lock(descarregarMutex);
 
 		Chunks.erase(chunk);
 
@@ -77,10 +77,13 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 
 void SuperChunk::update(const glm::vec2& chunkJugador)
 {
+	std::lock_guard<std::recursive_mutex> lock(descarregarMutex);
+
 	for (int i = -DISTANCIA+1; i < DISTANCIA; i++) {
 		for (int j = -DISTANCIA+1; j < DISTANCIA; j++) {
 			if (abs(i) + abs(j) > DISTANCIA) continue;
 			glm::vec2 chunk = chunkJugador + glm::vec2(i, j);
+
 			if (esCarregat(chunk)) {
 				Chunks[chunk]->crearVertexs();
 			}
@@ -91,22 +94,16 @@ void SuperChunk::update(const glm::vec2& chunkJugador)
 void SuperChunk::descarregarChunks()
 {
 	if (!chunksDescarregar.empty()) {
-		auto start = std::chrono::high_resolution_clock::now();
 		for (int i = 0; i < NCHUNKS; i++) {
 			if (chunksDescarregar.empty()) break;
-			//std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
-			//loadedChunksMutex.lock();
 			std::lock_guard<std::recursive_mutex> lock(cuaMutex);
+
 			Chunk* c = chunksDescarregar.back();
 			chunksDescarregar.pop_back();
-			//cout << "Descarregant chunk " << pos << endl;
+
 			delete c;
 			/*Chunks.erase(pos);*/
-			//loadedChunksMutex.unlock();
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> duration = end - start;
-		//cout << "En eliminar " << NCHUNKS << " chunks he trigat " << duration.count() << endl;
 	}
 
 }
@@ -114,7 +111,6 @@ void SuperChunk::descarregarChunks()
 void SuperChunk::carregarChunks()
 {
 	if (!chunksCarregar.empty() && potGenerar) {
-		auto start = std::chrono::high_resolution_clock::now();
 		//std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 		for (int i = 0; i < NCHUNKS; i++) {
 			if (chunksCarregar.empty()) break;
@@ -122,7 +118,6 @@ void SuperChunk::carregarChunks()
 			glm::vec2 pos = chunksCarregar.back();
 			chunksCarregar.pop_back();
 			if (!esCarregat(pos)) {
-				//cout << "Carregant chunk " << pos << endl;
 				vector<glm::vec3> arbrets;
 				generarChunk(pos, arbrets);
 				/*for (int i = 0; i < arbrets.size(); i++) {
@@ -130,15 +125,10 @@ void SuperChunk::carregarChunks()
 					arbre(posArbre.x, posArbre.y, posArbre.z);
 				}*/
 
-				
-
 				//potGenerar = false;
 			}
 
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> duration = end - start;
-		//cout << "En crear " << NCHUNKS << " chunks he trigat " << duration.count() << endl;
 	}
 }
 
@@ -196,7 +186,7 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 
 	int j = Y - 1;
 	uint8_t llum = 15;
-	while (blocs.getBloc(obtenirCub(x, j, z))->transparent && j>0) {
+	while (blocs.getBloc(obtenirCub(x, j, z))->transparent && j>=0) {
 		uint8_t tipus = obtenirCub(x, j, z);
 		if (tipus != AIRE && !blocs.getBloc(obtenirCub(x, j, z))->vegetacio) llum--;
 		canviarLlumNaturalCub(x, j, z, llum);
@@ -348,12 +338,11 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador, char* color)
 {
 	if (esValid(x,y,z) && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
-		//cout << x % X << " " << z % Z << endl;
 		Chunk* chunk = Chunks[BlocChunk(x,z)];
-		uint8_t tipusBlocAbans = chunk->obtenirCub(x % X, y, z % Z);
-		chunk->canviarCub(x % X, y, z % Z, tipus, reemplacar, color);
+		uint8_t tipusBlocAbans = chunk->obtenirCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
+		chunk->canviarCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z), tipus, reemplacar, color);
 
-		//cout << x << " " << y << " " << z << endl;
+		//cout << "El bloc " << x << " " << y << " " << z << " es troba al chunk " << BlocChunk(x, z) << " i dins es el bloc " << Mon2Chunk(x, X) << " " << Mon2Chunk(z, Z) << endl;
 
 		if (tipus == LLUM) {
 			// Afegim la llum
@@ -382,10 +371,10 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 		if(jugador) calculaLlumNatural(x, z);
 
 		//chunk.unCanviat = true;
-		//chunk.cubCanviat = glm::vec3(x % X, y, z % Z);
+		//chunk.cubCanviat = glm::vec3(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
 	}
 	//cout << *color << " " << (int)tipus << endl;
-	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << x % X << ", " << z % Z << endl;
+	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << Mon2Chunk(x,X) << ", " << Mon2Chunk(z,Z) << endl;
 }
 
 void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
@@ -393,7 +382,7 @@ void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 	if (esValid(x,y,z)) {
 
 		Chunk* chunk = Chunks[BlocChunk(x,z)];
-		chunk->canviarLlumNaturalCub(x % X, y, z % Z, llum);
+		chunk->canviarLlumNaturalCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z), llum);
 
 	}
 }
@@ -403,7 +392,7 @@ void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 	if (esValid(x,y,z)) {
 
 		Chunk* chunk = Chunks[BlocChunk(x,z)];
-		chunk->canviarLlumArtificialCub(x % X, y, z % Z, llum);
+		chunk->canviarLlumArtificialCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z), llum);
 
 	}
 }
@@ -411,21 +400,21 @@ void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 uint8_t SuperChunk::obtenirCub(int x, int y, int z) const
 {
 	if (esValid(x, y, z))
-		return Chunks[BlocChunk(x,z)]->obtenirCub(x % X, y, z % Z);
+		return Chunks[BlocChunk(x,z)]->obtenirCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
 	return 0;
 }
 
 uint8_t SuperChunk::obtenirLlumNaturalCub(int x, int y, int z)
 {
 	if (esValid(x,y,z))
-		return Chunks[BlocChunk(x,z)]->obtenirLlumNaturalCub(x % X, y, z % Z);
+		return Chunks[BlocChunk(x,z)]->obtenirLlumNaturalCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
 	return 0;
 }
 
 uint8_t SuperChunk::obtenirLlumArtificialCub(int x, int y, int z)
 {
 	if (esValid(x,y,z))
-		return Chunks[BlocChunk(x,z)]->obtenirLlumArtificialCub(x % X, y, z % Z);
+		return Chunks[BlocChunk(x,z)]->obtenirLlumArtificialCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
 	return 0;
 }
 
@@ -542,7 +531,7 @@ bool SuperChunk::renderCub(int x, int y, int z)
 		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, 0, z/Z * Z));
 		renderer->colocarMat4("model", model);
 
-		return Chunks[BlocChunk(x,z)]->renderCub(x % X, y, z % Z);
+		return Chunks[BlocChunk(x,z)]->renderCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
 
 	}
 	return false;
@@ -624,12 +613,18 @@ glm::vec2 SuperChunk::BlocChunk(const glm::vec3& pos) const
 
 glm::vec2 SuperChunk::BlocChunk(int x, int z) const
 {
-	return glm::vec2(floor(x / X), floor(z / Z));
+	return glm::vec2(floor((double)x / X), floor((double)z / Z));
+}
+
+int SuperChunk::Mon2Chunk(int n, int m) const
+{
+	// És l'equivalent a fer n % m, però fent que tracti bé els negatius
+	return ((n % m) + m) % m;
 }
 
 bool SuperChunk::esCarregat(const glm::vec2& pos) const
 {
-	return Chunks.count(pos) > 0 && Chunks[pos] != NULL;
+	return Chunks.count(pos) > 0 && Chunks[pos] != NULL && !Chunks[pos]->descarregant && Chunks[pos]->preparat;
 }
 
 bool SuperChunk::existeixCua(const deque<glm::vec2>& cua, const glm::vec2& e) const

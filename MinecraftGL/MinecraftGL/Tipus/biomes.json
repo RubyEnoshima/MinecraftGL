@@ -1,0 +1,12 @@
+{
+    "pradera": {
+        "nom": "Pradera",
+        "id": 0,
+        "temperatura": 0.8,
+        "humitat": 0.4,
+        "colorGespa": "#91BD59",
+        "colorFulles": "#77AB2F",
+        "colorAigua": "#44AFF5",
+        "vegetacio": []
+    }
+}

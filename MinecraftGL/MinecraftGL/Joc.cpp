@@ -118,7 +118,7 @@ void Joc::moure()
 
 int Joc::crearFinestra() {
 	int success = renderer.crearFinestra();
-	if (success) {
+	if (success > 0) {
 		window = renderer.finestra();
 		
 		// Funció per tractar l'input
@@ -131,15 +131,14 @@ int Joc::crearFinestra() {
 void Joc::ObtenirCubMira() {	
 	// Fent us de raycast
 	//Ray r;
-	//r.origen = jugador->obtCamera()->obtPos() + jugador->obtCamera()->obtDireccio();
-	///*r.origen = glm::vec3((int)(r.origen.x), (int)(r.origen.y), (int)(r.origen.z));
-	//cout << r.origen << endl;*/
+	//r.origen = jugador->obtCamera()->obtPos();// +jugador->obtCamera()->obtDireccio();
+	//r.origen = glm::vec3(floor(r.origen.x+0.5), floor(r.origen.y+0.5), floor(r.origen.z+0.5));
 	//r.direccion = jugador->obtCamera()->obtDireccio();
+	//cout << r.origen << " " << r.direccion << endl;
 	//int i = 0; int passes = 10;
 	//while (mon->obtenirCub(r.origen.x, r.origen.y, r.origen.z) == AIRE && i < passes) { r.origen += jugador->obtCamera()->obtDireccio(); i++; }
-
-	//CubActual = glm::vec3((int)r.origen.x, (int)r.origen.y, (int)r.origen.z);
-	//cout << CubActual << jugador->obtCamera()->obtPos() << endl;
+	//CubActual = glm::vec3(floor(r.origen.x), floor(r.origen.y), floor(r.origen.z));
+	////cout << CubActual << jugador->obtCamera()->obtPos() << endl;
 	//return;
 
 	// Desprojectant coordenades de pantalla
@@ -151,7 +150,7 @@ void Joc::ObtenirCubMira() {
 		CubActual = glm::vec3(-1, -1, -1);
 		return;
 	}
-
+	
 	glm::vec4 viewport = glm::vec4(0, 0, ww, wh);
 	glm::vec3 wincoord = glm::vec3(ww / 2, wh / 2, depth);
 	glm::vec3 objcoord = glm::unProject(wincoord, jugador->obtCamera()->getView(), jugador->obtCamera()->getProjection(), viewport);
@@ -162,7 +161,7 @@ void Joc::ObtenirCubMira() {
 
 void Joc::DestruirCub() {
 	// Si és un cub vàlid
-	if (CubActual.x != -1 && CubActual.y != -1 && CubActual.z != -1)
+	if (CubActual.y != -1)
 		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0, true, true);
 }
 
@@ -272,31 +271,12 @@ void Joc::loop() {
 		std::chrono::duration<double> duration;
 		while (!glfwWindowShouldClose(window)) {
 			mon->comprovarChunks(jugador->chunkActual());
-			/*end = std::chrono::high_resolution_clock::now();
-			duration = end - start;
-			mon->tempsCarrega += duration.count();
-			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now();}*/
-
 			mon->eliminaCarregats();
-			/*end = std::chrono::high_resolution_clock::now();
-			duration = end - start;
-			mon->tempsCarrega += duration.count();
-			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }*/
-
 			mon->descarregarChunks();
-			/*end = std::chrono::high_resolution_clock::now();
-			duration = end - start;
-			mon->tempsCarrega += duration.count();
-			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }*/
-
 			mon->carregarChunks();
-			/*end = std::chrono::high_resolution_clock::now();
-			duration = end - start;
-			mon->tempsCarrega += duration.count();
-			if (mon->tempsCarrega >= 0.0075) { std::this_thread::sleep_for(std::chrono::milliseconds(5)); mon->tempsCarrega = 0; start = std::chrono::high_resolution_clock::now(); }*/
 		}
 	});
-	thread t2([&]() {while (!glfwWindowShouldClose(window)) { mon->update(jugador->chunkActual()); } });
+	thread t2([&]() {while (!glfwWindowShouldClose(window)) { mon->update(jugador->chunkActual()); /*ObtenirCubMira();*/ } });
 	renderer.activaBounding(0);
 
 	// El loop del joc, mentre no es tanqui la finestra...
@@ -350,7 +330,7 @@ void Joc::loop() {
 		std::chrono::duration<double> duration = end - start;
 		if (duration.count() > 0.01) {
 			std::chrono::duration<double> duration2 = end2 - start2;
-			cout << "En fer un frame he trigat " << duration.count() << " i en renderitzar, " << duration2.count() << endl;
+			//cout << "En fer un frame he trigat " << duration.count() << " i en renderitzar, " << duration2.count() << endl;
 		}
 	}
 

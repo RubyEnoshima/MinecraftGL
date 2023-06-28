@@ -69,6 +69,6 @@ void main()
 	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
 	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat] * colorTint, colorText.w)*brillantor;
 	float z = gl_FragCoord.z / gl_FragCoord.w;
-	float fog = clamp(exp(1-fogdensity * z * z), 0.0, 1);
+	float fog = clamp(exp(0.5-fogdensity * z * z), 0.0, 1);
 	color = mix(fogcolor, color, fog);
 }
