@@ -1,7 +1,8 @@
 #version 330 core
 
-const vec4 fogcolor = vec4(0.6, 0.8, 1.0, 0.8);
-const float fogdensity = .0001;
+const vec4 fogcolor = vec4(0.7, 0.8, 1.0, 1.0);
+const float densitat = .0005;
+const float distanciaFog = 7;
 
 out vec4 color;
 
@@ -29,6 +30,12 @@ flat in int costat;
 
 in vec3 colorTint;
 
+// Ens diu el factor que s'ha d'utilitzar per la boira (0: tot boira, 1: sense boira)
+float calculaNiebla(float distancia){
+	float fogFactor = exp(distanciaFog-densitat * distancia * distancia);
+    return clamp(fogFactor, 0.0f, 1.0f);
+}
+
 void main()
 {
 	if(bounding){
@@ -42,6 +49,16 @@ void main()
 
 	// Funciona per cristal, pero es pot clicar un bloc a través...
 	if(colorText.a == 0) discard;
+
+	// Calculem la distancia del fragment a la pantalla
+	float z = gl_FragCoord.z / gl_FragCoord.w;
+	float fog = calculaNiebla(z);
+
+	// Si la quantitat és molt petita, no fa falta renderitzar res
+	if(fog <= 0.075) discard;
+
+	// Quanta més boira hi hagi, menys es veurà el fragment.
+	float alfa = fog;
 
 
 	// Ambient, per tal que la foscor no sigui tan fosca
@@ -68,7 +85,7 @@ void main()
 
 	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
 	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat] * colorTint, colorText.w)*brillantor;
-	float z = gl_FragCoord.z / gl_FragCoord.w;
-	float fog = clamp(exp(0.5-fogdensity * z * z), 0.0, 1);
+	
 	color = mix(fogcolor, color, fog);
+	color.a = alfa;
 }

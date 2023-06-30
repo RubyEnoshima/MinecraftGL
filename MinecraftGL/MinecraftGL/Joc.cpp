@@ -262,7 +262,9 @@ void Joc::loop() {
 	float ant = 0.0f;
 
 	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
-	glm::vec3 pos = glm::vec3(0, Y, 0.0f);
+	//glm::vec3 pos = glm::vec3(0, Y, 0.0f);
+
+	Nuvols nuvols;
 
 	thread t([&]() {
 		
@@ -276,7 +278,15 @@ void Joc::loop() {
 			mon->carregarChunks();
 		}
 	});
-	thread t2([&]() {while (!glfwWindowShouldClose(window)) { mon->update(jugador->chunkActual()); /*ObtenirCubMira();*/ } });
+	thread t2([&]() {
+		while (!glfwWindowShouldClose(window)) { 
+			mon->update(jugador->chunkActual(),jugador->obtCamera()->mvp()); 
+			nuvols.update();
+			jugador->update(deltaTime);
+			/*ObtenirCubMira();*/ 
+		} 
+	});
+	
 	renderer.activaBounding(0);
 
 	// El loop del joc, mentre no es tanqui la finestra...
@@ -294,11 +304,17 @@ void Joc::loop() {
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		nuvols.render(view, jugador->obtCamera()->getProjection());
+
+		// RENDERITZAR EL MÓN
+
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 		auto start2 = std::chrono::high_resolution_clock::now();
 		mon->render();
 		auto end2 = std::chrono::high_resolution_clock::now();
-		renderer.canviarPosLlum(pos);
+		//renderer.canviarPosLlum(pos);
+
+
 
 		glfwPollEvents(); // Processar events
 		moure();

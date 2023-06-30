@@ -74,6 +74,6 @@ private:
 	map<string,Sprite*> Sprites;
 	Renderer* renderer;
 	ShaderProgram* shader;
-	unsigned int quadVAO;
+	unsigned int quadVAO, VBO;
 };
 

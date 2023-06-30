@@ -4,6 +4,8 @@
 #include "Renderer/Renderer.h"
 #include "Jugador/Jugador.h"
 #include "HUD.h"
+#include "Mon/Nuvols.h"
+
 #include "glm/gtx/io.hpp"
 
 #include <string>

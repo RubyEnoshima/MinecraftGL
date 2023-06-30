@@ -75,7 +75,7 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 
 }
 
-void SuperChunk::update(const glm::vec2& chunkJugador)
+void SuperChunk::update(const glm::vec2& chunkJugador, const glm::mat4& mvp)
 {
 	std::lock_guard<std::recursive_mutex> lock(descarregarMutex);
 
@@ -84,7 +84,7 @@ void SuperChunk::update(const glm::vec2& chunkJugador)
 			if (abs(i) + abs(j) > DISTANCIA) continue;
 			glm::vec2 chunk = chunkJugador + glm::vec2(i, j);
 
-			if (esCarregat(chunk)) {
+			if (esCarregat(chunk) ){//&& Chunks[chunk]->esVisible(mvp)) {
 				Chunks[chunk]->crearVertexs();
 			}
 		}
@@ -186,7 +186,7 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 
 	int j = Y - 1;
 	uint8_t llum = 15;
-	while (blocs.getBloc(obtenirCub(x, j, z))->transparent && j>=0) {
+	while (blocs.getBloc(obtenirCub(x, j, z))->transparent && j>0) {
 		uint8_t tipus = obtenirCub(x, j, z);
 		if (tipus != AIRE && !blocs.getBloc(obtenirCub(x, j, z))->vegetacio) llum--;
 		canviarLlumNaturalCub(x, j, z, llum);

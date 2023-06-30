@@ -30,6 +30,7 @@ public:
 	glm::vec3 obtDireccio() const;
 
 	glm::mat4 lookAt();
+	glm::mat4 mvp() const;
 
 	//void moure(float deltaTime, GLFWwindow* window);
 	void girar(GLFWwindow* window);
