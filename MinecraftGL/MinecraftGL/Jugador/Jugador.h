@@ -1,6 +1,8 @@
 #pragma once
 #include "Camera.h"
 
+#define GRAVETAT 0.5
+
 enum MODE_JOC {
 	SURVIVAL = 0,
 	CREATIU = 1,
@@ -13,6 +15,8 @@ public:
 	Jugador(Camera* _camera);
 	~Jugador();
 
+	void update(float deltaTime);
+
 	void moure(float deltaTime,int tecla);
 	void correr();
 	void caminar();
@@ -23,7 +27,7 @@ public:
 private:
 	const float velocitat = 7.5;
 	float velocitatAct = velocitat;
-
+	glm::vec2 vel;
 	int mode = ESPECTADOR; // Veure adalt la llista de modes
 
 	Camera* camera = NULL;

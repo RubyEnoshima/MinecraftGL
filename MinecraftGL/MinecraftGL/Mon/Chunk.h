@@ -58,6 +58,7 @@ public:
 	void crearVertexs();
 	void update();
 	void render();
+	bool esVisible(const glm::mat4& mvp) const;
 	bool renderCub(int x, int y, int z);
 
 	int nCubs() const;

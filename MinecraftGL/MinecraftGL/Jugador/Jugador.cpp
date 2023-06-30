@@ -10,6 +10,13 @@ Jugador::~Jugador()
 	delete camera;
 }
 
+void Jugador::update(float deltaTime)
+{
+	if (mode == ESPECTADOR) return;
+	vel.y += GRAVETAT * deltaTime;
+	camera->moureAvall(deltaTime, vel.y);
+}
+
 void Jugador::moure(float deltaTime, int tecla)
 {
 	switch (tecla)

@@ -12,6 +12,7 @@ SpriteRenderer::SpriteRenderer(ShaderProgram* _shader, Renderer* _renderer)
 SpriteRenderer::~SpriteRenderer()
 {
     glDeleteVertexArrays(1, &quadVAO);
+    glDeleteBuffers(1, &VBO);
     delete shader;
     for (pair<string,Sprite*> sprite : Sprites)
     {
@@ -83,7 +84,6 @@ void SpriteRenderer::initRenderData()
     shader->carregaShaders();
     shader->colocarInt("image",1);
 
-    unsigned int VBO;
     // Tots els sprites seran iguals: un quadrat que comença a la cantonada esq sup
     float vertices[] = {
         // pos      // tex

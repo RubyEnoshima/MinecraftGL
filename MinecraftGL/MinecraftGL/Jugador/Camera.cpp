@@ -3,7 +3,7 @@
 Camera::Camera()
 {
 	//pos = glm::vec3(X * SIZE / 2 + 0.5, Y / 2 + altura, Z * SIZE / 2 + 0.5);
-	pos = glm::vec3(0, Y / 2 + altura, 0);
+	pos = glm::vec3(0, Y / 1.5 + altura, 0);
 	altura = Y / 2 + altura;
 	objectiu = glm::vec3(-1.0, 0.0f, -1.0f);
 	direccio = glm::normalize(pos - objectiu);
@@ -94,6 +94,11 @@ glm::mat4 Camera::lookAt()
 {
 	view = glm::lookAt(pos, pos + front, cameraUp);
 	return view;
+}
+
+glm::mat4 Camera::mvp() const
+{
+	return model*view*projection;
 }
 
 //void Camera::moure(float deltaTime, GLFWwindow* window)

@@ -160,9 +160,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
 		return;
 	}
-	if (x == 0 && z == 14 && y == 70 && posX == 0 && posY==-2) {
-		cout << "chicri";
-	}
+
 	tipus = b->costats;
 	// Cara esq
 	if ((x == 0 and veiEsq != NULL and (!veiEsq->obtenirCub(X - 1, y, z) || blocs->getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent)) or (x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x - 1][y][z].tipus)->transparent))) {
@@ -462,6 +460,14 @@ void Chunk::render()
 	glDisableVertexAttribArray(5);
 }
 
+bool Chunk::esVisible(const glm::mat4& mvp) const
+{
+	glm::vec4 coords = mvp * glm::vec4(glm::vec3(posX*X+X/2, Y / 2, posY * Z+Z/2), 1);
+	coords.x /= coords.w;
+	coords.y /= coords.w;
+	return !(coords.x < -1 || coords.x > 1 || coords.y < -1 || coords.y > 1 || coords.z < 0);
+}
+
 int Chunk::nCubs() const
 {
 	return elements / 6;
@@ -530,7 +536,7 @@ bool Chunk::cubTop(int8_t x, int8_t y, int8_t z) const
 {
 	if (x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) return false;
 	if (y == Y - 1) return true;
-	//return chunk[x][y][z].top;
+	//return chunk[x][y][z]->top;
 
 	for (int i = y + 1; i < Y; i++) {
 		if (obtenirCub(x, i, z) != 0) return false;

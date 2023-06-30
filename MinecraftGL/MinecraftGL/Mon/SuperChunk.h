@@ -13,8 +13,8 @@
 //#define YC 3
 
 //#define SIZE 11
-#define DISTANCIA 8
-#define NCHUNKS 3 // Quants chunks pot processar en un sol frame
+#define DISTANCIA 15
+#define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // La llum natural no es calcularà
 
@@ -46,7 +46,7 @@ public:
 	void descarregarChunks();
 	void carregarChunks();
 	void eliminaCarregats();
-	void update(const glm::vec2& chunkJugador);
+	void update(const glm::vec2& chunkJugador, const glm::mat4& mvp);
 
 	float tempsCarrega = 0;
 

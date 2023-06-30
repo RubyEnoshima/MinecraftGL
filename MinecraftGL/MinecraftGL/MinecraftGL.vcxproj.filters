@@ -63,6 +63,9 @@
     <ClCompile Include="Jugador\Jugador.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mon\Nuvols.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Joc.h">
@@ -110,12 +113,21 @@
     <ClInclude Include="Jugador\Jugador.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mon\Nuvols.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\FragmentSprite.frag" />
     <None Include="Shaders\FragmentShader.frag" />
     <None Include="Shaders\VertexShader.vert" />
     <None Include="Shaders\VertexSprite.vert" />
+    <None Include="Shaders\FragmentNuvols.frag">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Shaders\VertexNuvols.vert">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\VertexPla.vert" />

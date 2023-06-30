@@ -151,6 +151,7 @@
     <ClCompile Include="Jugador\Jugador.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mon\Chunk.cpp" />
+    <ClCompile Include="Mon\Nuvols.cpp" />
     <ClCompile Include="Mon\SuperChunk.cpp" />
     <ClCompile Include="Recursos.cpp" />
     <ClCompile Include="Renderer\Framebuffer.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Jugador\Camera.h" />
     <ClInclude Include="Jugador\Jugador.h" />
     <ClInclude Include="Mon\Chunk.h" />
+    <ClInclude Include="Mon\Nuvols.h" />
     <ClInclude Include="Mon\SuperChunk.h" />
     <ClInclude Include="Recursos.h" />
     <ClInclude Include="Renderer\Framebuffer.h" />
@@ -178,8 +180,10 @@
     <ClInclude Include="Tipus.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\FragmentNuvols.frag" />
     <None Include="Shaders\FragmentSprite.frag" />
     <None Include="Shaders\FragmentShader.frag" />
+    <None Include="Shaders\VertexNuvols.vert" />
     <None Include="Shaders\VertexSprite.vert" />
     <None Include="Shaders\VertexShader.vert" />
   </ItemGroup>
