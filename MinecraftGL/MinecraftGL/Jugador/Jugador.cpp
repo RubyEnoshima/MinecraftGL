@@ -52,6 +52,16 @@ void Jugador::caminar()
 	velocitatAct = velocitat;
 }
 
+glm::vec3 Jugador::obtPos() const
+{
+	return camera->obtPos();
+}
+
+glm::vec2 Jugador::obtPos2D() const
+{
+	return glm::vec2(camera->obtPos().x,camera->obtPos().z);
+}
+
 Camera* Jugador::obtCamera() const
 {
 	return camera;

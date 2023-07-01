@@ -216,11 +216,12 @@ glm::vec3 Joc::ObtenirCostat() {
 
 void Joc::PosarCub() {
 	// Si és un cub vàlid
-	if (CubActual.x == -1 || CubActual.y == -1 || CubActual.z == -1 ) return;
+	if (CubActual.y == -1) return;
 	
 
 	// Obtenim el costat al que estem mirant
 	glm::vec3 Costat = ObtenirCostat();
+	cout << Costat << endl;
 	if (Costat.x==-1 && Costat.y==-1) return;
 	
 	// Canviem el cub
@@ -264,7 +265,7 @@ void Joc::loop() {
 	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
 	//glm::vec3 pos = glm::vec3(0, Y, 0.0f);
 
-	Nuvols nuvols;
+	Nuvols nuvols(jugador->obtCamera()->getProjection());
 
 	thread t([&]() {
 		
@@ -276,12 +277,12 @@ void Joc::loop() {
 			mon->eliminaCarregats();
 			mon->descarregarChunks();
 			mon->carregarChunks();
+
 		}
 	});
 	thread t2([&]() {
 		while (!glfwWindowShouldClose(window)) { 
 			mon->update(jugador->chunkActual(),jugador->obtCamera()->mvp()); 
-			nuvols.update();
 			jugador->update(deltaTime);
 			/*ObtenirCubMira();*/ 
 		} 
@@ -304,7 +305,8 @@ void Joc::loop() {
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		nuvols.render(view, jugador->obtCamera()->getProjection());
+		nuvols.update(jugador->obtPos2D());
+		nuvols.render(view);
 
 		// RENDERITZAR EL MÓN
 
@@ -313,7 +315,6 @@ void Joc::loop() {
 		mon->render();
 		auto end2 = std::chrono::high_resolution_clock::now();
 		//renderer.canviarPosLlum(pos);
-
 
 
 		glfwPollEvents(); // Processar events
