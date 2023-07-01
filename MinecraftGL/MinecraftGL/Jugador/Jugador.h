@@ -21,6 +21,9 @@ public:
 	void correr();
 	void caminar();
 
+	glm::vec3 obtPos() const;
+	glm::vec2 obtPos2D() const;
+
 	Camera* obtCamera() const;
 	// Retorna la posició del jugador respecte al chunk actual
 	glm::vec2 chunkActual() const;

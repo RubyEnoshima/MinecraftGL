@@ -486,7 +486,7 @@ vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus)
 		for (int k = 0; k < Z; k++) {
 
 			int height = Y / 2;
-			if(tipus == Recursos::NORMAL) height = Y/2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 15);
+			if(tipus == Recursos::NORMAL) height = Y/2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 20);
 
 			for (int j = 0; j <= height; j++) {
 				uint8_t tipus = TERRA;
