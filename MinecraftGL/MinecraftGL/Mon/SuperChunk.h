@@ -140,8 +140,8 @@ public:
 		}
 	}
 
-	// Retorna tots els cubs valids (transparents)
-	vector<glm::vec3> obtenirColindants(const glm::vec3& pos, bool transparents = false, bool ellMateix = false) const;
+	// Retorna tots els cubs al voltant d'una posició, tots els transparents (1) o tots els solids (2)
+	vector<glm::vec3> obtenirColindants(const glm::vec3& pos, int transparents = 0, bool ellMateix = false) const;
 
 	bool potGenerar = true;
 	bool carregat = false;

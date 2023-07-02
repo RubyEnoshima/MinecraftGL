@@ -1,7 +1,8 @@
 #pragma once
 #include "Camera.h"
 
-#define GRAVETAT 0.1
+#define GRAVETAT 9.8
+#define SALT 5
 
 enum MODE_JOC {
 	SURVIVAL = 0, // Supervivència
@@ -12,19 +13,20 @@ enum MODE_JOC {
 class Jugador
 {
 public:
-	Jugador(Camera* _camera, int _mode = ESPECTADOR);
+	Jugador(Camera* _camera);
 	~Jugador();
 
 	// MOVIMENT
-	void update(float deltaTime);
+	void update(float deltaTime, const vector<glm::vec3>& blocs);
 
 	void moure(float deltaTime,int tecla);
+	void parar();
 	void correr();
 	void caminar();
 
 	// Retorna true si està colidint
 	bool colisiona(const vector<glm::vec3>& blocs);
-	bool colisiona(const glm::vec3& bloc) const;
+	bool colisiona(const glm::vec3& bloc);
 
 	// FUNCIONS SOBRE LA POSICIÓ
 	// Retorna la posició del jugador
@@ -40,11 +42,11 @@ public:
 
 	void canviaMode(int _mode);
 private:
-	int mode = CREATIU; // Veure adalt la llista de modes
+	int mode = ESPECTADOR; // Veure adalt la llista de modes
 
 	const float velocitat = 7.5;
 	float velocitatAct = velocitat;
-	glm::vec2 vel;
+	glm::vec3 vel;
 
 	vector<glm::vec3> anteriors;
 	bool ultimResultat = false;

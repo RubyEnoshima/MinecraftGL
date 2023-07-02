@@ -14,7 +14,7 @@ SuperChunk::~SuperChunk() {
 
 	for (auto chunk : Chunks)
 	{
-		delete chunk.second;
+		if(!chunk.second->descarregant) delete chunk.second;
 	}
 	glDeleteBuffers(1, &VAO);
 }
@@ -595,15 +595,19 @@ void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, ui
 	}
 }
 
-vector<glm::vec3> SuperChunk::obtenirColindants(const glm::vec3& pos, bool transparents, bool ellMateix) const
+vector<glm::vec3> SuperChunk::obtenirColindants(const glm::vec3& pos, int transparents, bool ellMateix) const
 {
 	vector<glm::vec3> res;
 	int max = 6;
 	if (ellMateix) max++;
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < max; i++) {
 		glm::vec3 act = glm::vec3(pos.x+posicions[i].x, pos.y + posicions[i].y, pos.z + posicions[i].z);
-		if (!esValid(act)) continue;
-		if(!transparents || blocs.getBloc(obtenirCub(act.x,act.y,act.z))->transparent) res.push_back(act);
+		//if (!esValid(act)) continue;
+		if(transparents == 0) res.push_back(act);
+		else {
+			bool esTransparent = blocs.getBloc(obtenirCub(act.x, act.y, act.z))->transparent;
+			if(transparents == 1 && esTransparent || transparents == 2 && !esTransparent) res.push_back(act);
+		}
 	}
 	return res;
 }
