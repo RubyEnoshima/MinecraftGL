@@ -87,6 +87,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_W: case GLFW_KEY_A: case GLFW_KEY_S: case GLFW_KEY_D: case GLFW_KEY_SPACE: case GLFW_KEY_LEFT_SHIFT:
 				//joc->jugador->moure(joc->deltaTime, key);
 				joc->tecles[key] = false;
+				joc->jugador->parar();
 				break;
 			case GLFW_KEY_LEFT_CONTROL:
 				joc->jugador->caminar();
@@ -290,15 +291,14 @@ void Joc::loop() {
 			mon->eliminaCarregats();
 			mon->descarregarChunks();
 			mon->carregarChunks();
-
+			
 		}
 	});
 	thread t2([&]() {
 		while (!glfwWindowShouldClose(window)) { 
 			mon->update(jugador->chunkActual()); 
 			if (mon->carregat) {
-				if(mon->blocs.getBloc(mon->obtenirCub(jugador->obtPosBloc()))->transparent) jugador->update(deltaTime);
-				//vector<glm::vec3> blocs = mon->obtenirColindants(jugador->obtPosBloc(),false,true);
+				
 			}
 			/*ObtenirCubMira();*/ 
 		} 
@@ -312,6 +312,9 @@ void Joc::loop() {
 		auto start = std::chrono::high_resolution_clock::now();
 		//jugador->obtCamera()->moure(deltaTime, window);
 		jugador->obtCamera()->girar(window);
+
+		vector<glm::vec3> blocs = mon->obtenirColindants(jugador->obtPosBloc(), 2, true);
+		jugador->update(deltaTime, blocs);
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -338,7 +341,7 @@ void Joc::loop() {
 
 		// Obtenim el cub al que estem mirant i el senyalem al mon
 		ObtenirCubMira();
-		if(mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
+		if(CubActual.y >= 0 && mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
 			mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
 
 

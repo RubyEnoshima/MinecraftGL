@@ -1,9 +1,8 @@
 #include "Jugador.h"
 
-Jugador::Jugador(Camera* _camera, int _mode)
+Jugador::Jugador(Camera* _camera)
 {
 	camera = _camera;
-	mode = _mode;
 }
 
 Jugador::~Jugador()
@@ -11,12 +10,26 @@ Jugador::~Jugador()
 	delete camera;
 }
 
-void Jugador::update(float deltaTime)
+void Jugador::update(float deltaTime, const vector<glm::vec3>& blocs)
 {
+	if (vel.x > 0) camera->moureDreta(deltaTime, vel.x);
+	else if (vel.x < 0) camera->moureEsquerra(deltaTime, -vel.x);
+
+	if (vel.z > 0) camera->moureDavant(deltaTime, vel.z);
+	else if (vel.z < 0) camera->moureDarrera(deltaTime, -vel.z);
+
 	if (mode == ESPECTADOR) return;
 
-	vel.y += GRAVETAT * deltaTime;
-	camera->moureAvall(deltaTime, vel.y);
+	if (colisiona(blocs)) {
+		if(vel.y <= 0) vel.y = 0;
+		else vel.y -= GRAVETAT * deltaTime;
+	}
+	else vel.y -= GRAVETAT * deltaTime;
+	
+	if(vel.y < 0) camera->moureAvall(deltaTime, -vel.y);
+	else if(vel.y > 0) camera->moureAmunt(deltaTime, vel.y);
+
+	
 }
 
 void Jugador::moure(float deltaTime, int tecla)
@@ -24,24 +37,31 @@ void Jugador::moure(float deltaTime, int tecla)
 	switch (tecla)
 	{
 		case GLFW_KEY_W:
-			camera->moureDavant(deltaTime, velocitatAct);
+			vel.z = velocitatAct;
 			break;
 		case GLFW_KEY_A:
-			camera->moureEsquerra(deltaTime, velocitatAct);
+			vel.x = -velocitatAct;
 			break;
 		case GLFW_KEY_S:
-			camera->moureDarrera(deltaTime, velocitatAct);
+			vel.z = -velocitatAct;
 			break;
 		case GLFW_KEY_D:
-			camera->moureDreta(deltaTime, velocitatAct);
+			vel.x = velocitatAct;
 			break;
 		case GLFW_KEY_SPACE: 
 			if (mode == ESPECTADOR) camera->moureAmunt(deltaTime, velocitatAct);
+			else if(vel.y == 0) vel.y = SALT;
 			break;
 		case GLFW_KEY_LEFT_SHIFT:
 			if (mode == ESPECTADOR) camera->moureAvall(deltaTime, velocitatAct);
 			break;
 	}
+}
+
+void Jugador::parar()
+{
+	vel.x = 0;
+	vel.z = 0;
 }
 
 void Jugador::correr()
@@ -56,20 +76,23 @@ void Jugador::caminar()
 
 bool Jugador::colisiona(const vector<glm::vec3>& blocs) 
 {
-	if (blocs == anteriors) return ultimResultat; // tecnicament false???
-	anteriors = blocs;
-	glm::vec3 pos = obtPosBloc();
-	for (auto bloc : blocs)
+	//if (blocs == anteriors) return ultimResultat; // tecnicament false???
+	//anteriors = blocs;
+	//glm::vec3 pos = obtPosBloc();
+	for (const auto &bloc : blocs)
 	{
-		if (bloc == pos) { ultimResultat = true; return true; }
+		if (colisiona(bloc)) return true;
 	}
-	ultimResultat = false;
+	//ultimResultat = false;
 	return false;
 }
 
-bool Jugador::colisiona(const glm::vec3& bloc) const
+bool Jugador::colisiona(const glm::vec3& bloc)
 {
-	return bloc == obtPosBloc();
+	if (bloc == obtPosBloc()) { 
+		return true; 
+	}
+	return false;
 }
 
 glm::vec3 Jugador::obtPos() const
@@ -102,4 +125,5 @@ glm::vec2 Jugador::chunkActual() const
 void Jugador::canviaMode(int _mode)
 {
 	mode = _mode;
+	vel.y = 0;
 }
