@@ -57,9 +57,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 				}
 				break;
+			// F1: oculta HUD
+			case GLFW_KEY_F1:
+				joc->_HUD->alternaVisibilitat();
+				break;
 			// F2 = Cull/!Cull
 			case GLFW_KEY_F2:
 				joc->Culling();
+				break;
+			// F3 = canvia el mode
+			case GLFW_KEY_F3:
+				joc->CanviarMode();
 				break;
 			// F4: 
 			case GLFW_KEY_F4:
@@ -69,9 +77,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_F5:
 				cout << "Cambiar camara" << endl;
 				break;
-			case GLFW_KEY_F1:
-				joc->_HUD->alternaVisibilitat();
-				break;
+			
 		}
 
 	}
@@ -114,6 +120,13 @@ void Joc::moure()
 			jugador->moure(deltaTime, tecla.first);
 		}
 	}
+}
+
+void Joc::CanviarMode()
+{
+	if (mode == ESPECTADOR) mode = CREATIU;
+	else mode = ESPECTADOR;
+	jugador->canviaMode(mode);
 }
 
 int Joc::crearFinestra() {
@@ -282,8 +295,11 @@ void Joc::loop() {
 	});
 	thread t2([&]() {
 		while (!glfwWindowShouldClose(window)) { 
-			mon->update(jugador->chunkActual(),jugador->obtCamera()->mvp()); 
-			jugador->update(deltaTime);
+			mon->update(jugador->chunkActual()); 
+			if (mon->carregat) {
+				if(mon->blocs.getBloc(mon->obtenirCub(jugador->obtPosBloc()))->transparent) jugador->update(deltaTime);
+				//vector<glm::vec3> blocs = mon->obtenirColindants(jugador->obtPosBloc(),false,true);
+			}
 			/*ObtenirCubMira();*/ 
 		} 
 	});
@@ -305,14 +321,14 @@ void Joc::loop() {
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		nuvols.update(jugador->obtPos2D());
+		nuvols.update(jugador->obtPos2D(),deltaTime);
 		nuvols.render(view);
 
 		// RENDERITZAR EL MÓN
 
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 		auto start2 = std::chrono::high_resolution_clock::now();
-		mon->render();
+		mon->render(jugador->obtCamera()->obtPlans());
 		auto end2 = std::chrono::high_resolution_clock::now();
 		//renderer.canviarPosLlum(pos);
 

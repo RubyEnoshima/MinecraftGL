@@ -10,6 +10,8 @@ SuperChunk::SuperChunk()
 }
 
 SuperChunk::~SuperChunk() {
+	std::lock_guard<std::recursive_mutex> lock(descarregarMutex);
+
 	for (auto chunk : Chunks)
 	{
 		delete chunk.second;
@@ -27,7 +29,7 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 
 	vector<glm::vec3> arbrets;
 
-	carregat = true;
+	//carregat = true;
 }
 
 void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
@@ -60,17 +62,20 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 
 	}
 
-	//if (chunksDescarregar.size() > 0) {
-		// MIRAR AL VOLTANT DEL JUGADOR Y POSAR EN CUA CHUNKS NOUS
-		for (int i = -DISTANCIA; i <= DISTANCIA; i++) {
-			for (int j = -DISTANCIA; j <= DISTANCIA; j++) {
-				if (abs(i) + abs(j) > DISTANCIA) continue;
-				glm::vec2 nouChunk = chunkJugador + glm::vec2(i,j);
-				if (!esCarregat(nouChunk) && !existeixCua(chunksCarregar, nouChunk))chunksCarregar.push_back(nouChunk);
+	
+	// MIRAR AL VOLTANT DEL JUGADOR Y POSAR EN CUA CHUNKS NOUS
+	if (!esCarregat(chunkJugador) && !existeixCua(chunksCarregar, chunkJugador)) {
+		chunksCarregar.push_front(chunkJugador);
+		chunkInicial = chunkJugador;
+	}
+	for (int i = -DISTANCIA; i <= DISTANCIA; i++) {
+		for (int j = -DISTANCIA; j <= DISTANCIA; j++) {
+			if (abs(i) + abs(j) > DISTANCIA) continue;
+			glm::vec2 nouChunk = chunkJugador + glm::vec2(i,j);
+			if (!esCarregat(nouChunk) && !existeixCua(chunksCarregar, nouChunk))chunksCarregar.push_front(nouChunk);
 				
-			}
 		}
-	//}
+	}
 	//cout << "--------" << endl;
 
 }
@@ -84,8 +89,9 @@ void SuperChunk::update(const glm::vec2& chunkJugador, const glm::mat4& mvp)
 			if (abs(i) + abs(j) > DISTANCIA) continue;
 			glm::vec2 chunk = chunkJugador + glm::vec2(i, j);
 
-			if (esCarregat(chunk) ){//&& Chunks[chunk]->esVisible(mvp)) {
+			if (esCarregat(chunk)) {
 				Chunks[chunk]->crearVertexs();
+				if (chunk == chunkInicial) carregat = true;
 			}
 		}
 	}
@@ -397,6 +403,11 @@ void SuperChunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 	}
 }
 
+uint8_t SuperChunk::obtenirCub(const glm::vec3& pos) const
+{
+	return obtenirCub(pos.x,pos.y,pos.z);
+}
+
 uint8_t SuperChunk::obtenirCub(int x, int y, int z) const
 {
 	if (esValid(x, y, z))
@@ -422,10 +433,10 @@ void SuperChunk::BoundingBox(int x, int y, int z)
 {
 	if (!obtenirCub(x, y, z)) return;
 	renderer->activaBounding(1);
-	/*x -= X*DISTANCIA-X;
-	z -= Z*DISTANCIA-Z;*/
-	//cout << x << " " << y << " " << z << endl;
-	x = X/2; z = Z/2;
+	glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(BlocChunk(x, z).x * X, 0, BlocChunk(x, z).y * Z));
+	renderer->colocarMat4("model", model);
+	x -= X*BlocChunk(x,z).x;
+	z -= Z* BlocChunk(x, z).y;
 	glBindVertexArray(VAO);
 	GLfloat vertices[] = {
 	  0.0 + x, 0.0 + y, 0.0 + z, 1.0,
@@ -477,6 +488,7 @@ void SuperChunk::BoundingBox(int x, int y, int z)
 
 	glDeleteBuffers(1, &vbo_vertices);
 	glDeleteBuffers(1, &ibo_elements);
+
 	renderer->activaBounding(0);
 	glBindVertexArray(0);
 
@@ -498,17 +510,17 @@ bool SuperChunk::existeixCub(int x, int y, int z, uint8_t tipus) const
 	return false;
 }
 
-void SuperChunk::render()
+void SuperChunk::render(const vector<Pla>& mvp)
 {	
 	if (renderer) {
 
 		renderer->usarShader(0);
 		renderer->usarTexturaMon();
 		glBindVertexArray(VAO);
-
+		
 		//loadedChunksMutex.lock();
 		for (auto chunk : Chunks) {
-			if (chunk.second == NULL or chunk.second->descarregant) continue;
+			if (chunk.second == NULL || chunk.second->descarregant || (DEBUG_FRUSTUM && !chunk.second->esVisible(mvp))) continue;
 			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
 			//glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y/2, j * Z - Z * YC / 2));
@@ -583,13 +595,15 @@ void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, ui
 	}
 }
 
-vector<glm::vec3> SuperChunk::obtenirColindants(const glm::vec3& pos, bool transparents) const
+vector<glm::vec3> SuperChunk::obtenirColindants(const glm::vec3& pos, bool transparents, bool ellMateix) const
 {
 	vector<glm::vec3> res;
+	int max = 6;
+	if (ellMateix) max++;
 	for (int i = 0; i < 6; i++) {
 		glm::vec3 act = glm::vec3(pos.x+posicions[i].x, pos.y + posicions[i].y, pos.z + posicions[i].z);
-		bool valid = esValid(act);
-		if(valid && !transparents || valid && blocs.getBloc(obtenirCub(act.x,act.y,act.z))->transparent) res.push_back(act);
+		if (!esValid(act)) continue;
+		if(!transparents || blocs.getBloc(obtenirCub(act.x,act.y,act.z))->transparent) res.push_back(act);
 	}
 	return res;
 }

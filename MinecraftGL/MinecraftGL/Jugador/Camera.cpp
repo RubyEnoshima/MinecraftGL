@@ -3,12 +3,12 @@
 Camera::Camera()
 {
 	//pos = glm::vec3(X * SIZE / 2 + 0.5, Y / 2 + altura, Z * SIZE / 2 + 0.5);
-	pos = glm::vec3(0, Y / 1.5 + altura, 0);
+	pos = glm::vec3(0, 64 + altura, 0);
 	altura = Y / 2 + altura;
-	objectiu = glm::vec3(-1.0, 0.0f, -1.0f);
-	direccio = glm::normalize(pos - objectiu);
-	right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), direccio));
+	objectiu = glm::vec3(0.0, 0.0f, -1.0f);
+	front = glm::normalize(pos - objectiu);
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	right = glm::normalize(glm::cross(front,cameraUp));
 
 	mirar();
 }
@@ -48,6 +48,8 @@ void Camera::mirar() {
 	nouFront.y = sin(glm::radians(pitch));
 	nouFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	front = glm::normalize(nouFront);
+	right = glm::normalize(glm::cross(front,glm::vec3(0.0f, 1.0f, 0.0f)));
+	//cameraUp = glm::normalize(glm::cross(front, right));
 }
 
 void Camera::girar(GLFWwindow* window) {
@@ -92,42 +94,17 @@ glm::vec3 Camera::obtDireccio() const
 
 glm::mat4 Camera::lookAt()
 {
-	view = glm::lookAt(pos, pos + front, cameraUp);
+	glm::mat4 novaView = glm::lookAt(pos, pos + front, cameraUp);
+	if (view == novaView) return view;
+	view = novaView;
+	actualitzaPlans();
 	return view;
 }
 
 glm::mat4 Camera::mvp() const
 {
-	return model*view*projection;
+	return projection*view;
 }
-
-//void Camera::moure(float deltaTime, GLFWwindow* window)
-//{
-//	// Córrer
-//	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
-//		velocitatAct = velocitat * 2.0f;
-//	}
-//	else velocitatAct = velocitat;
-//
-//	if (glfwGetKey(window, GLFW_KEY_W)) {
-//		moureDavant(deltaTime);
-//	}
-//	if (glfwGetKey(window, GLFW_KEY_S)) {
-//		moureDarrera(deltaTime);
-//	}
-//	if (glfwGetKey(window, GLFW_KEY_A)) {
-//		moureEsquerra(deltaTime);
-//	}
-//	if (glfwGetKey(window, GLFW_KEY_D)) {
-//		moureDreta(deltaTime);
-//	}
-//	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
-//		moureAmunt(deltaTime);
-//	}
-//	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
-//		moureAvall(deltaTime);
-//	}
-//}
 
 void Camera::moureDreta(float deltaTime, float vel)
 {
@@ -163,4 +140,26 @@ void Camera::moureAvall(float deltaTime, float vel)
 	pos.y -= vel * deltaTime;
 	altura = pos.y;
 
+}
+
+void Camera::actualitzaPlans()
+{
+	plansFrustum.clear();
+
+	const float halfVSide = far * tanf(fov * 0.5f);
+	const float halfHSide = halfVSide * aspect;
+	const glm::vec3 frontMultFar = far * front;
+
+	plansFrustum.push_back(Pla( pos + near * front, front));
+	plansFrustum.push_back(Pla( pos + frontMultFar, -front));
+	plansFrustum.push_back(Pla( pos, glm::cross(frontMultFar - right * halfHSide, cameraUp)));
+	plansFrustum.push_back(Pla( pos, glm::cross(cameraUp,frontMultFar + right * halfHSide)));
+	plansFrustum.push_back(Pla( pos, glm::cross(right, frontMultFar - cameraUp * halfVSide)));
+	plansFrustum.push_back(Pla( pos, glm::cross(frontMultFar + cameraUp * halfVSide, right)));
+
+}
+
+vector<Pla> Camera::obtPlans() const
+{
+	return plansFrustum;
 }

@@ -12,6 +12,8 @@
 #include <iostream>
 using namespace std;
 
+#define ALTURA_JUG 2
+
 class Camera
 {
 public:
@@ -32,7 +34,6 @@ public:
 	glm::mat4 lookAt();
 	glm::mat4 mvp() const;
 
-	//void moure(float deltaTime, GLFWwindow* window);
 	void girar(GLFWwindow* window);
 
 	void moureDreta(float deltaTime, float vel);
@@ -41,7 +42,11 @@ public:
 	void moureDarrera(float deltaTime, float vel);
 	void moureAmunt(float deltaTime, float vel);
 	void moureAvall(float deltaTime, float vel);
+	
+	void actualitzaPlans();
+	vector<Pla> obtPlans() const;
 private:
+	vector<Pla> plansFrustum;
 	const float sensibilitat = 0.1f;
 
 	void mirar();
@@ -50,13 +55,12 @@ private:
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 
-	float altura = 2.0f;
+	float altura = ALTURA_JUG;
 
 	bool primerCop = true;
 
 	glm::vec3 pos;
 	glm::vec3 objectiu;
-	glm::vec3 direccio; // El vector apunta cap a la càmera
 	glm::vec3 cameraUp;
 	glm::vec3 right;
 	glm::vec3 front;

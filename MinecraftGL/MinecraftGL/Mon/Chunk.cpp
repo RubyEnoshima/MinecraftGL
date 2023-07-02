@@ -12,6 +12,17 @@ Chunk::Chunk(unsigned int _x, unsigned int _y, Blocs* _blocs)
 	}*/
 	posX = _x;
 	posY = _y;
+	cantonades = {
+		glm::vec3(posX * X + 0,0,posY * Z + 0),
+		glm::vec3(posX * X + X,0,posY * Z + 0),
+		glm::vec3(posX * X + 0,0,posY * Z + Z),
+		glm::vec3(posX * X + X,0,posY * Z + Z),
+		glm::vec3(posX * X + 0,Y,posY * Z + 0),
+		glm::vec3(posX * X + X,Y,posY * Z + 0),
+		glm::vec3(posX * X + 0,Y,posY * Z + Z),
+		glm::vec3(posX * X + X,Y,posY * Z + Z),
+
+	};
 	//mon = _mon;
 	blocs = _blocs;
 }
@@ -466,6 +477,16 @@ bool Chunk::esVisible(const glm::mat4& mvp) const
 	coords.x /= coords.w;
 	coords.y /= coords.w;
 	return !(coords.x < -1 || coords.x > 1 || coords.y < -1 || coords.y > 1 || coords.z < 0);
+}
+
+bool Chunk::esVisible(const vector<Pla>& plansFrustum) const
+{
+	for (const Pla &pla : plansFrustum) {
+		//float distancia = glm::dot(pla.normal, (glm::vec3(posX * X + X / 2, Y / 2, posY * Z + Z / 2) - pla.pos));
+		if (pla.distancia(glm::vec3(posX * X + X / 2, Y / 2, posY * Z + Z / 2)) < 0)
+			return false;
+	}
+	return true;
 }
 
 int Chunk::nCubs() const
