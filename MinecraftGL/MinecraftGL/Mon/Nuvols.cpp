@@ -23,7 +23,7 @@ void Nuvols::render(const glm::mat4& view)
 
 	shader->colocarVec2("posicioSprite", offset);
 	shader->colocarVec2("tamanyTextura", t->obtTamany());
-	shader->colocarVec2("tamanySprite", glm::vec2(32));
+	shader->colocarVec2("tamanySprite", glm::vec2(15));
     shader->colocarMat4("view", view);
     shader->colocarMat4("projection", projection);
     glm::mat4 model;
@@ -37,10 +37,10 @@ void Nuvols::render(const glm::mat4& view)
     glBindVertexArray(0);
 }
 
-void Nuvols::update(const glm::vec2& _pos)
+void Nuvols::update(const glm::vec2& _pos, float deltaTime)
 {
-	offset.y += (pos.y - _pos.y)/25 + velocitat;
-	offset.x += (_pos.x - pos.x)/25 + velocitat / 3;
+	offset.y += (pos.y - _pos.y)/25 + velocitat * deltaTime;
+	offset.x += (_pos.x - pos.x)/25 + velocitat * deltaTime / 3;
     pos = _pos;
 }
 
@@ -49,7 +49,7 @@ void Nuvols::initRenderData()
     shader->carregaShaders();
     //shader->colocarInt("uTexture", 1);
 
-    float altura = 150;
+    float altura = 200;
     float vertices[] = {
         // pos      // tex
         -500, altura, -500.0f, 0.0f, 1.0f,

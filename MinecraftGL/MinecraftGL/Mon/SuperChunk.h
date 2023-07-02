@@ -13,10 +13,11 @@
 //#define YC 3
 
 //#define SIZE 11
-#define DISTANCIA 15
-#define NCHUNKS 5 // Quants chunks pot processar en un sol frame
+#define DISTANCIA 13
+#define NCHUNKS 4 // Quants chunks pot processar en un sol frame
 
-#define DEBUG true // La llum natural no es calcularà
+#define DEBUG true // true: La llum natural no es calcularà
+#define DEBUG_FRUSTUM true // true: apliquem Frustum Culling
 
 const struct CompararVec2 {
 	bool operator()(const glm::vec2& a, const glm::vec2& b) const {
@@ -46,7 +47,8 @@ public:
 	void descarregarChunks();
 	void carregarChunks();
 	void eliminaCarregats();
-	void update(const glm::vec2& chunkJugador, const glm::mat4& mvp);
+	void update(const glm::vec2& chunkJugador, const glm::mat4& mvp = glm::mat4());
+	void render(const vector<Pla>& mvp);
 
 	float tempsCarrega = 0;
 
@@ -59,6 +61,7 @@ public:
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
 	// Retorna el tipus del cub
+	uint8_t obtenirCub(const glm::vec3&pos) const;
 	uint8_t obtenirCub(int x, int y, int z) const;
 
 	// ILUMINACIO
@@ -82,7 +85,6 @@ public:
 	// True si existeix un cub d'un tipus concret al voltant d'un cub
 	bool existeixCub(int x, int y, int z, uint8_t tipus) const;
 
-	void render();
 	// Renderitza un cub en una posició de manera que cada cara es pugui identificar pel color
 	bool renderCub(int x, int y, int z);
 
@@ -138,12 +140,19 @@ public:
 		}
 	}
 
+	// Retorna tots els cubs valids (transparents)
+	vector<glm::vec3> obtenirColindants(const glm::vec3& pos, bool transparents = false, bool ellMateix = false) const;
+
 	bool potGenerar = true;
+	bool carregat = false;
+
+	Blocs blocs;
+
 
 private:
-	int tipusMon = Recursos::NORMAL;
+	int tipusMon = Recursos::PLA;
 
-	bool carregat = false;
+	glm::vec2 chunkInicial;
 
 	void posarLlum(glm::vec3 pos, uint8_t llum);
 	void eliminarLlum(glm::vec3 pos, uint8_t llum);
@@ -152,8 +161,7 @@ private:
 	void eliminarLlumNatural(glm::vec3 pos, uint8_t llum);
 
 	// FUNCIONS PER BLOCS
-	// Retorna tots els cubs valids (transparents)
-	vector<glm::vec3> obtenirColindants(const glm::vec3& pos, bool transparents=false) const;
+	
 
 	bool esValid(int x, int y, int z) const;
 	bool esValid(const glm::vec3& pos) const;
@@ -178,9 +186,6 @@ private:
 
 	const vector<int> flors = { ROSA,DENT_DE_LLEO,TULIPA_TARONJA,ESCLATASANG,XAMPINYO };
 
-	Blocs blocs;
-
-
 	// Propagació de llums "artificials"
 	queue<glm::vec3> llums;
 	queue<glm::vec3> cuaLlum;
@@ -192,7 +197,7 @@ private:
 
 	uint8_t llumNatural = 15;
 
-	glm::vec3 posicions[6] = { glm::vec3(-1,0,0),glm::vec3(0,-1,0),glm::vec3(0,0,-1),glm::vec3(1,0,0),glm::vec3(0,1,0),glm::vec3(0,0,1) };
+	glm::vec3 posicions[7] = { glm::vec3(-1,0,0),glm::vec3(0,-1,0),glm::vec3(0,0,-1),glm::vec3(1,0,0),glm::vec3(0,1,0),glm::vec3(0,0,1),glm::vec3(0,0,0) };
 	
 	// GESTIÓ DE CHUNKS
 	mutable std::recursive_mutex loadedChunksMutex;

@@ -38,6 +38,7 @@ public:
 	void VSync();
 
 	void moure();
+	void CanviarMode();
 
 	uint8_t tipusCub = TERRA;
 	HUD* _HUD;
@@ -61,6 +62,7 @@ private:
 
 	bool _VSync = false;
 	bool _Culling = true;
+	int mode = ESPECTADOR;
 	
 	GLFWwindow* window;
 	glm::vec3 CubActual;

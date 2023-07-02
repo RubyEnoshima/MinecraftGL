@@ -59,6 +59,7 @@ public:
 	void update();
 	void render();
 	bool esVisible(const glm::mat4& mvp) const;
+	bool esVisible(const vector<Pla>& plansFrustum) const;
 	bool renderCub(int x, int y, int z);
 
 	int nCubs() const;
@@ -91,6 +92,8 @@ private:
 	void afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
 	unsigned int VBO = 0;
+
+	vector<glm::vec3> cantonades;
 
 	int posX, posY;
 	Cub chunk[X][Y][Z];

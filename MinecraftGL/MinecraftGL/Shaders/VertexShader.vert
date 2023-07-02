@@ -27,6 +27,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+out vec3 FragPos;
 
 void main()
 {
@@ -45,4 +46,6 @@ void main()
 
 	costat = int(aCostat);
 	colorTint = aColor/255;
+
+	FragPos = (model * vec4(aPos, 1.0)).xyz;
 }
