@@ -28,10 +28,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
 	if (action == GLFW_PRESS) {
-		if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9)
+		if (key >= GLFW_KEY_1 && key <= GLFW_KEY_9)
 		{
+			uint8_t num = key % 48;
 			if (key == GLFW_KEY_9) joc->tipusCub = TULIPA_TARONJA;
-			else joc->tipusCub = key%48;
+			else joc->tipusCub = num;
+			joc->jugador->inventari->canviaSeleccionat(num-1);
 			return;
 		}
 		switch (key) {
@@ -39,7 +41,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 				joc->jugador->correr();
 				break;
 			case GLFW_KEY_W: case GLFW_KEY_A: case GLFW_KEY_S: case GLFW_KEY_D: case GLFW_KEY_SPACE: case GLFW_KEY_LEFT_SHIFT:
-				//joc->jugador->moure(joc->deltaTime, key);
 				joc->tecles[key] = true;
 				break;
 			// ESC: es tanca la finestra i tanca el joc
@@ -235,7 +236,6 @@ void Joc::PosarCub() {
 
 	// Obtenim el costat al que estem mirant
 	glm::vec3 Costat = ObtenirCostat();
-	cout << Costat << endl;
 	if (Costat.x==-1 && Costat.y==-1) return;
 	
 	// Canviem el cub
@@ -392,8 +392,8 @@ void Joc::gameLoop() {
 		canviarModeMouse(GLFW_CURSOR_DISABLED);
 
 		mon = new SuperChunk(&renderer);
-		_HUD = new HUD(&renderer);
 		jugador = new Jugador(new Camera());
+		_HUD = new HUD(&renderer,jugador->inventari);
 
 		// Posem el color taronja
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));

@@ -1,5 +1,6 @@
 #pragma once
 #include "Camera.h"
+#include "Inventari.h"
 
 #define GRAVETAT 9.8
 #define SALT 5
@@ -41,6 +42,9 @@ public:
 	Camera* obtCamera() const;
 
 	void canviaMode(int _mode);
+
+	Inventari* inventari;
+
 private:
 	int mode = ESPECTADOR; // Veure adalt la llista de modes
 
