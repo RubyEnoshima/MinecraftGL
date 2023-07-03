@@ -3,11 +3,13 @@
 Jugador::Jugador(Camera* _camera)
 {
 	camera = _camera;
+	inventari = new Inventari();
 }
 
 Jugador::~Jugador()
 {
 	delete camera;
+	delete inventari;
 }
 
 void Jugador::update(float deltaTime, const vector<glm::vec3>& blocs)

@@ -22,15 +22,15 @@ SpriteRenderer::~SpriteRenderer()
 
 void SpriteRenderer::render()
 {
-    for (pair<string,Sprite*> sprite : Sprites)
-    {
-        DrawSprite(sprite.second);
+    for (auto it = SpritesOrdenats.rbegin(); it != SpritesOrdenats.rend(); it++) {
+        DrawSprite(it->second);
     }
 }
 
 void SpriteRenderer::afegirSprite(Sprite* sprite)
 {
     Sprites[sprite->nom] = sprite;
+    SpritesOrdenats.emplace(sprite->indexZ, sprite);
 }
 
 Sprite* SpriteRenderer::obtSprite(string nom) const
@@ -38,6 +38,19 @@ Sprite* SpriteRenderer::obtSprite(string nom) const
     map<string,Sprite*>::const_iterator it = Sprites.find(nom);
     if (it!=Sprites.end()) return it->second;
     return nullptr;
+}
+
+void SpriteRenderer::canviaIndex(string nom, int nouIndex)
+{
+    auto it = SpritesOrdenats.begin();
+    while (it != SpritesOrdenats.end()) {
+        if (it->second->nom == nom) {
+            SpritesOrdenats.emplace_hint(it, nouIndex, it->second);
+            SpritesOrdenats.erase(it);
+            break;
+        }
+        it++;
+    }
 }
 
 void SpriteRenderer::DrawSprite(Sprite* sprite)

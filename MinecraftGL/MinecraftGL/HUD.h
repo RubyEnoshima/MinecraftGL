@@ -1,9 +1,10 @@
 #pragma once
 #include "Renderer/SpriteRenderer.h"
+#include "Inventari.h"
 class HUD
 {
 public:
-	HUD(Renderer* _renderer);
+	HUD(Renderer* _renderer, Inventari* _inventari);
 	~HUD();
 
 	void render();
@@ -12,8 +13,6 @@ private:
 	void iniciaSprites();
 
 	bool visible = true;
-
-	Textura inventari;
 
 	SpriteRenderer* renderer;
 };

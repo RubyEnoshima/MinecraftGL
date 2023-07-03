@@ -523,7 +523,6 @@ void SuperChunk::render(const vector<Pla>& mvp)
 			if (chunk.second == NULL || chunk.second->descarregant || (DEBUG_FRUSTUM && !chunk.second->esVisible(mvp))) continue;
 			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
-			//glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(i * X - X * XC / 2, -Y/2, j * Z - Z * YC / 2));
 			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
 			renderer->colocarMat4("model", model);
 			chunk.second->render();
@@ -540,10 +539,11 @@ bool SuperChunk::renderCub(int x, int y, int z)
 	glBindVertexArray(VAO);
 	if (esValid(x,y,z)) {
 		// Hem d'aplicar la mateixa transformació que abans
-		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(x/X * X, 0, z/Z * Z));
+		glm::vec2 chunk = BlocChunk(x, z);
+		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.x * X, 0, chunk.y * Z));
 		renderer->colocarMat4("model", model);
 
-		return Chunks[BlocChunk(x,z)]->renderCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
+		return Chunks[chunk]->renderCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
 
 	}
 	return false;

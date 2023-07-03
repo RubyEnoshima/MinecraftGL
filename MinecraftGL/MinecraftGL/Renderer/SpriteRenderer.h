@@ -33,6 +33,7 @@ public:
 	glm::vec4 color = glm::vec4(1.0f);
 	glm::vec2 escala = glm::vec2(1.0f);
 	float rotacio = 0.0f;
+	float indexZ = 0.0f;
 
 	// Si fals, no es renderitzarà
 	bool visible = true;
@@ -58,6 +59,8 @@ public:
 	void afegirSprite(Sprite* sprite);
 	// Retorna un punter a un sprite
 	Sprite* obtSprite(string nom) const;
+	// Canvia el zIndex d'un sprite
+	void canviaIndex(string nom, int nouIndex);
 	
 	float width, height;
 
@@ -71,6 +74,7 @@ private:
 	// Donada una posició en píxels [0-width][0-height], retorna la posició en coordenades pantalla [-1,1][-1,1]
 	glm::vec2 normalitzarPos(const glm::vec2& pos, int w, int h);
 
+	multimap<int,Sprite*> SpritesOrdenats;
 	map<string,Sprite*> Sprites;
 	Renderer* renderer;
 	ShaderProgram* shader;
