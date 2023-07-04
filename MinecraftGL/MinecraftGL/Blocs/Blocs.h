@@ -47,6 +47,7 @@ public:
     Blocs();
     ~Blocs();
     Bloc* getBloc(int id) const{
+        if (id == -1) return NULL;
         return dades.at(id);
     }
     

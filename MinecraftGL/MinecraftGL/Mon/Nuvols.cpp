@@ -3,7 +3,7 @@
 Nuvols::Nuvols(const glm::mat4& _projection)
 {
 	offset = glm::vec2(0.0f);
-	t = new Textura("nuvols.png");
+	t = Recursos::obtTextura("nuvols.png");
 	shader = new ShaderProgram("VertexNuvols.vert", "FragmentNuvols.frag");
     initRenderData();
     projection = _projection;

@@ -6,6 +6,8 @@ Recursos::MapColors Recursos::COLORS = {
 	{"VerdFulles",glm::vec3(99, 169, 72)}
 };
 
+Recursos::NomTextures Recursos::texturesPrecarrega = { "icon.png","icons.png","items.png","inventari.png","minecraft_transp.png","nuvols.png","seleccio.png" };
+
 int Recursos::width = 0;
 int Recursos::height = 0;
 
@@ -26,6 +28,17 @@ Item* Recursos::getItem(int id)
 Item* Recursos::getItem(string nom)
 {
 	return _items.getItem(nom);
+}
+
+Textura* Recursos::obtTextura(string nom)
+{
+	if (_textures.empty()) {
+		for (string nom : texturesPrecarrega)
+		{
+			afegirTextura(new Textura(nom));
+		}
+	}
+	return _textures[nom];
 }
 
 void Recursos::afegirTextura(Textura* t)

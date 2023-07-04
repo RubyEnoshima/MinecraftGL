@@ -16,9 +16,9 @@ Items::Items()
     // Per tots els items que hi hagi a l'arxiu
     while (it != jsonItems.end()) {
         json data = *it;
-        int id = data.value("id", 0);
+        int id = data.value("id", -1);
         string nom = data.value("nom", "");
-        dades[id] = new Item(id, data.value("classe", 0), nom, data.value("sprite", 0));
+        dades[id] = new Item(id, data.value("classe", 0), nom, data.value("sprite", 0), data.value("bloc_id", -1));
         it++;
     }
 

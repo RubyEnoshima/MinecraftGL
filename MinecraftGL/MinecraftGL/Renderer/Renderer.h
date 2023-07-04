@@ -24,7 +24,7 @@ public:
 
 	unsigned int obtenirUniform(const char* uniform) const;
 
-	void colocarMat4(const string uniform,const glm::mat4 matriu);
+	void colocarMat4(const string uniform,const glm::mat4 matriu); 
 	void activaBounding(bool bounding);
 
 	// Llum (deprecated?)
@@ -42,7 +42,7 @@ public:
 
 	void usarTexturaMon();
 private:
-	Textura texturaMon;
+	Textura* texturaMon;
 	unsigned int shaderActual;
 
 	ShaderProgram shaders[MAX_SHADERS];

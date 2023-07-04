@@ -26,7 +26,6 @@ struct Slot{
 	uint8_t quantitat = 0;
 
 	Sprite* sprite = NULL;
-	unsigned int VBO = 0;
 };
 
 class Inventari
@@ -38,15 +37,20 @@ public:
 	void iniciaSprites(SpriteRenderer* renderer);
 	// Canvia l'item seleccionat
 	void canviaSeleccionat(const uint8_t seleccio);
+	void canviaSelecccionatPer1(int seleccio);
 	// Retorna l'item seleccionat
 	Item* obtenirItemActual() const;
 	// Afegeix l'item a l'inventari
 	void afegirItem(int id, uint8_t _quantitat = 1);
 	// Si no sabem l'id o ens fa molta mandra, podem posar el nom
 	void afegirItem(string nom, uint8_t _quantitat = 1); 
+
+	void render();
 private:
+	void initRenderData();
+
 	Sprite* spriteSlot = NULL;
-	uint8_t slotSeleccionat = 0;
+	int slotSeleccionat = 0;
 	glm::vec2 posInicial;
 	
 	vector<Slot*> inventari;
@@ -55,6 +59,7 @@ private:
 	uint8_t quantitat = 0; 
 
 	Textura* mapaItems;
-	unsigned int VAO = 0;
+	unsigned int VAO = 0, VBO = 0;
+	ShaderProgram* shader; // S'utilitza pels blocs
 };
 

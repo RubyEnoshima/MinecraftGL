@@ -33,8 +33,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (key >= GLFW_KEY_1 && key <= GLFW_KEY_9)
 		{
 			uint8_t num = key % 48;
-			if (key == GLFW_KEY_9) joc->tipusCub = TULIPA_TARONJA;
-			else joc->tipusCub = num;
+			/*if (key == GLFW_KEY_9) joc->tipusCub = TULIPA_TARONJA;
+			else joc->tipusCub = num;*/
 			joc->jugador->inventari->canviaSeleccionat(num-1);
 			return;
 		}
@@ -231,7 +231,7 @@ glm::vec3 Joc::ObtenirCostat() {
 	return glm::vec3(-1, -1, -1);
 }
 
-void Joc::PosarCub() {
+void Joc::PosarCub(uint8_t tipus) {
 	// Si és un cub vàlid
 	if (CubActual.y == -1) return;
 	
@@ -241,8 +241,21 @@ void Joc::PosarCub() {
 	if (Costat.x==-1 && Costat.y==-1) return;
 	
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipusCub, false, true);
+	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipus, false, true);
 
+}
+
+void Joc::Usar()
+{
+	Item* item = jugador->inventari->obtenirItemActual();
+	if (item == NULL) return;
+
+	if (item->classe == BLOC) {
+		PosarCub(Recursos::getBloc(item->bloc_id)->id);
+	}
+	else {
+		cout << "Encara no esta fet..." << endl;
+	}
 }
 
 void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
@@ -256,8 +269,14 @@ void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
 	else if (click == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
-		joc->PosarCub();
+		joc->Usar();
 	}
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
+	joc->jugador->inventari->canviaSelecccionatPer1(-yoffset);
 }
 
 void Joc::loop() {
@@ -384,6 +403,7 @@ void Joc::gameLoop() {
 
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
 		glfwSetMouseButtonCallback(window, mouse_click_callback);
+		glfwSetScrollCallback(window, scroll_callback);
 		glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 		glEnable(GL_DEPTH_TEST);
