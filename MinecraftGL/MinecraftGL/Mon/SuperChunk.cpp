@@ -151,7 +151,7 @@ void SuperChunk::eliminaCarregats()
 
 void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 {
-	Chunk* nou = new Chunk(pos.x, pos.y, &blocs);
+	Chunk* nou = new Chunk(pos.x, pos.y);
 	Chunk* up = NULL;
 	Chunk* left = NULL;
 	Chunk* right = NULL; 
@@ -192,9 +192,9 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 
 	int j = Y - 1;
 	uint8_t llum = 15;
-	while (blocs.getBloc(obtenirCub(x, j, z))->transparent && j>0) {
+	while (Recursos::getBloc(obtenirCub(x, j, z))->transparent && j>0) {
 		uint8_t tipus = obtenirCub(x, j, z);
-		if (tipus != AIRE && !blocs.getBloc(obtenirCub(x, j, z))->vegetacio) llum--;
+		if (tipus != AIRE && !Recursos::getBloc(obtenirCub(x, j, z))->vegetacio) llum--;
 		canviarLlumNaturalCub(x, j, z, llum);
 		j--;
 	}
@@ -207,7 +207,7 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 	
 	while (j >= 0) {
 		uint8_t tipus = obtenirCub(x, j, z);
-		b = blocs.getBloc(obtenirCub(x, j, z));
+		b = Recursos::getBloc(obtenirCub(x, j, z));
 		if (b->transparent) cua.emplace(glm::vec3(x, j, z));
 		j--;
 	}
@@ -223,7 +223,7 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 		for (int i = 0; i < 6; i++) {
 			glm::vec3 actual = glm::vec3(pos.x + posicions[i].x, pos.y + posicions[i].y, pos.z + posicions[i].z);
 
-			if (!blocs.getBloc(obtenirCub(actual.x, actual.y, actual.z))->transparent) continue;
+			if (!Recursos::getBloc(obtenirCub(actual.x, actual.y, actual.z))->transparent) continue;
 
 			llum = obtenirLlumNaturalCub(actual.x,actual.y,actual.z);
 
@@ -247,7 +247,7 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 
 void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum) {
 	// Mirem si és transparent i si hem de pujar la llum
-	if (blocs.getBloc(obtenirCub(pos.x, pos.y, pos.z))->transparent && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
+	if (Recursos::getBloc(obtenirCub(pos.x, pos.y, pos.z))->transparent && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
 		uint8_t resLlum = llum - 1;
 		canviarLlumArtificialCub(pos.x, pos.y, pos.z, resLlum);
 		cuaLlum.emplace(pos);
@@ -371,7 +371,7 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 				canviarLlumArtificialCub(llum.x, llum.y, llum.z, 14);
 				afegirLlum(llum);
 			}
-			if(!blocs.getBloc(tipus)->transparent) canviarLlumNaturalCub(x, y, z, 0);
+			if(!Recursos::getBloc(tipus)->transparent) canviarLlumNaturalCub(x, y, z, 0);
 		}
 
 		if(jugador) calculaLlumNatural(x, z);
@@ -605,7 +605,7 @@ vector<glm::vec3> SuperChunk::obtenirColindants(const glm::vec3& pos, int transp
 		//if (!esValid(act)) continue;
 		if(transparents == 0) res.push_back(act);
 		else {
-			bool esTransparent = blocs.getBloc(obtenirCub(act.x, act.y, act.z))->transparent;
+			bool esTransparent = Recursos::getBloc(obtenirCub(act.x, act.y, act.z))->transparent;
 			if(transparents == 1 && esTransparent || transparents == 2 && !esTransparent) res.push_back(act);
 		}
 	}
@@ -642,6 +642,8 @@ int SuperChunk::Mon2Chunk(int n, int m) const
 
 bool SuperChunk::esCarregat(const glm::vec2& pos) const
 {
+	std::lock_guard<std::recursive_mutex> lock(cuaMutex);
+
 	return Chunks.count(pos) > 0 && Chunks[pos] != NULL && !Chunks[pos]->descarregant && Chunks[pos]->preparat;
 }
 

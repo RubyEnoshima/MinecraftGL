@@ -2,8 +2,8 @@
 
 Blocs::Blocs() {
     
-    dades.assign(256,NULL);
-    for (int i = 0; i < 256; i++) {
+    dades.assign(MAX_BLOCS,NULL);
+    for (int i = 0; i < MAX_BLOCS; i++) {
         dades[i] = new Bloc();
     }
 

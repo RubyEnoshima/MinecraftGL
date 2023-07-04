@@ -147,7 +147,7 @@
     <ClCompile Include="Blocs\Blocs.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Inventari.cpp" />
-    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Items.cpp" />
     <ClCompile Include="Joc.cpp" />
     <ClCompile Include="Jugador\Camera.cpp" />
     <ClCompile Include="Jugador\Jugador.cpp" />
@@ -167,7 +167,7 @@
     <ClInclude Include="Blocs\Blocs.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Inventari.h" />
-    <ClInclude Include="Item.h" />
+    <ClInclude Include="Items.h" />
     <ClInclude Include="Joc.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Jugador\Camera.h" />

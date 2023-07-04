@@ -14,7 +14,8 @@ Textura::~Textura()
 
 Textura::Textura(string _nom)
 {
-	nom = "Textures/"+_nom;
+	nom = _nom;
+	string path = "Textures/"+_nom;
 
 	glGenTextures(1,&textura);
 	glBindTexture(GL_TEXTURE_2D, textura);
@@ -26,14 +27,14 @@ Textura::Textura(string _nom)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	data = stbi_load(nom.c_str(), &width, &height, &nrChannels, 4);
+	data = stbi_load(path.c_str(), &width, &height, &nrChannels, 4);
 	if (data) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 	}
 	else {
-		cout << "ERROR!!! No s'ha pogut carregar la textura " << _nom << endl;
+		cout << "ERROR!!! No s'ha pogut carregar la textura " << path << endl;
 	}
 		// pagina 60
 	stbi_image_free(data);

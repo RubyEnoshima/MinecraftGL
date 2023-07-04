@@ -1,15 +1,15 @@
 #pragma once
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+//#include <glad/glad.h>
+//#include <GLFW/glfw3.h>
+//
+//#include <glm/glm.hpp>
+//#include <glm/gtc/matrix_transform.hpp>
+//#include <glm/gtc/type_ptr.hpp>
+#include "Recursos.h"
 #include "Renderer.h"
 #include "Shaders/ShaderProgram.h"
-#include "Textura.h"
-#include "glm/gtx/io.hpp"
+//#include "Textura.h"
+//#include "glm/gtx/io.hpp"
 #include <map>
 
 // Es guarda tota la informació que pot tenir un Sprite
@@ -18,13 +18,14 @@ public:
 	Sprite(Textura* _textura, string _nom, const glm::vec2& _pos, const glm::vec2& _escala = glm::vec2(1.0f), float _rotacio = 0.0f) {
 		pos = _pos;
 		textura = _textura;
+		Recursos::afegirTextura(_textura);
 		escala = _escala;
 		rotacio = _rotacio;
 		tamany = tamanyMapa = _textura->obtTamany();
 		nom = _nom;
 	};
 	~Sprite() {
-		delete textura;
+//		delete textura;
 	}
 
 	// Atributs per renderitzar
@@ -57,6 +58,8 @@ public:
 	void render();
 	// Afegeix un sprite per tal que es pugui renderitzar. Si ja hi havia un amb el mateix nom, no s'afegfirà!
 	void afegirSprite(Sprite* sprite);
+	// Elimina un sprite
+	void eliminaSprite(string nom);
 	// Retorna un punter a un sprite
 	Sprite* obtSprite(string nom) const;
 	// Canvia el zIndex d'un sprite

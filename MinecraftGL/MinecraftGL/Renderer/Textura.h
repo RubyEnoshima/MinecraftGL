@@ -16,8 +16,8 @@ public:
 	glm::vec2 obtTamany() const;
 
 	bool mapa = false;
-private:
 	string nom;
+private:
 	unsigned char* data;
 	unsigned int textura;
 

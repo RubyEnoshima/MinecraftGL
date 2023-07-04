@@ -1,7 +1,12 @@
 #pragma once
-#include <glm/glm.hpp>
-#include <string>
-#include <map>
+//#include <glm/glm.hpp>
+//#include <string>
+//#include <map>
+#include "Blocs/Blocs.h"
+#include "Items.h"
+#include "Renderer/Textura.h"
+
+using namespace std;
 
 struct Pla {
 public:
@@ -17,23 +22,40 @@ public:
 	}
 };
 
-using namespace std;
 class Recursos
 {
 public:
-	static enum TIPUS_MON {
+	typedef map<string, glm::vec3> MapColors;
+	typedef map<string, Textura*> Textures;
+	typedef Blocs BLOCS;
+	typedef Items ITEMS;
+	enum TIPUS_MON {
 		NORMAL = 0,
 		PLA = 1
 	};
 	static glm::vec3* obtColor(string color) {
 		return &COLORS[color];
 	}
-	typedef map<string, glm::vec3> MapColors;
-	static MapColors COLORS;
+	
 	bool start = false;
+
+	static Bloc* getBloc(int id);
+	static Item* getItem(int id);
+
+	static void afegirTextura(Textura* t);
+
 private:
+	static MapColors COLORS;
+	static BLOCS _blocs;
+	static ITEMS _items;
+	static map<string, Textura*> _textures;
+
 	Recursos() { 
 	}
-
+	~Recursos() {
+		for (auto t : _textures) {
+			delete t.second;
+		}
+	}
 };
 

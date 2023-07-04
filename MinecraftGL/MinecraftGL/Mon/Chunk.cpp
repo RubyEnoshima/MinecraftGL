@@ -1,6 +1,6 @@
 #include "Chunk.h"
 
-Chunk::Chunk(unsigned int _x, unsigned int _y, Blocs* _blocs)
+Chunk::Chunk(unsigned int _x, unsigned int _y)
 {
 	memset(chunk, 0, sizeof(chunk));
 	/*for (int i = 0; i < X; i++) {
@@ -24,7 +24,6 @@ Chunk::Chunk(unsigned int _x, unsigned int _y, Blocs* _blocs)
 
 	};
 	//mon = _mon;
-	blocs = _blocs;
 }
 
 Chunk::~Chunk()
@@ -48,12 +47,12 @@ void Chunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, char
 	if ((x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) || (!reemplacar && obtenirCub(x, y, z) != AIRE)) return;
 
 	// Si volem posar vegetacio, ens asegurem que nomes es pot posar on volem
-	if (blocs->getBloc(tipus)->vegetacio) {
+	if (Recursos::getBloc(tipus)->vegetacio) {
 		uint8_t tipusBlocDebaix = obtenirCub(x, y - 1, z);
 		if(tipusBlocDebaix != GESPA && tipusBlocDebaix != TERRA) return;
 	}
 	// Si volem treure el bloc i a sobre tenim vegetacio, també treiem la vegetacio
-	if (tipus == AIRE && blocs->getBloc(obtenirCub(x, y + 1, z))->vegetacio)
+	if (tipus == AIRE && Recursos::getBloc(obtenirCub(x, y + 1, z))->vegetacio)
 		canviarCub(x, y + 1, z, AIRE);
 
 	chunk[x][y][z].tipus = tipus;
@@ -136,7 +135,7 @@ void Chunk::afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z
 }
 
 void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus,const char* _color) {
-	Bloc* b = blocs->getBloc(tipus);
+	Bloc* b = Recursos::getBloc(tipus);
 	uint8_t llum = chunk[x][y][z].llum;
 	const char* color = _color;
 	// Si es vegetació, la renderitzem amb 4 plans que sempre miren a la mateixa orientació
@@ -174,7 +173,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	tipus = b->costats;
 	// Cara esq
-	if ((x == 0 and veiEsq != NULL and (!veiEsq->obtenirCub(X - 1, y, z) || blocs->getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent)) or (x != 0 and (!chunk[x - 1][y][z].tipus or blocs->getBloc(chunk[x - 1][y][z].tipus)->transparent))) {
+	if ((x == 0 and veiEsq != NULL and (!veiEsq->obtenirCub(X - 1, y, z) || Recursos::getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent)) or (x != 0 and (!chunk[x - 1][y][z].tipus or Recursos::getBloc(chunk[x - 1][y][z].tipus)->transparent))) {
 		if (x == 0) llum = veiEsq->chunk[X - 1][y][z].llum;
 		else llum = chunk[x - 1][y][z].llum;
 
@@ -191,7 +190,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		}
 	}
 	// Cara dre
-	if ((x == X - 1 and veiDre != NULL and (!veiDre->obtenirCub(0, y, z) || blocs->getBloc(veiDre->obtenirCub(0, y, z))->transparent)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or blocs->getBloc(chunk[x + 1][y][z].tipus)->transparent))) {
+	if ((x == X - 1 and veiDre != NULL and (!veiDre->obtenirCub(0, y, z) || Recursos::getBloc(veiDre->obtenirCub(0, y, z))->transparent)) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or Recursos::getBloc(chunk[x + 1][y][z].tipus)->transparent))) {
 		if (x == X - 1) llum = veiDre->chunk[0][y][z].llum;
 		else llum = chunk[x + 1][y][z].llum;
 
@@ -209,7 +208,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp != NULL and (!veiUp->obtenirCub(x, y, 0) || blocs->getBloc(veiUp->obtenirCub(x, y, 0))->transparent)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or blocs->getBloc(chunk[x][y][z + 1].tipus)->transparent))) {
+	if ((z == Z - 1 and veiUp != NULL and (!veiUp->obtenirCub(x, y, 0) || Recursos::getBloc(veiUp->obtenirCub(x, y, 0))->transparent)) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or Recursos::getBloc(chunk[x][y][z + 1].tipus)->transparent))) {
 		if (z == Z - 1) llum = veiUp->chunk[x][y][0].llum;
 		else llum = chunk[x][y][z + 1].llum;
 		
@@ -228,7 +227,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix != NULL and (!veiBaix->obtenirCub(x, y, Z - 1) || blocs->getBloc(veiBaix->obtenirCub(x, y, Z - 1))->transparent)) or (z != 0 and (!chunk[x][y][z - 1].tipus or blocs->getBloc(chunk[x][y][z - 1].tipus)->transparent))) {
+	if ((z == 0 and veiBaix != NULL and (!veiBaix->obtenirCub(x, y, Z - 1) || Recursos::getBloc(veiBaix->obtenirCub(x, y, Z - 1))->transparent)) or (z != 0 and (!chunk[x][y][z - 1].tipus or Recursos::getBloc(chunk[x][y][z - 1].tipus)->transparent))) {
 		if (z == 0) llum = veiBaix->chunk[x][y][Z - 1].llum;
 		else llum = chunk[x][y][z - 1].llum;
 		
@@ -248,7 +247,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	tipus = b->adalt;
 	// Cara adalt
-	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or blocs->getBloc(chunk[x][y + 1][z].tipus)->transparent) {
+	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or Recursos::getBloc(chunk[x][y + 1][z].tipus)->transparent) {
 		if (y == Y - 1) llum = 0;
 		else llum = chunk[x][y + 1][z].llum;
 
@@ -267,7 +266,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	tipus = b->sota;
 	// Cara sota
-	if (y == 0 or !chunk[x][y - 1][z].tipus or blocs->getBloc(chunk[x][y - 1][z].tipus)->transparent) {
+	if (y == 0 or !chunk[x][y - 1][z].tipus or Recursos::getBloc(chunk[x][y - 1][z].tipus)->transparent) {
 		if (y == Y - 1) llum = 0;
 		else if(y>0) llum = chunk[x][y - 1][z].llum;
 

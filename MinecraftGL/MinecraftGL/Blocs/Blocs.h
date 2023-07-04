@@ -8,6 +8,8 @@
 using json = nlohmann::json;
 using namespace std;
 
+#define MAX_BLOCS 256
+
 struct Bloc {
     Bloc(string _nom,int _id,bool _trans,int _cost,int _sota,int _adalt,bool _vegetal,const glm::vec3& _color){
         nom = _nom;

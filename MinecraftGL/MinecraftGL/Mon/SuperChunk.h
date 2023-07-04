@@ -146,9 +146,6 @@ public:
 	bool potGenerar = true;
 	bool carregat = false;
 
-	Blocs blocs;
-
-
 private:
 	int tipusMon = Recursos::PLA;
 
