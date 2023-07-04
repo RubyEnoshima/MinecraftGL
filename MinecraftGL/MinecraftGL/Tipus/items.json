@@ -4,16 +4,32 @@
         "classe": 0
     },
     "patata":{
-        "id": 1,
+        "id": 119,
         "classe": 2,
         "nom": "Patata",
         "sprite": 119
     },
     "destral_fusta":{
-        "id": 2,
+        "id": 112,
         "classe": 1,
         "nom": "Destral de fusta",
         "sprite": 112,
+        "tier": 0,
+        "durabilitat": 50
+    },
+    "espasa_fusta":{
+        "id": 64,
+        "classe": 1,
+        "nom": "Espasa de fusta",
+        "sprite": 64,
+        "tier": 0,
+        "durabilitat": 50
+    },
+    "pic_de_fusta":{
+        "id": 96,
+        "classe": 1,
+        "nom": "Pic de fusta",
+        "sprite": 96,
         "tier": 0,
         "durabilitat": 50
     }

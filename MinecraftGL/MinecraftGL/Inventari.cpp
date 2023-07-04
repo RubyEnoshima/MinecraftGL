@@ -10,7 +10,7 @@ Inventari::Inventari()
 	for (int i = 0; i < MAX_FILES; i++) {
 		inventariGran.push_back(vector<Slot*>());
 		for (int j = 0; j < MAX_ITEMS; j++) {
-			inventariGran[i].push_back(new Slot(mapaItems,10*i+1 + i*j+j));
+			inventariGran[i].push_back(new Slot(mapaItems, (10 * i + 1 + i * j + j)+9));
 		}
 	}
 	glGenBuffers(1, &VAO);
@@ -35,21 +35,20 @@ Inventari::~Inventari()
 
 void Inventari::iniciaSprites(SpriteRenderer* renderer)
 {
-	Sprite* spriteInventari = new Sprite(new Textura("inventari.png"), "Inventari", glm::vec2(), glm::vec2(7));
-	spriteInventari->centrat = true;
-	spriteInventari->pos = glm::vec2(renderer->width / 2, renderer->height - spriteInventari->tamany.y * 1.7);
+	Sprite* spriteInventari = new Sprite(new Textura("inventari.png"), "Inventari", glm::vec2(), glm::vec2(7), true);
+	spriteInventari->teletransportar(glm::vec2(renderer->width / 2, renderer->height - spriteInventari->obtTamany().y * 1.7));
 	renderer->afegirSprite(spriteInventari);
 
-	spriteSlot = new Sprite(new Textura("seleccio.png"), "Seleccio", glm::vec2(), glm::vec2(7));
-	spriteSlot->centrat = true;
-	spriteSlot->pos = glm::vec2(renderer->width / 2 - 80 * 3.5, renderer->height - spriteSlot->tamany.y * 1.7);
-	posInicial = spriteSlot->pos;
+	spriteSlot = new Sprite(new Textura("seleccio.png"), "Seleccio", glm::vec2(), glm::vec2(7), true);
+	spriteSlot->teletransportar(glm::vec2(renderer->width / 2 - 80 * 3.5, renderer->height - spriteSlot->obtTamany().y * 1.7));
+	posInicial = spriteSlot->obtPos();
 	spriteSlot->indexZ = 1;
 	renderer->afegirSprite(spriteSlot);
 
 	for (auto slot : inventari)
 	{
-		slot->sprite->pos = glm::vec2(renderer->width / 2 - 70 * 4 + 70 * slot->id, renderer->height - 32 - 5);
+		slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70 * 4 + 70 * slot->id, renderer->height - 32 - 5));
+		slot->sprite->visible = true;
 		renderer->afegirSprite(slot->sprite);
 	}
 	for (auto vector : inventariGran)
@@ -65,9 +64,8 @@ void Inventari::canviaSeleccionat(const uint8_t seleccio)
 {
 	if (seleccio >= 0 && seleccio < MAX_ITEMS) {
 		slotSeleccionat = seleccio;
-		spriteSlot->pos = posInicial;
-		spriteSlot->pos.x += seleccio * (70);
-
+		glm::vec2 novaPos = posInicial + glm::vec2(seleccio * 70, 0);
+		spriteSlot->teletransportar(novaPos);
 	}
 }
 
@@ -78,6 +76,7 @@ Item* Inventari::obtenirItemActual() const
 
 void Inventari::afegirItem(int id, uint8_t _quantitat)
 {
+	if (id == -1) return;
 	if (quantitat == MAX_ITEMS) return;
 	int i = 0;
 	while (i < MAX_ITEMS) {
@@ -95,6 +94,13 @@ void Inventari::afegirItem(int id, uint8_t _quantitat)
 		i++;
 	}
 	quantitat++;
+}
+
+void Inventari::afegirItem(string nom, uint8_t _quantitat)
+{
+	Item* i = Recursos::getItem(nom);
+	if (i == NULL) return;
+	afegirItem(i->id,quantitat);
 }
 
 void Slot::actualitzaSprite()

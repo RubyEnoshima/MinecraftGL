@@ -20,7 +20,7 @@ enum TIPUS_ITEM {
 struct Item
 {
 	Item() {
-		id = 0;
+		id = -1;
 		classe = BLOC;
 		nom = "";
 		sprite = 0;
@@ -32,7 +32,7 @@ struct Item
 		sprite = _sprite;
 	}
 
-	int id = 0;
+	int id = -1;
 	int classe = BLOC;
 	string nom = "";
 	uint8_t sprite = 0; // Al mapa d'items, quin lloc ocupa
@@ -45,6 +45,14 @@ public:
 	~Items();
 	Item* getItem(int id) const {
 		return dades.at(id);
+	}
+	Item* getItem(string nom) const {
+		for (Item* i : dades) {
+			if (i->nom == nom) {
+				return i;
+			}
+		}
+		return NULL;
 	}
 
 private:
