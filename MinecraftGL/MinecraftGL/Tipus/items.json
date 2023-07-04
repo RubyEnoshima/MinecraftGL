@@ -1,0 +1,20 @@
+{
+    "gespa": {
+        "id": 0,
+        "classe": 0
+    },
+    "patata":{
+        "id": 1,
+        "classe": 2,
+        "nom": "Patata",
+        "sprite": 119
+    },
+    "destral_fusta":{
+        "id": 2,
+        "classe": 1,
+        "nom": "Destral de fusta",
+        "sprite": 112,
+        "tier": 0,
+        "durabilitat": 50
+    }
+}

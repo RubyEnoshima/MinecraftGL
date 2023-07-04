@@ -41,7 +41,7 @@ struct Cub {
 class Chunk
 {
 public:
-	Chunk(unsigned int _x=0, unsigned int _y=0, Blocs* _blocs=NULL);
+	Chunk(unsigned int _x=0, unsigned int _y=0);
 	~Chunk();
 
 	// Canvia el tipus d'un cub concret
@@ -102,10 +102,6 @@ private:
 	Chunk* veiDre = NULL;
 	Chunk* veiUp = NULL;
 	Chunk* veiBaix = NULL;
-
-	//SuperChunk* mon = NULL;
-
-	Blocs* blocs = NULL;
 
 	// Probabilitats de generació: 1 == 100%
 	float probabilitatArbre = 0.025;

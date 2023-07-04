@@ -29,8 +29,25 @@ void SpriteRenderer::render()
 
 void SpriteRenderer::afegirSprite(Sprite* sprite)
 {
+    eliminaSprite(sprite->nom);
     Sprites[sprite->nom] = sprite;
     SpritesOrdenats.emplace(sprite->indexZ, sprite);
+}
+
+void SpriteRenderer::eliminaSprite(string nom)
+{
+    if (Sprites.empty()) return;
+    auto it = SpritesOrdenats.begin();
+    while (it != SpritesOrdenats.end()) {
+        if (it->second->nom == nom) {
+            SpritesOrdenats.erase(it);
+            break;
+        }
+        it++;
+    }
+    delete Sprites[nom];
+    Sprites.erase(nom);
+
 }
 
 Sprite* SpriteRenderer::obtSprite(string nom) const
