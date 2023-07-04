@@ -1,7 +1,7 @@
 #pragma once
-#include "Renderer/Textura.h"
+//#include "Renderer/Textura.h"
 #include "Shaders/ShaderProgram.h"
-
+#include "Recursos.h"
 #define Y 120
 
 class Nuvols {

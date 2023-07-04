@@ -92,19 +92,11 @@ int Renderer::carregaShaders()
 	if (totbe) {
 		usarShader();
 	}
-
-	//Textura lightMap("lightMap.png");
 	
 	glActiveTexture(GL_TEXTURE0);
-	texturaMon = Textura("minecraft_transp.png");
-	texturaMon.use();
+	texturaMon = Recursos::obtTextura("minecraft_transp.png");
+	texturaMon->use();
 	glUniform1i(obtenirUniform("textura"), 0);
-
-	/*glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, lightMap.textura);*/
-
-	//glUniform1i(obtenirUniform("lightMap"), 1);
-	//cout << lightMap.textura << " " << textura.textura;
 
 	
 	return totbe;
@@ -165,7 +157,7 @@ float Renderer::aspectRatio() const
 
 void Renderer::usarTexturaMon()
 {
-	texturaMon.use();
+	texturaMon->use();
 }
 
 pair<int, int> Renderer::obtenirTamany() const

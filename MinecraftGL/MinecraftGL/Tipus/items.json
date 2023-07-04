@@ -1,7 +1,8 @@
 {
     "gespa": {
         "id": 0,
-        "classe": 0
+        "classe": 0,
+        "bloc_id": 1
     },
     "patata":{
         "id": 119,

@@ -26,7 +26,7 @@ void HUD::alternaVisibilitat()
 
 void HUD::iniciaSprites()
 {
-	Sprite* crosshair = new Sprite(new Textura("icons.png"), "Crosshair", glm::vec2(renderer->width / 2, renderer->height / 2), glm::vec2(0.4), true);
+	Sprite* crosshair = new Sprite(Recursos::obtTextura("icons.png"), "Crosshair", glm::vec2(renderer->width / 2, renderer->height / 2), glm::vec2(0.4), true);
 	crosshair->tamanyMapa = glm::vec2(16, 16);
 	crosshair->posicioMapa = glm::vec2(0, 0);
 	crosshair->color.a = 0.85;

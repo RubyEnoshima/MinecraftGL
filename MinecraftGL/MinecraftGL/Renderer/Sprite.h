@@ -16,7 +16,6 @@ public:
 	Sprite(Textura* _textura, string _nom, const glm::vec2& _pos, const glm::vec2& _escala = glm::vec2(1.0f), bool _centrat = false) {
 		pos = _pos;
 		textura = _textura;
-		Recursos::afegirTextura(_textura);
 		escala = _escala;
 		tamany = tamanyMapa = _textura->obtTamany();
 		nom = _nom;

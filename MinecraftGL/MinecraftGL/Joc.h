@@ -32,7 +32,9 @@ public:
 	// -- Funcions per quan es prem alguna tecla o botó --
 
 	void DestruirCub();
-	void PosarCub();
+	void PosarCub(uint8_t tipus);
+
+	void Usar();
 	
 	void Culling();
 	void VSync();
@@ -40,7 +42,7 @@ public:
 	void moure();
 	void CanviarMode();
 
-	uint8_t tipusCub = TERRA;
+	//uint8_t tipusCub = TERRA;
 	HUD* _HUD;
 
 	float deltaTime = 0.0f;

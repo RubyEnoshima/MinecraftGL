@@ -24,6 +24,7 @@ public:
 	
 	float width, height;
 
+	ShaderProgram* shader;
 private:
 	// Inicia els vertex que pot tenir un sprite (sempre seran un quadrat)
 	void initRenderData();
@@ -36,7 +37,6 @@ private:
 	multimap<int,Sprite*> SpritesOrdenats;
 	map<string,Sprite*> Sprites;
 	Renderer* renderer;
-	ShaderProgram* shader;
 	unsigned int quadVAO, VBO;
 };
 
