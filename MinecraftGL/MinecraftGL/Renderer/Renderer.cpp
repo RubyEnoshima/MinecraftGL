@@ -17,6 +17,8 @@ int Renderer::crearFinestra()
 
 	// Creem una nova finestra amb unes dimensions i un nom i que comenci en Windowed mode
 	window = glfwCreateWindow(WIDTH, HEIGHT, "MinecraftGL", NULL, NULL);
+	Recursos::width = WIDTH;
+	Recursos::height = HEIGHT;
 
 	// Si no aconseguim crear-la, terminem el programa
 	if (window == NULL)

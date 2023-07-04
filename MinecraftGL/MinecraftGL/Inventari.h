@@ -9,8 +9,7 @@
 struct Slot{
 	Slot(Textura* t, int _id) {
 		id = _id;
-		sprite = new Sprite(t, "Slot" + to_string(id), glm::vec2(0,0), glm::vec2(.425));
-		sprite->centrat = true;
+		sprite = new Sprite(t, "Slot" + to_string(id), glm::vec2(0,0), glm::vec2(.425), true);
 		sprite->tamanyMapa = glm::vec2(16, 16);
 		sprite->visible = false;
 
@@ -43,6 +42,8 @@ public:
 	Item* obtenirItemActual() const;
 	// Afegeix l'item a l'inventari
 	void afegirItem(int id, uint8_t _quantitat = 1);
+	// Si no sabem l'id o ens fa molta mandra, podem posar el nom
+	void afegirItem(string nom, uint8_t _quantitat = 1); 
 private:
 	Sprite* spriteSlot = NULL;
 	uint8_t slotSeleccionat = 0;

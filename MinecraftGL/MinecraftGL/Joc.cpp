@@ -21,6 +21,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
 	joc->canviarProjeccio();
+	Recursos::width = width;
+	Recursos::height = height;
 }
 
 // Funció per processar tots els inputs
@@ -394,9 +396,9 @@ void Joc::gameLoop() {
 		mon = new SuperChunk(&renderer);
 		jugador = new Jugador(new Camera());
 		_HUD = new HUD(&renderer,jugador->inventari);
-		jugador->inventari->afegirItem(1);
-		jugador->inventari->afegirItem(1);
-		jugador->inventari->afegirItem(2);
+		jugador->inventari->afegirItem("Patata");
+		jugador->inventari->afegirItem("Espasa de fusta");
+		jugador->inventari->afegirItem("Pic de fusta");
 
 		// Posem el color taronja
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));

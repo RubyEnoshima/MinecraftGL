@@ -75,24 +75,10 @@ void SpriteRenderer::DrawSprite(Sprite* sprite)
     if (!sprite->visible) return;
     shader->usar();
 
-    glm::mat4 model = glm::mat4(1.0f);
-
-    // Movem l'sprite on toqui.
-    model = glm::translate(model, glm::vec3(normalitzarPos(sprite->pos, width, height), 0.0f));
-
-    // Fem que l'sprite tingui l'escala exactament igual a la textura. Si no fes això, l'sprite ocuparia un quart de la pantalla.
-    model = glm::scale(model, glm::vec3(sprite->tamany.x / width, sprite->tamany.y / height, 1.0f));
-
-    // Escalem l'sprite
-    model = glm::scale(model, glm::vec3(sprite->escala, 1));
-
-    // Centrem l'sprite si mode és true
-    if (sprite->centrat) model = glm::translate(model, glm::vec3(normalitzarPos(glm::vec2(width/4,height/4), width, height), 0.0f));
-
     // Podriem rotar l'sprite, però de moment no ens interesa
     //model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f)); 
 
-    shader->colocarMat4("model", model);
+    shader->colocarMat4("model", sprite->model);
 
     shader->colocarVec4("spriteColor", sprite->color);
     
@@ -136,18 +122,4 @@ void SpriteRenderer::initRenderData()
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-}
-
-glm::vec2 SpriteRenderer::normalitzarPos(const glm::vec2& pos, int w, int h)
-{
-    // Normalitzem de 0 a 1
-    float normalizedX = pos.x / w;
-    float normalizedY = 1 - pos.y / h;
-
-    // Normalitzem de -1 a 1
-    glm::vec2 normalizedCoords;
-    normalizedCoords.x = (normalizedX * 2.0f) - 1.0f;
-    normalizedCoords.y = (normalizedY * 2.0f) - 1.0f;
-
-    return normalizedCoords;
 }

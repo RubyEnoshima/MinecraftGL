@@ -3,6 +3,7 @@
 #include "Shaders/ShaderProgram.h"
 #include "Framebuffer.h"
 #include "Textura.h"
+#include "Recursos.h"
 
 #define MAX_SHADERS 2
 

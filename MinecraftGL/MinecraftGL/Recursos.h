@@ -1,7 +1,5 @@
 #pragma once
-//#include <glm/glm.hpp>
-//#include <string>
-//#include <map>
+
 #include "Blocs/Blocs.h"
 #include "Items.h"
 #include "Renderer/Textura.h"
@@ -29,6 +27,7 @@ public:
 	typedef map<string, Textura*> Textures;
 	typedef Blocs BLOCS;
 	typedef Items ITEMS;
+
 	enum TIPUS_MON {
 		NORMAL = 0,
 		PLA = 1
@@ -36,19 +35,21 @@ public:
 	static glm::vec3* obtColor(string color) {
 		return &COLORS[color];
 	}
-	
-	bool start = false;
 
 	static Bloc* getBloc(int id);
 	static Item* getItem(int id);
+	static Item* getItem(string nom);
 
 	static void afegirTextura(Textura* t);
 
+	static int width;
+	static int height;
 private:
 	static MapColors COLORS;
 	static BLOCS _blocs;
 	static ITEMS _items;
 	static map<string, Textura*> _textures;
+
 
 	Recursos() { 
 	}
@@ -58,4 +59,3 @@ private:
 		}
 	}
 };
-
