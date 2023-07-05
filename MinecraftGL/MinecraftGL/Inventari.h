@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Tipus.h"
 #include "Renderer/SpriteRenderer.h"
 #include "Recursos.h"
 #define MAX_ITEMS 9
@@ -12,7 +13,7 @@ struct Slot{
 		sprite = new Sprite(t, "Slot" + to_string(id), glm::vec2(0,0), glm::vec2(.425), true);
 		sprite->tamanyMapa = glm::vec2(16, 16);
 		sprite->visible = false;
-
+		sprite->indexZ = 1;
 	}
 	~Slot() {
 		//if (sprite != NULL) delete sprite;
@@ -21,9 +22,10 @@ struct Slot{
 	
 	void actualitzaSprite();
 
-	int id = 0;
+	int id = 0; // id de l'slot
 	int item = -1; // id de l'item
 	uint8_t quantitat = 0;
+	bool visible = false;
 
 	Sprite* sprite = NULL;
 };
@@ -45,8 +47,11 @@ public:
 	// Si no sabem l'id o ens fa molta mandra, podem posar el nom
 	void afegirItem(string nom, uint8_t _quantitat = 1); 
 
+	void alternaVisibilitat();
+
 	void render();
 private:
+	bool visible = true;
 	void initRenderData();
 
 	Sprite* spriteSlot = NULL;
@@ -59,6 +64,7 @@ private:
 	uint8_t quantitat = 0; 
 
 	Textura* mapaItems;
+	Textura* mapaBlocs;
 	unsigned int VAO = 0, VBO = 0;
 	ShaderProgram* shader; // S'utilitza pels blocs
 };

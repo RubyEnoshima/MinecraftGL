@@ -2,7 +2,14 @@
     "gespa": {
         "id": 0,
         "classe": 0,
-        "bloc_id": 1
+        "bloc_id": 1,
+        "nom": "Gespa"
+    },
+    "terra": {
+        "id": 1,
+        "classe": 0,
+        "bloc_id": 3,
+        "nom": "Terra"
     },
     "patata":{
         "id": 119,

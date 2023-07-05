@@ -146,6 +146,12 @@
     <None Include="Shaders\VertexNuvols.vert">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="Shaders\VertexBlocItem.vert">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Shaders\FragmentBlocItem.frag">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Shaders\VertexPla.vert" />

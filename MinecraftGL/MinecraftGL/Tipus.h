@@ -1,4 +1,5 @@
-enum TIPUS {
+#pragma once
+enum TIPUS_BLOC {
 	AIRE = 0,
 	GESPA = 1,
 	PEDRA = 2,

@@ -63,6 +63,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			// F1: oculta HUD
 			case GLFW_KEY_F1:
 				joc->_HUD->alternaVisibilitat();
+				joc->jugador->inventari->alternaVisibilitat();
 				break;
 			// F2 = Cull/!Cull
 			case GLFW_KEY_F2:
@@ -369,6 +370,7 @@ void Joc::loop() {
 		view = jugador->obtCamera()->lookAt();
 		renderer.colocarMat4("view", view);
 
+		jugador->inventari->render();
 		_HUD->render();
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra
@@ -416,7 +418,9 @@ void Joc::gameLoop() {
 		mon = new SuperChunk(&renderer);
 		jugador = new Jugador(new Camera());
 		_HUD = new HUD(&renderer,jugador->inventari);
+		jugador->inventari->afegirItem("Gespa");
 		jugador->inventari->afegirItem("Patata");
+		jugador->inventari->afegirItem("Terra");
 		jugador->inventari->afegirItem("Espasa de fusta");
 		jugador->inventari->afegirItem("Pic de fusta");
 

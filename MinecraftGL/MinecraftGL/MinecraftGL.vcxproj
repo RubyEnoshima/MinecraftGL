@@ -186,9 +186,11 @@
     <ClInclude Include="Tipus.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\FragmentBlocItem.frag" />
     <None Include="Shaders\FragmentNuvols.frag" />
     <None Include="Shaders\FragmentSprite.frag" />
     <None Include="Shaders\FragmentShader.frag" />
+    <None Include="Shaders\VertexBlocItem.vert" />
     <None Include="Shaders\VertexNuvols.vert" />
     <None Include="Shaders\VertexSprite.vert" />
     <None Include="Shaders\VertexShader.vert" />
