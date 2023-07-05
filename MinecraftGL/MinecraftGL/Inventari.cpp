@@ -3,6 +3,7 @@
 Inventari::Inventari()
 {
 	mapaItems = Recursos::obtTextura("items.png");
+	mapaBlocs = Recursos::obtTextura("minecraft_transp.png");
 
 	for (int i = 0; i < MAX_ITEMS; i++) {
 		inventari.push_back(new Slot(mapaItems,i));
@@ -31,6 +32,7 @@ Inventari::~Inventari()
 	}
 	glDeleteBuffers(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	delete shader;
 	//delete mapaItems;
 }
 
@@ -43,7 +45,7 @@ void Inventari::iniciaSprites(SpriteRenderer* renderer)
 	spriteSlot = new Sprite(Recursos::obtTextura("seleccio.png"), "Seleccio", glm::vec2(), glm::vec2(7), true);
 	spriteSlot->teletransportar(glm::vec2(renderer->width / 2 - 80 * 3.5, renderer->height - spriteSlot->obtTamany().y * 1.7));
 	posInicial = spriteSlot->obtPos();
-	spriteSlot->indexZ = 1;
+	spriteSlot->indexZ = 3;
 	renderer->afegirSprite(spriteSlot);
 
 	for (auto slot : inventari)
@@ -58,8 +60,6 @@ void Inventari::iniciaSprites(SpriteRenderer* renderer)
 			renderer->afegirSprite(slot->sprite);
 		}
 	}
-
-	shader = renderer->shader;
 }
 
 void Inventari::canviaSeleccionat(const uint8_t seleccio)
@@ -113,32 +113,73 @@ void Inventari::afegirItem(string nom, uint8_t _quantitat)
 	afegirItem(i->id,quantitat);
 }
 
+void Inventari::alternaVisibilitat()
+{
+	visible = !visible;
+}
+
 void Inventari::render()
 {
+	if (!visible) return;
 	for (auto slot : inventari)
 	{
-		if (Recursos::getItem(slot->id)->classe == BLOC) {
+		if (!slot->visible) continue;
+		Item* i = Recursos::getItem(slot->item);
+		if (i->classe == BLOC) {
+			Bloc* b = Recursos::getBloc(i->bloc_id);
 			shader->usar();
-			// fer servir el shader d'items blocs
-			// fer servir la textura de blocs
-			// posar el model de l'sprite ja que sera la mateixa posició, tamany...
-			// renderitzar
+			glm::mat4 model = slot->sprite->model;
+			//model = glm::scale(model, glm::vec3(.75));
+			shader->colocarMat4("model", model);
+
+			mapaBlocs->use();
+			
+			shader->colocarVec2("posicioSprite", glm::vec2(16 * (b->costats % 16), 16 * (int)(b->costats / 16)));
+			shader->colocarVec2("tamanyTextura", slot->sprite->textura->obtTamany());
+
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_TRIANGLES, 0, 12);
+			shader->colocarVec4("spriteColor", slot->sprite->color);
+			shader->colocarVec2("posicioSprite", glm::vec2(16 * (b->adalt % 16), 16 * (int)(b->adalt / 16)));
+			glDrawArrays(GL_TRIANGLES, 12, 6);
+			shader->colocarVec4("spriteColor", glm::vec4(1));
+			glBindVertexArray(0);
 		}
 	}
 }
 
 void Inventari::initRenderData()
 {
-	// Tots els sprites seran iguals: un quadrat que comença a la cantonada esq sup
+	shader = new ShaderProgram("VertexBlocItem.vert","FragmentBlocItem.frag");
+	shader->carregaShaders();
+	shader->colocarInt("image", 1);
 	float vertices[] = {
 		// pos      // tex
-		0.0f, -1.0f, 0.0f, 1.0f,
-		1.0f, -1.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-
-		0.0f, 0.0f, 0.0f, 0.0f,
-		1.0f, -1.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 0.0f
+		0.0f, 0.25f, 0.0f, 1.0f,	   0.55,
+		0.5f, 0.0f, 1.0f, 1.0f,		   0.55,
+		0.0f, 0.75f, 0.0f, 0.0f,	   0.55,
+									   
+		0.0f, 0.75f, 0.0f, 0.0f,	   0.55,
+		0.5f, 0.0f, 1.0f, 1.0f,		   0.55,
+		0.5f, 0.525f, 1.0f, 0.0f,	   0.55,
+									   	
+		// pos      // tex			   	
+		0.5f, 0.0f, 0.0f, 1.0f,		   0.25,
+		1.0f, 0.25f, 1.0f, 1.0f,	   0.25,
+		0.5f, 0.525f, 0.0f, 0.0f,	   0.25,
+									   	
+		0.5f, 0.525f, 0.0f, 0.0f,	   0.25,
+		1.0f, 0.25f, 1.0f, 1.0f,	   0.25,
+		1.0f, 0.75f, 1.0f, 0.0f,	   0.25,
+									   	
+		// pos      // tex			   	
+		0.0f, 0.75f, 0.0f, 1.0f,	   1,
+		0.5f, 0.525f, 1.0f, 1.0f,	   1,
+		0.5f, 1.0f, 0.0f, 0.0f,		   1,
+									   	
+		0.5f, 1.0f, 0.0f, 0.0f,		   1,
+		0.5f, 0.525f, 1.0f, 1.0f,	   1,
+		1.0f, 0.75f, 1.0f, 0.0f,	1
 	};
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -148,7 +189,9 @@ void Inventari::initRenderData()
 
 	glBindVertexArray(VAO);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(4 * sizeof(float)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
@@ -157,9 +200,22 @@ void Slot::actualitzaSprite()
 {
 	if (item == -1) {
 		sprite->visible = false;
+		visible = false;
 		return;
 	}
-	uint8_t posSprite = Recursos::getItem(item)->sprite;
+	visible = true;
+	Item* i = Recursos::getItem(item);
+	if (i->classe == BLOC) {
+		if (Recursos::getBloc(i->bloc_id)->id == GESPA) {
+			glm::vec3* color = Recursos::obtColor("VerdGespa");
+			sprite->color = glm::vec4(color->r/255,color->g/255,color->b/255, 1.0f);
+		}
+		else sprite->color = glm::vec4(1.0f);
+		sprite->visible = false;
+		return;
+	}
+	else sprite->color = glm::vec4(1.0f);
+	uint8_t posSprite = i->sprite;
 	sprite->posicioMapa = glm::vec2((posSprite % 16) * 16, (int)(posSprite / 16) * 16);
 	sprite->visible = true;
 }

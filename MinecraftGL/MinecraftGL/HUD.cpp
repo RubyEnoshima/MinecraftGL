@@ -16,7 +16,10 @@ HUD::~HUD()
 
 void HUD::render()
 {
-	if(visible) renderer->render();
+	if (visible) {
+		renderer->render();
+		
+	}
 }
 
 void HUD::alternaVisibilitat()
