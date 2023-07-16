@@ -173,7 +173,7 @@ void Joc::ObtenirCubMira() {
 	glm::vec3 wincoord = glm::vec3(ww / 2, wh / 2, depth);
 	glm::vec3 objcoord = glm::unProject(wincoord, jugador->obtCamera()->getView(), jugador->obtCamera()->getProjection(), viewport);
 	CubActual = glm::vec3(floorf(objcoord.x), floorf(objcoord.y), floorf(objcoord.z));
-	
+	if((mon->obtenirCub(CubActual)) == AIGUA) CubActual = glm::vec3(-1, -1, -1);
 	//cout << CubActual << endl;
 }
 
@@ -421,6 +421,7 @@ void Joc::gameLoop() {
 		jugador->inventari->afegirItem("Gespa");
 		jugador->inventari->afegirItem("Patata");
 		jugador->inventari->afegirItem("Terra");
+		jugador->inventari->afegirItem("Cristal");
 		jugador->inventari->afegirItem("Espasa de fusta");
 		jugador->inventari->afegirItem("Pic de fusta");
 

@@ -17,7 +17,7 @@
 #define NCHUNKS 4 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // true: La llum natural no es calcularà
-#define DEBUG_FRUSTUM true // true: apliquem Frustum Culling
+#define DEBUG_FRUSTUM false // true: apliquem Frustum Culling
 
 const struct CompararVec2 {
 	bool operator()(const glm::vec2& a, const glm::vec2& b) const {
@@ -147,7 +147,7 @@ public:
 	bool carregat = false;
 
 private:
-	int tipusMon = Recursos::PLA;
+	int tipusMon = Recursos::NORMAL;
 
 	glm::vec2 chunkInicial;
 

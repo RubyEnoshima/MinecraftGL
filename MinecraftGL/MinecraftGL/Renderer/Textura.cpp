@@ -9,7 +9,7 @@ Textura::Textura()
 
 Textura::~Textura()
 {
-	//glDeleteTextures(1, &textura);
+	glDeleteTextures(1, &textura);
 }
 
 Textura::Textura(string _nom)
@@ -36,7 +36,7 @@ Textura::Textura(string _nom)
 	else {
 		cout << "ERROR!!! No s'ha pogut carregar la textura " << path << endl;
 	}
-		// pagina 60
+	
 	stbi_image_free(data);
 	glBindTexture(GL_TEXTURE_2D, 0);
 

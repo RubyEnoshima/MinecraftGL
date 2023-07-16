@@ -3,7 +3,8 @@
 Recursos::MapColors Recursos::COLORS = {
 	{"Blanc",glm::vec3(255)},
 	{"VerdGespa",glm::vec3(131, 187, 109)},
-	{"VerdFulles",glm::vec3(99, 169, 72)}
+	{"VerdFulles",glm::vec3(99, 169, 72)},
+	{"Aigua",glm::vec3(63, 118, 228)}
 };
 
 Recursos::NomTextures Recursos::texturesPrecarrega = { "icon.png","icons.png","items.png","inventari.png","minecraft_transp.png","nuvols.png","seleccio.png" };

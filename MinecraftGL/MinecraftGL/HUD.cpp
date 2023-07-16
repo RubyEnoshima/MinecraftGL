@@ -7,18 +7,21 @@ HUD::HUD(Renderer* _renderer, Inventari* _inventari)
 	renderer = new SpriteRenderer(shader,_renderer);
 	iniciaSprites();
 	_inventari->iniciaSprites(renderer);
+	textRenderer = new TextRenderer(Recursos::width,Recursos::height);
+	textRenderer->Load("Fonts/OCRAEXT.TTF", 24);
 }
 
 HUD::~HUD()
 {
 	delete renderer;
+	delete textRenderer;
 }
 
 void HUD::render()
 {
 	if (visible) {
 		renderer->render();
-		
+		textRenderer->RenderText("Hola hola hola", 1.0f, 1.0f, 1.0f);
 	}
 }
 

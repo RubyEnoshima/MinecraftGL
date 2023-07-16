@@ -3,7 +3,7 @@
 #include "Blocs/Blocs.h"
 #include "Items.h"
 #include "Renderer/Textura.h"
-
+#include "Renderer/TextRenderer.h"
 using namespace std;
 
 struct Pla {
@@ -54,9 +54,7 @@ private:
 
 	static NomTextures texturesPrecarrega;
 
-	Recursos() { 
-		
-	}
+	Recursos();
 	~Recursos() {
 		for (auto t : _textures) {
 			delete t.second;

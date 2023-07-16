@@ -59,8 +59,7 @@ void main()
 	if(fog <= 0.075) discard;
 
 	// Quanta més boira hi hagi, menys es veurà el fragment.
-	float alfa = fog;
-
+	float alfa = fog * colorText.a;
 
 	// Ambient, per tal que la foscor no sigui tan fosca
 	float ambientStrength = 0.1;

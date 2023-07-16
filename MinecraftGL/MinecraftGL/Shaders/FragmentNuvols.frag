@@ -8,7 +8,7 @@ const vec4 colorNuvols = vec4(1.0f);
 in vec2 TexCoord;
 out vec4 color;
 
-uniform sampler2D uTexture;
+uniform sampler2D image;
 
 uniform vec2 posicioSprite;
 uniform vec2 tamanyTextura;
@@ -22,7 +22,7 @@ float calculaNiebla(float distancia){
 void main()
 {
     vec2 posTex = TexCoord * (tamanySprite / tamanyTextura) + (posicioSprite / tamanyTextura);
-    vec4 colorText = texture(uTexture, posTex);
+    vec4 colorText = texture(image, posTex);
 
 	if(colorText.a == 0) discard;
 	else colorText.a /= 1.5;

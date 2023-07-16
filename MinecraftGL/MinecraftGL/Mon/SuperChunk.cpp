@@ -527,7 +527,16 @@ void SuperChunk::render(const vector<Pla>& mvp)
 			renderer->colocarMat4("model", model);
 			chunk.second->render();
 		}
-		tempsCarrega = 0;
+
+		for (auto chunk : Chunks) {
+			if (chunk.second == NULL || chunk.second->descarregant || (DEBUG_FRUSTUM && !chunk.second->esVisible(mvp))) continue;
+			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
+			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
+			renderer->colocarMat4("model", model);
+			chunk.second->render(true);
+		}
+		
 		//loadedChunksMutex.unlock();
 		glBindVertexArray(0);
 	}
