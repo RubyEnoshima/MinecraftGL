@@ -14,24 +14,38 @@ Jugador::~Jugador()
 
 void Jugador::update(float deltaTime, const vector<glm::vec3>& blocs)
 {
-	if (vel.x > 0) camera->moureDreta(deltaTime, vel.x);
-	else if (vel.x < 0) camera->moureEsquerra(deltaTime, -vel.x);
+	
+	if (mode == ESPECTADOR) {
+		if (vel.x > 0) camera->moureDreta(deltaTime, vel.x);
+		else if (vel.x < 0) camera->moureEsquerra(deltaTime, -vel.x);
 
-	if (vel.z > 0) camera->moureDavant(deltaTime, vel.z);
-	else if (vel.z < 0) camera->moureDarrera(deltaTime, -vel.z);
+		if (vel.z > 0) camera->moureDavant(deltaTime, vel.z);
+		else if (vel.z < 0) camera->moureDarrera(deltaTime, -vel.z);
 
-	if (mode == ESPECTADOR) return;
-
-	if (colisiona(blocs)) {
-		if(vel.y <= 0) vel.y = 0;
-		else vel.y -= GRAVETAT * deltaTime;
+		return;
 	}
-	else vel.y -= GRAVETAT * deltaTime;
-	
-	if(vel.y < 0) camera->moureAvall(deltaTime, -vel.y);
-	else if(vel.y > 0) camera->moureAmunt(deltaTime, vel.y);
 
+	posSeg = obtPos() + vel;
+	posSeg = glm::vec3(floor(posSeg.x), floor(posSeg.y) - ALTURA_JUG, floor(posSeg.z));
+	if (colisiona(blocs)) {
+		parar();
+		vel.y = 0;
+	}
+	else {
+		if (vel.x > 0) camera->moureDreta(deltaTime, vel.x);
+		else if (vel.x < 0) camera->moureEsquerra(deltaTime, -vel.x);
+
+		if (vel.z > 0) camera->moureDavant(deltaTime, vel.z);
+		else if (vel.z < 0) camera->moureDarrera(deltaTime, -vel.z);
+		
+		vel.y -= GRAVETAT * deltaTime;
+	}
 	
+	if (vel.y < 0) camera->moureAvall(deltaTime, -vel.y);
+	else if (vel.y > 0) camera->moureAmunt(deltaTime, vel.y);
+
+	velAnt = obtPos() - posAnt;
+	posAnt = obtPos();
 }
 
 void Jugador::moure(float deltaTime, int tecla)
@@ -91,7 +105,7 @@ bool Jugador::colisiona(const vector<glm::vec3>& blocs)
 
 bool Jugador::colisiona(const glm::vec3& bloc)
 {
-	if (bloc == obtPosBloc()) { 
+	if (bloc == obtPosBloc()) {
 		return true; 
 	}
 	return false;

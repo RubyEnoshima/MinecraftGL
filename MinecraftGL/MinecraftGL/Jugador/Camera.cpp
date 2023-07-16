@@ -142,6 +142,11 @@ void Camera::moureAvall(float deltaTime, float vel)
 
 }
 
+void Camera::teletransporta(const glm::vec3& posNova)
+{
+	pos = posNova;
+}
+
 void Camera::actualitzaPlans()
 {
 	plansFrustum.clear();

@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderer/SpriteRenderer.h"
+#include "Renderer/TextRenderer.h"
 #include "Inventari.h"
 class HUD
 {
@@ -15,5 +16,6 @@ private:
 	bool visible = true;
 
 	SpriteRenderer* renderer;
+	TextRenderer* textRenderer;
 };
 

@@ -51,6 +51,9 @@ private:
 	const float velocitat = 7.5;
 	float velocitatAct = velocitat;
 	glm::vec3 vel;
+	glm::vec3 posAnt;
+	glm::vec3 velAnt;
+	glm::vec3 posSeg;
 
 	vector<glm::vec3> anteriors;
 	bool ultimResultat = false;

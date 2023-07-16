@@ -11,6 +11,18 @@
         "bloc_id": 3,
         "nom": "Terra"
     },
+    "cristal": {
+        "id": 2,
+        "classe": 0,
+        "bloc_id": 49,
+        "nom": "Cristal"
+    },
+    "aigua": {
+        "id": 3,
+        "classe": 0,
+        "bloc_id": 205,
+        "nom": "Aigua"
+    },
     "patata":{
         "id": 119,
         "classe": 2,

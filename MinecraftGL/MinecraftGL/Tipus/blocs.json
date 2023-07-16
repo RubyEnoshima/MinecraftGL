@@ -30,6 +30,14 @@
         "vegetacio": true,
         "transparent": true
     },
+    "sorra": {
+        "nom": "Sorra",
+        "id": 18
+    },
+    "bedrock": {
+        "nom": "Roca mare",
+        "id": 17
+    },
     "tulipa_taronja": {
         "nom": "Tulipà taronja",
         "id": 169,
@@ -63,5 +71,11 @@
         "nom": "Cristal",
         "id": 49,
         "transparent": true
+    },
+    "aigua": {
+        "nom": "Aigua",
+        "id": 205,
+        "transparent": true,
+        "semitransparent": true
     }
 }

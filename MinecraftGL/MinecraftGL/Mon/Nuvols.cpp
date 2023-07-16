@@ -2,11 +2,12 @@
 
 Nuvols::Nuvols(const glm::mat4& _projection)
 {
-	offset = glm::vec2(0.0f);
+	offset = glm::vec2((float)(rand()) / (float)(RAND_MAX), (float)(rand()) / (float)(RAND_MAX));
 	t = Recursos::obtTextura("nuvols.png");
 	shader = new ShaderProgram("VertexNuvols.vert", "FragmentNuvols.frag");
     initRenderData();
     projection = _projection;
+
 }
 
 Nuvols::~Nuvols()
@@ -23,9 +24,10 @@ void Nuvols::render(const glm::mat4& view)
 
 	shader->colocarVec2("posicioSprite", offset);
 	shader->colocarVec2("tamanyTextura", t->obtTamany());
-	shader->colocarVec2("tamanySprite", glm::vec2(15));
     shader->colocarMat4("view", view);
+    shader->colocarVec2("tamanySprite", glm::vec2(15));
     shader->colocarMat4("projection", projection);
+
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(pos.x,0,pos.y));
     shader->colocarMat4("model",model);
@@ -47,7 +49,6 @@ void Nuvols::update(const glm::vec2& _pos, float deltaTime)
 void Nuvols::initRenderData()
 {
     shader->carregaShaders();
-    //shader->colocarInt("uTexture", 1);
 
     float altura = 200;
     float vertices[] = {

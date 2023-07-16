@@ -42,6 +42,8 @@ public:
 	void moureDarrera(float deltaTime, float vel);
 	void moureAmunt(float deltaTime, float vel);
 	void moureAvall(float deltaTime, float vel);
+
+	void teletransporta(const glm::vec3& posNova);
 	
 	void actualitzaPlans();
 	vector<Pla> obtPlans() const;

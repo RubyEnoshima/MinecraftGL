@@ -57,7 +57,7 @@ public:
 
 	void crearVertexs();
 	void update();
-	void render();
+	void render(bool semi = false);
 	bool esVisible(const glm::mat4& mvp) const;
 	bool esVisible(const vector<Pla>& plansFrustum) const;
 	bool renderCub(int x, int y, int z);
@@ -71,8 +71,8 @@ public:
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
 
-	vector<GLubyte> _vertices;
-	unsigned int elements = 0;
+	vector<GLubyte> _vertices, _vertices_transp;
+	unsigned int elements = 0, elements_transp = 0;
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
 	bool unCanviat = false;
@@ -91,7 +91,7 @@ private:
 	void afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, const char* _color);
 	void afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
-	unsigned int VBO = 0;
+	unsigned int VBO = 0, VBO_TRANSP = 0;
 
 	vector<glm::vec3> cantonades;
 
