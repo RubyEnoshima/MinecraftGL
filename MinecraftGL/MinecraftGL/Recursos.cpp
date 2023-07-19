@@ -11,6 +11,7 @@ Recursos::NomTextures Recursos::texturesPrecarrega = { "icon.png","icons.png","i
 
 int Recursos::width = 0;
 int Recursos::height = 0;
+bool Recursos::jocAcabat = false;
 
 Recursos::BLOCS Recursos::_blocs = Blocs();
 Recursos::ITEMS Recursos::_items = Items();

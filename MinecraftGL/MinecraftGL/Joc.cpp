@@ -47,6 +47,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 				break;
 			// ESC: es tanca la finestra i tanca el joc
 			case GLFW_KEY_ESCAPE:
+				Recursos::jocAcabat = true;
 				glfwSetWindowShouldClose(window, true);
 				break;
 			// F10: es canvia entre mode normal i wireframe
@@ -327,6 +328,8 @@ void Joc::loop() {
 	});
 	
 	renderer.activaBounding(0);
+	bool aigua = false;
+	renderer.activaAigua(aigua);
 
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
@@ -335,7 +338,7 @@ void Joc::loop() {
 		//jugador->obtCamera()->moure(deltaTime, window);
 		jugador->obtCamera()->girar(window);
 
-		vector<glm::vec3> blocs = mon->obtenirColindants(jugador->obtPosBloc(), 2, true);
+		vector<pair<glm::vec3, uint8_t>> blocs = mon->obtenirColindants(jugador->obtPosBloc(), 2, true);
 		jugador->update(deltaTime, blocs);
 
 		float currentFrame = glfwGetTime();
@@ -349,11 +352,13 @@ void Joc::loop() {
 		nuvols.update(jugador->obtPos2D(),deltaTime);
 		nuvols.render(view);
 
-		// RENDERITZAR EL MÓN
-
+		//
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 		auto start2 = std::chrono::high_resolution_clock::now();
-		mon->render(jugador->obtCamera()->obtPlans());
+		bool sotaAigua = jugador->sotaAigua(mon->obtenirColindants(jugador->obtPosBloc(false), 1, true));
+		mon->render(jugador->obtCamera()->obtPlans(), sotaAigua);
+		renderer.activaAigua(sotaAigua);
+
 		auto end2 = std::chrono::high_resolution_clock::now();
 		//renderer.canviarPosLlum(pos);
 

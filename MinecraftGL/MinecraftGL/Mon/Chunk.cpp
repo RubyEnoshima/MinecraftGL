@@ -30,10 +30,13 @@ Chunk::~Chunk()
 {
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &VBO_TRANSP);
-	if (veiUp)veiUp->veiBaix = NULL;
-	if (veiBaix)veiBaix->veiUp = NULL;
-	if (veiEsq)veiEsq->veiDre = NULL;
-	if (veiDre)veiDre->veiEsq = NULL;
+	if (!Recursos::jocAcabat) {
+		if (veiUp)veiUp->veiBaix = NULL;
+		if (veiBaix)veiBaix->veiUp = NULL;
+		if (veiEsq)veiEsq->veiDre = NULL;
+		if (veiDre)veiDre->veiEsq = NULL;
+
+	}
 	/*for (int i = 0; i < X; i++) {
 		for (int j = 0; j < Y; j++) {
 			for (int k = 0; k < Z; k++) {
@@ -257,9 +260,9 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 			}
 
 		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum, 0, color);
-			afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, llum, 0, color);
-			afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum, 0, color);
-			afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum, 0, color);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, llum, 0, color);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum, 0, color);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum, 0, color);
 		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 1, llum, 0, color);
 		afegirVertex(vertices, x + 1, y + 1, z + 1, tipus, 1, 1, llum, 0, color);
 		color = _color;
@@ -508,21 +511,39 @@ glm::vec2 Chunk::obtPos() const
 	return glm::vec2(posX,posY);
 }
 
-vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus)
+vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus, const vector<Soroll>& noises)
 {
 	vector<pair<int, glm::vec3>> res;
 	const int W = 500, H = 500;
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
 
-			int height = Y / 2;
-			if(tipus == Recursos::NORMAL) height = Y/2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 12);
+			int height = 0;
+			float x = (W + i + X * posX);
+			float y = (H + k + Z * posY);
+			//if (tipus == Recursos::NORMAL) height = Y / 2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 12);
+			if (tipus == Recursos::NORMAL) {
+				int i = 0;
+				for (const Soroll& noise : noises)
+				{
+					double soroll = noise.noise->GetNoise(x, y);
+					height += Recursos::interpolarSegments(noise.punts, soroll);
+					//else height -= Recursos::interpolarSegments(noise.punts, soroll);
+					i++;
+				}
+			}
+			
+			height /= noises.size();
+			height += 5;
+			float nivellMar = 60, nivellNeu = 90;
+			
 
 			for (int j = 0; j <= height; j++) {
 				uint8_t tipus = TERRA;
-				if (j <= Y / 2 && j > height - 3) tipus = SORRA;
+				if (j <= nivellMar && j > height - 3) tipus = SORRA;
 				else if (j == height) { // Capa d'adalt
-					tipus = GESPA;
+					if (height >= nivellNeu) tipus = NEU;
+					else tipus = GESPA;
 					//color = glm::vec3(0.8f, 0.8f, 0.5f);
 					float probArbre = (float)(rand()) / (float)(RAND_MAX);
 					float probFlor = (float)(rand()) / (float)(RAND_MAX);
@@ -541,7 +562,7 @@ vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus)
 				canviarCub(i, j, k, tipus, true, (char *)"Blanc");
 
 			}
-			for (int j = 0; j < Y / 2; j++) {
+			for (int j = 0; j < nivellMar; j++) {
 				canviarCub(i, j, k, AIGUA, false, (char*)"Aigua");
 
 			}

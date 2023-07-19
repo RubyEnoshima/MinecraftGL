@@ -12,7 +12,7 @@ Jugador::~Jugador()
 	delete inventari;
 }
 
-void Jugador::update(float deltaTime, const vector<glm::vec3>& blocs)
+void Jugador::update(float deltaTime, const vector<pair<glm::vec3, uint8_t>>& blocs)
 {
 	
 	if (mode == ESPECTADOR) {
@@ -90,14 +90,14 @@ void Jugador::caminar()
 	velocitatAct = velocitat;
 }
 
-bool Jugador::colisiona(const vector<glm::vec3>& blocs) 
+bool Jugador::colisiona(const vector<pair<glm::vec3, uint8_t>>& blocs)
 {
 	//if (blocs == anteriors) return ultimResultat; // tecnicament false???
 	//anteriors = blocs;
 	//glm::vec3 pos = obtPosBloc();
 	for (const auto &bloc : blocs)
 	{
-		if (colisiona(bloc)) return true;
+		if (colisiona(bloc.first)) return true;
 	}
 	//ultimResultat = false;
 	return false;
@@ -111,15 +111,27 @@ bool Jugador::colisiona(const glm::vec3& bloc)
 	return false;
 }
 
+bool Jugador::sotaAigua(const vector<pair<glm::vec3, uint8_t>>& blocs) const
+{
+	for (const auto& bloc : blocs)
+	{
+		if (bloc.first == obtPosBloc(false) && bloc.second == AIGUA) {
+			return true;
+		}
+	}
+	return false;
+}
+
 glm::vec3 Jugador::obtPos() const
 {
 	return camera->obtPos();
 }
 
-glm::vec3 Jugador::obtPosBloc() const
+glm::vec3 Jugador::obtPosBloc(bool peu) const
 {
 	glm::vec3 pos = obtPos();
-	return glm::vec3(floor(pos.x), floor(pos.y) - ALTURA_JUG, floor(pos.z));
+	if(peu) return glm::vec3(floor(pos.x), floor(pos.y) - ALTURA_JUG, floor(pos.z));
+	return glm::vec3(floor(pos.x), floor(pos.y), floor(pos.z));
 }
 
 glm::vec2 Jugador::obtPos2D() const

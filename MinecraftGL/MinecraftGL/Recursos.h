@@ -45,6 +45,26 @@ public:
 
 	static int width;
 	static int height;
+
+	static bool jocAcabat;
+
+	// Donat un segment [a,b], retorna el valor de y donat x
+	static double interpolar(const glm::vec2& a, const glm::vec2& b, double x) {
+		return a.y + ((b.y - a.y) / (b.x - a.x)) * (x - a.x);
+	}
+
+	// Donats diversos punts en un vector, retorna la interpolació del punt
+	static double interpolarSegments(const vector<glm::vec2>& punts, double punt) {
+		if (punts.size() < 2) return 0;
+
+		for (size_t i = 0; i < punts.size() - 1; i++) {
+			if (punt >= punts[i].x && punt <= punts[i + 1].x) {
+				return interpolar(punts[i], punts[i + 1], punt);
+			}
+		}
+
+		return 0;
+	}
 private:
 	static void afegirTextura(Textura* t);
 	static MapColors COLORS;

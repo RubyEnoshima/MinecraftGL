@@ -17,12 +17,49 @@ SuperChunk::~SuperChunk() {
 		if(!chunk.second->descarregant) delete chunk.second;
 	}
 	glDeleteBuffers(1, &VAO);
+	for(auto noise : noises) delete noise.noise;
 }
 
 SuperChunk::SuperChunk(Renderer* _renderer)
 {
 	srand(semilla);
+	Soroll continentalness;
+	continentalness.noise = new FastNoiseLite(semilla);
+	continentalness.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	continentalness.noise->SetFrequency(0.02);
+	continentalness.noise->SetFractalType(FastNoiseLite::FractalType_FBm);
+	continentalness.noise->SetFractalLacunarity(2);
+	continentalness.noise->SetFractalGain(0.3);
+	continentalness.noise->SetFractalOctaves(7);
+	//continentalness.punts = { glm::vec2(-1,5), glm::vec2(-0.25,5), glm::vec2(-0.15,50), glm::vec2(0.1,50), glm::vec2(0.12,90), glm::vec2(0.13,90), glm::vec2(0.15,100), glm::vec2(0.5,120), glm::vec2(1,125) };
+	continentalness.punts = { glm::vec2(-1,5), glm::vec2(0,60), glm::vec2(0.5,80), glm::vec2(0.7,100), glm::vec2(1,120) };
 
+	noises.push_back(continentalness);
+
+	Soroll erosion;
+	erosion.noise = new FastNoiseLite(semilla);
+	erosion.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	erosion.noise->SetFrequency(0.018);
+	erosion.noise->SetFractalType(FastNoiseLite::FractalType_FBm);
+	erosion.noise->SetFractalLacunarity(0.05);
+	erosion.noise->SetFractalGain(0.8);
+	erosion.noise->SetFractalOctaves(3);
+	//erosion.punts = { glm::vec2(-1,100), glm::vec2(-0.75,100), glm::vec2(-0.25,60), glm::vec2(-0.2,70), glm::vec2(0,45), glm::vec2(0.25,30), glm::vec2(0.45,30), glm::vec2(0.5,25), glm::vec2(0.7,25), glm::vec2(0.75,10), glm::vec2(1,5) };
+	erosion.punts = { glm::vec2(-1,5), glm::vec2(1,120) };
+	noises.push_back(erosion);
+
+	//Soroll pv;
+	//pv.noise = new FastNoiseLite(semilla);
+	//pv.noise->SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+	//pv.noise->SetFrequency(0.05);
+	//pv.noise->SetFractalType(FastNoiseLite::FractalType_Ridged);
+	//pv.noise->SetFractalLacunarity(1);
+	//pv.noise->SetFractalGain(0.2);
+	//pv.noise->SetFractalOctaves(2);
+	////pv.punts = { glm::vec2(-1,5), glm::vec2(-0.75,20), glm::vec2(-0.25,30), glm::vec2(0,35), glm::vec2(0.5,100), glm::vec2(1,100) };
+	//pv.punts = { glm::vec2(-1,70), glm::vec2(-0.75,70), glm::vec2(-0.25,70), glm::vec2(0,70), glm::vec2(0.5,50), glm::vec2(1,40) };
+	//noises.push_back(pv);
+	
 	renderer = _renderer;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -161,7 +198,7 @@ void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 	if (esCarregat(glm::vec2(pos.x, pos.y - 1))) down = Chunks[glm::vec2(pos.x, pos.y - 1)];
 	if (esCarregat(glm::vec2(pos.x, pos.y + 1))) up = Chunks[glm::vec2(pos.x, pos.y + 1)];
 	nou->afegirVeins(left, right, up, down);
-	vector<pair<int, glm::vec3>> estructures = nou->emplenarChunk(tipusMon);
+	vector<pair<int, glm::vec3>> estructures = nou->emplenarChunk(tipusMon, noises);
 	/*for (int i = 0; i < estructures.size(); i++) {
 		int tipus = estructures[i].first;
 		glm::vec3 pos = estructures[i].second;
@@ -510,7 +547,7 @@ bool SuperChunk::existeixCub(int x, int y, int z, uint8_t tipus) const
 	return false;
 }
 
-void SuperChunk::render(const vector<Pla>& mvp)
+void SuperChunk::render(const vector<Pla>& mvp, bool sotaAigua)
 {	
 	if (renderer) {
 
@@ -528,6 +565,8 @@ void SuperChunk::render(const vector<Pla>& mvp)
 			chunk.second->render();
 		}
 
+		if(sotaAigua) glDisable(GL_CULL_FACE);
+		// RENDERITZAR L'AIGUA
 		for (auto chunk : Chunks) {
 			if (chunk.second == NULL || chunk.second->descarregant || (DEBUG_FRUSTUM && !chunk.second->esVisible(mvp))) continue;
 			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
@@ -536,7 +575,7 @@ void SuperChunk::render(const vector<Pla>& mvp)
 			renderer->colocarMat4("model", model);
 			chunk.second->render(true);
 		}
-		
+		if (sotaAigua) glEnable(GL_CULL_FACE);
 		//loadedChunksMutex.unlock();
 		glBindVertexArray(0);
 	}
@@ -604,18 +643,20 @@ void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, ui
 	}
 }
 
-vector<glm::vec3> SuperChunk::obtenirColindants(const glm::vec3& pos, int transparents, bool ellMateix) const
+vector<pair<glm::vec3, uint8_t>> SuperChunk::obtenirColindants(const glm::vec3& pos, int transparents, bool ellMateix) const
 {
-	vector<glm::vec3> res;
+	vector<pair<glm::vec3, uint8_t>> res;
 	int max = 6;
 	if (ellMateix) max++;
 	for (int i = 0; i < max; i++) {
 		glm::vec3 act = glm::vec3(pos.x+posicions[i].x, pos.y + posicions[i].y, pos.z + posicions[i].z);
 		//if (!esValid(act)) continue;
-		if(transparents == 0) res.push_back(act);
+		uint8_t tipus = obtenirCub(act.x, act.y, act.z);
+		if (transparents == 0) res.push_back({ act, tipus});
 		else {
-			bool esTransparent = Recursos::getBloc(obtenirCub(act.x, act.y, act.z))->transparent;
-			if(transparents == 1 && esTransparent || transparents == 2 && !esTransparent) res.push_back(act);
+			Bloc* b = Recursos::getBloc(tipus);
+			bool esTransparent = b->transparent;
+			if(transparents == 1 && esTransparent || transparents == 2 && !esTransparent) res.push_back({act,tipus});
 		}
 	}
 	return res;

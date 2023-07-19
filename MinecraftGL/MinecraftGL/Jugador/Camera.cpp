@@ -155,12 +155,12 @@ void Camera::actualitzaPlans()
 	const float halfHSide = halfVSide * aspect;
 	const glm::vec3 frontMultFar = far * front;
 
-	plansFrustum.push_back(Pla( pos + near * front, front));
-	plansFrustum.push_back(Pla( pos + frontMultFar, -front));
-	plansFrustum.push_back(Pla( pos, glm::cross(frontMultFar - right * halfHSide, cameraUp)));
-	plansFrustum.push_back(Pla( pos, glm::cross(cameraUp,frontMultFar + right * halfHSide)));
-	plansFrustum.push_back(Pla( pos, glm::cross(right, frontMultFar - cameraUp * halfVSide)));
-	plansFrustum.push_back(Pla( pos, glm::cross(frontMultFar + cameraUp * halfVSide, right)));
+	plansFrustum.push_back(Pla( pos + near * front, glm::normalize(front)));
+	plansFrustum.push_back(Pla( pos + frontMultFar, glm::normalize(-front)));
+	plansFrustum.push_back(Pla( pos, glm::normalize(glm::cross(frontMultFar - right * halfHSide, cameraUp))));
+	plansFrustum.push_back(Pla( pos, glm::normalize(glm::cross(cameraUp,frontMultFar + right * halfHSide))));
+	plansFrustum.push_back(Pla( pos, glm::normalize(glm::cross(right, frontMultFar - cameraUp * halfVSide))));
+	plansFrustum.push_back(Pla( pos, glm::normalize(glm::cross(frontMultFar + cameraUp * halfVSide, right))));
 
 }
 
