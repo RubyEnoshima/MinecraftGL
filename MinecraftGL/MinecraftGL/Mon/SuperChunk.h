@@ -14,7 +14,7 @@
 
 //#define SIZE 11
 #define DISTANCIA 13
-#define NCHUNKS 4 // Quants chunks pot processar en un sol frame
+#define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // true: La llum natural no es calcularà
 #define DEBUG_FRUSTUM false // true: apliquem Frustum Culling
@@ -48,7 +48,7 @@ public:
 	void carregarChunks();
 	void eliminaCarregats();
 	void update(const glm::vec2& chunkJugador, const glm::mat4& mvp = glm::mat4());
-	void render(const vector<Pla>& mvp);
+	void render(const vector<Pla>& mvp, bool sotaAigua = false);
 
 	float tempsCarrega = 0;
 
@@ -141,7 +141,7 @@ public:
 	}
 
 	// Retorna tots els cubs al voltant d'una posició, tots els transparents (1) o tots els solids (2)
-	vector<glm::vec3> obtenirColindants(const glm::vec3& pos, int transparents = 0, bool ellMateix = false) const;
+	vector<pair<glm::vec3,uint8_t>> obtenirColindants(const glm::vec3& pos, int transparents = 0, bool ellMateix = false) const;
 
 	bool potGenerar = true;
 	bool carregat = false;
@@ -176,10 +176,8 @@ private:
 
 	// GENERACIÓ DE MON
 
-	//int octaves = 8;
-	//float frequencia = 8.0;
-	//float amplitud = 1.0;
 	int semilla = 874;
+	vector<Soroll> noises; // 0: continentalness, 1: erosion, 2: peaks and valleys
 
 	const vector<int> flors = { ROSA,DENT_DE_LLEO,TULIPA_TARONJA,ESCLATASANG,XAMPINYO };
 

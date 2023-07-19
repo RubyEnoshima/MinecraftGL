@@ -62,15 +62,21 @@
         "adalt": 21,
         "sota": 21
     },
+    "cristal": {
+        "nom": "Cristal",
+        "id": 49,
+        "transparent": true
+    },
     "fulles": {
         "nom": "Fulles",
         "id": 132,
         "transparent": true
     },
-    "cristal": {
-        "nom": "Cristal",
-        "id": 49,
-        "transparent": true
+    "neu": {
+        "nom": "Neu",
+        "id": 66,
+        "costats": 68,
+        "sota": 3
     },
     "aigua": {
         "nom": "Aigua",

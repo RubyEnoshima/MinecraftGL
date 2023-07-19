@@ -1,8 +1,8 @@
 #version 330 core
 
-const vec4 fogcolor = vec4(0.7, 0.8, 1.0, 1.0);
+vec4 fogcolor = vec4(0.7, 0.8, 1.0, 1.0);
 const float densitat = .0005;
-const float distanciaFog = 7;
+float distanciaFog = 7;
 
 in vec3 FragPos;
 out vec4 color;
@@ -19,10 +19,12 @@ flat in int offsetY;
 uniform vec3 lightColor;
 uniform vec3 lightPos;
 
+
 uniform sampler2D textura;
 //uniform sampler2D lightMap;
 
 uniform bool bounding;
+uniform bool sotaAigua;
 
 float tamanyMapaX = 16.0;
 float tamanyMapaY = 16.0;
@@ -44,6 +46,11 @@ void main()
 		return;
 	}
 
+	if(sotaAigua){
+		distanciaFog = 0.6;
+		fogcolor = vec4(0.25,0.45,1.0,1);
+	}
+
 	// Textura
 	vec2 posTex = vec2(TexCoord.x+(offsetX/tamanyMapaX),TexCoord.y+(offsetY/tamanyMapaY));
 	vec4 colorText = texture(textura, posTex);
@@ -56,10 +63,11 @@ void main()
 	float fog = calculaNiebla(z);
 
 	// Si la quantitat és molt petita, no fa falta renderitzar res
-	if(fog <= 0.075) discard;
+	if(!sotaAigua && fog <= 0.075) discard;
 
 	// Quanta més boira hi hagi, menys es veurà el fragment.
 	float alfa = fog * colorText.a;
+	if(sotaAigua) alfa = colorText.a;
 
 	// Ambient, per tal que la foscor no sigui tan fosca
 	float ambientStrength = 0.1;
@@ -81,11 +89,13 @@ void main()
 	vec3 LlumFinal = colorLlum*suma*0.9;
 
 	vec4 brillantor = vec4(0.99,0.99,0.99,1);
-	vec4 ombres = vec4(1.0,0.75,0.45,0.2);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
+	vec4 ombres = vec4(1.0,0.8,0.45,0.2);                                                                                                                                                                                                                                                                                                                                                                                                              // UwU
 
 	// El resultat final és la suma de l'ambient i la llum calculada abans, amb un percentatge segons la cara, pel color obtingut de la textura
 	color = vec4( (ambient + LlumFinal) * colorText.xyz * ombres[costat] * colorTint, colorText.w)*brillantor;
 	
 	color = mix(fogcolor, color, fog);
 	color.a = alfa;
+	// Si som a l'aigua, fem que els blocs tinguin un color blau
+	if(sotaAigua) color *= vec4(0.25,0.45,1.0,1);
 }

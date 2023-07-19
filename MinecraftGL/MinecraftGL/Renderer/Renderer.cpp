@@ -81,7 +81,6 @@ int Renderer::carregaShaders()
 {
 	shaders[0] = ShaderProgram("VertexShader.vert", "FragmentShader.frag");
 	shaders[1] = ShaderProgram("VertexPla.vert", "FragmentPla.frag");
-	//shaders[2] = ShaderProgram("VertexSprite.vert", "FragmentSprite.frag");
 
 	int totbe = 1, i=0;
 	while (totbe && i<MAX_SHADERS) {
@@ -116,6 +115,16 @@ unsigned int Renderer::obtenirUniform(const char* uniform) const
 void Renderer::colocarMat4(const string uniform, const glm::mat4 matriu)
 {
 	shaders[shaderActual].colocarMat4(uniform, matriu);
+}
+
+void Renderer::colocarInt(const string uniform, int n)
+{
+	shaders[shaderActual].colocarInt(uniform, n);
+}
+
+void Renderer::activaAigua(bool aigua)
+{
+	glUniform1i(obtenirUniform("sotaAigua"), aigua);
 }
 
 void Renderer::activaBounding(bool bounding)
