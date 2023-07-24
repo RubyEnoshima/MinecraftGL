@@ -107,6 +107,11 @@ void Renderer::usarShader(int i)
 	shaders[i].usar();
 }
 
+ShaderProgram* Renderer::obtShader()
+{
+	return &(shaders[shaderActual]);
+}
+
 unsigned int Renderer::obtenirUniform(const char* uniform) const
 {
 	return shaders[shaderActual].obtenirUniform(uniform);

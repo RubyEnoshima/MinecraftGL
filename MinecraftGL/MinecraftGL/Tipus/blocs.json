@@ -2,7 +2,8 @@
     "aire":{
         "nom": "Aire",
         "id": 0,
-        "transparent": true
+        "transparent": true,
+        "solid": false
     },
     "gespa": {
         "nom": "Gespa",
@@ -82,6 +83,7 @@
         "nom": "Aigua",
         "id": 205,
         "transparent": true,
-        "semitransparent": true
+        "semitransparent": true,
+        "solid": false
     }
 }

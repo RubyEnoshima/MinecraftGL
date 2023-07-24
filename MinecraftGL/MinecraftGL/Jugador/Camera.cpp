@@ -3,7 +3,7 @@
 Camera::Camera()
 {
 	//pos = glm::vec3(X * SIZE / 2 + 0.5, Y / 2 + altura, Z * SIZE / 2 + 0.5);
-	pos = glm::vec3(0, 65 + altura, 0);
+	pos = glm::vec3(0, 90 + altura, 0);
 	altura = Y / 2 + altura;
 	objectiu = glm::vec3(0.0, 0.0f, -1.0f);
 	front = glm::normalize(pos - objectiu);
@@ -91,6 +91,10 @@ glm::vec3 Camera::obtDireccio() const
 	return front;
 }
 
+glm::vec3 Camera::obtRight() const
+{
+	return right;
+}
 
 glm::mat4 Camera::lookAt()
 {

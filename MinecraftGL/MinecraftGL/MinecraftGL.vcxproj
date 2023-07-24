@@ -175,6 +175,7 @@
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Jugador\Camera.h" />
     <ClInclude Include="Jugador\Jugador.h" />
+    <ClInclude Include="Mates.h" />
     <ClInclude Include="Mon\Chunk.h" />
     <ClInclude Include="Mon\Nuvols.h" />
     <ClInclude Include="Mon\SuperChunk.h" />

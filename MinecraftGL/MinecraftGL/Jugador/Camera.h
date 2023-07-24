@@ -12,7 +12,7 @@
 #include <iostream>
 using namespace std;
 
-#define ALTURA_JUG 2
+#define ALTURA_JUG 1
 
 class Camera
 {
@@ -30,6 +30,8 @@ public:
 	glm::vec3 obtPos() const;
 	// Retorna cap a on mira la càmera
 	glm::vec3 obtDireccio() const;
+
+	glm::vec3 obtRight() const;
 
 	glm::mat4 lookAt();
 	glm::mat4 mvp() const;

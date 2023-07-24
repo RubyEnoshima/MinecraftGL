@@ -163,10 +163,10 @@ void SuperChunk::carregarChunks()
 			if (!esCarregat(pos)) {
 				vector<glm::vec3> arbrets;
 				generarChunk(pos, arbrets);
-				/*for (int i = 0; i < arbrets.size(); i++) {
+				for (int i = 0; i < arbrets.size(); i++) {
 					glm::vec3 posArbre = arbrets[i];
 					arbre(posArbre.x, posArbre.y, posArbre.z);
-				}*/
+				}
 
 				//potGenerar = false;
 			}
@@ -199,7 +199,7 @@ void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 	if (esCarregat(glm::vec2(pos.x, pos.y + 1))) up = Chunks[glm::vec2(pos.x, pos.y + 1)];
 	nou->afegirVeins(left, right, up, down);
 	vector<pair<int, glm::vec3>> estructures = nou->emplenarChunk(tipusMon, noises);
-	/*for (int i = 0; i < estructures.size(); i++) {
+	for (int i = 0; i < estructures.size(); i++) {
 		int tipus = estructures[i].first;
 		glm::vec3 pos = estructures[i].second;
 
@@ -208,7 +208,7 @@ void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 			int tipusFlor = rand() % flors.size();
 			canviarCub(pos.x, pos.y, pos.z, flors[tipusFlor], false);
 		}
-	}*/
+	}
 	calculaLlumNatural(pos);
 	nou->preparat = true;
 	Chunks[pos] = nou;
@@ -655,9 +655,24 @@ vector<pair<glm::vec3, uint8_t>> SuperChunk::obtenirColindants(const glm::vec3& 
 		if (transparents == 0) res.push_back({ act, tipus});
 		else {
 			Bloc* b = Recursos::getBloc(tipus);
-			bool esTransparent = b->transparent;
+			bool esTransparent = !b->solid;
 			if(transparents == 1 && esTransparent || transparents == 2 && !esTransparent) res.push_back({act,tipus});
 		}
+	}
+	return res;
+}
+
+vector<AABB> SuperChunk::obtenirAABB(const glm::vec3& pos)
+{
+	vector<AABB> res;
+	vector<pair<glm::vec3, uint8_t>> blocs = obtenirColindants(pos, 2);
+	for(const auto& b : blocs)
+	{
+		AABB aabb;
+		aabb.shader = renderer->obtShader();
+		aabb.pos = b.first;
+		aabb.tamany = glm::vec3(1, 1, 1);
+		res.push_back(aabb);
 	}
 	return res;
 }

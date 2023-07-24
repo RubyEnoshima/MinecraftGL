@@ -121,11 +121,13 @@ void Joc::VSync() {
 
 void Joc::moure()
 {
-	for (auto tecla : tecles) {
+	/*for (auto tecla : tecles) {
 		if (tecla.second) {
 			jugador->moure(deltaTime, tecla.first);
 		}
-	}
+	}*/
+	jugador->moure(deltaTime, tecles);
+
 }
 
 void Joc::CanviarMode()
@@ -153,7 +155,7 @@ void Joc::ObtenirCubMira() {
 	//r.origen = jugador->obtCamera()->obtPos();// +jugador->obtCamera()->obtDireccio();
 	//r.origen = glm::vec3(floor(r.origen.x+0.5), floor(r.origen.y+0.5), floor(r.origen.z+0.5));
 	//r.direccion = jugador->obtCamera()->obtDireccio();
-	//cout << r.origen << " " << r.direccion << endl;
+	////cout << r.origen << " " << r.direccion << endl;
 	//int i = 0; int passes = 10;
 	//while (mon->obtenirCub(r.origen.x, r.origen.y, r.origen.z) == AIRE && i < passes) { r.origen += jugador->obtCamera()->obtDireccio(); i++; }
 	//CubActual = glm::vec3(floor(r.origen.x), floor(r.origen.y), floor(r.origen.z));
@@ -236,14 +238,15 @@ glm::vec3 Joc::ObtenirCostat() {
 void Joc::PosarCub(uint8_t tipus) {
 	// Si és un cub vàlid
 	if (CubActual.y == -1) return;
-	
 
 	// Obtenim el costat al que estem mirant
 	glm::vec3 Costat = ObtenirCostat();
 	if (Costat.x==-1 && Costat.y==-1) return;
 	
+	glm::vec3 posNova = glm::vec3(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z);
+	if (jugador->obtPosBloc() == posNova) return;
 	// Canviem el cub
-	mon->canviarCub(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z, tipus, false, true);
+	mon->canviarCub(posNova.x, posNova.y, posNova.z, tipus, false, true);
 
 }
 
@@ -334,16 +337,16 @@ void Joc::loop() {
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
-		auto start = std::chrono::high_resolution_clock::now();
-		//jugador->obtCamera()->moure(deltaTime, window);
-		jugador->obtCamera()->girar(window);
-
-		vector<pair<glm::vec3, uint8_t>> blocs = mon->obtenirColindants(jugador->obtPosBloc(), 2, true);
-		jugador->update(deltaTime, blocs);
-
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		//jugador->obtCamera()->moure(deltaTime, window);
+		jugador->obtCamera()->girar(window);
+
+		//vector<pair<glm::vec3, uint8_t>> blocs = mon->obtenirColindants(jugador->obtPosBloc(), 2, true);
+		jugador->update(deltaTime, mon->obtenirAABB(jugador->obtPosBloc()));
+
 
 		// Canvia el color del fons
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
@@ -354,12 +357,11 @@ void Joc::loop() {
 
 		//
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
-		auto start2 = std::chrono::high_resolution_clock::now();
+
 		bool sotaAigua = jugador->sotaAigua(mon->obtenirColindants(jugador->obtPosBloc(false), 1, true));
 		mon->render(jugador->obtCamera()->obtPlans(), sotaAigua);
 		renderer.activaAigua(sotaAigua);
 
-		auto end2 = std::chrono::high_resolution_clock::now();
 		//renderer.canviarPosLlum(pos);
 
 
@@ -370,7 +372,9 @@ void Joc::loop() {
 		ObtenirCubMira();
 		if(CubActual.y >= 0 && mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
 			mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
-
+		/*renderer.activaBounding(1);
+		jugador->render();
+		renderer.activaBounding(0);*/
 
 		view = jugador->obtCamera()->lookAt();
 		renderer.colocarMat4("view", view);
@@ -390,12 +394,6 @@ void Joc::loop() {
 		}
 		//mon->potGenerar = true;
 		fps++;
-		auto end = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> duration = end - start;
-		if (duration.count() > 0.01) {
-			std::chrono::duration<double> duration2 = end2 - start2;
-			//cout << "En fer un frame he trigat " << duration.count() << " i en renderitzar, " << duration2.count() << endl;
-		}
 	}
 
 	t.join();
@@ -421,7 +419,7 @@ void Joc::gameLoop() {
 		canviarModeMouse(GLFW_CURSOR_DISABLED);
 
 		mon = new SuperChunk(&renderer);
-		jugador = new Jugador(new Camera());
+		jugador = new Jugador(new Camera(), renderer.obtShader());
 		_HUD = new HUD(&renderer,jugador->inventari);
 		jugador->inventari->afegirItem("Gespa");
 		jugador->inventari->afegirItem("Patata");

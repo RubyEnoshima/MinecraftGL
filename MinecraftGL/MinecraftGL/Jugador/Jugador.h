@@ -3,7 +3,7 @@
 #include "Inventari.h"
 
 #define GRAVETAT 9.8
-#define SALT 5
+#define SALT 7
 
 enum MODE_JOC {
 	SURVIVAL = 0, // Supervivència
@@ -14,13 +14,14 @@ enum MODE_JOC {
 class Jugador
 {
 public:
-	Jugador(Camera* _camera);
+	Jugador(Camera* _camera, ShaderProgram* shader);
 	~Jugador();
 
 	// MOVIMENT
-	void update(float deltaTime, const vector<pair<glm::vec3, uint8_t>>& blocs);
+	void update(float deltaTime, const vector<AABB>& blocs);
+	void render();
 
-	void moure(float deltaTime,int tecla);
+	void moure(float deltaTime, const map<int, bool>& tecles);
 	void parar();
 	void correr();
 	void caminar();
@@ -48,13 +49,19 @@ public:
 
 private:
 	int mode = ESPECTADOR; // Veure adalt la llista de modes
+	const float velocitat = 6;
+	vector<AABB> _blocs;
 
-	const float velocitat = 7.5;
+	bool enTerra = false;
+
+	// Actualitza la posició de la càmera segons la velocitat actual
+	void actualitzaCamera(float deltaTime);
+
+	AABB aabb;
+
 	float velocitatAct = velocitat;
 	glm::vec3 vel;
-	glm::vec3 posAnt;
-	glm::vec3 velAnt;
-	glm::vec3 posSeg;
+	glm::vec3 antPos;
 
 	vector<glm::vec3> anteriors;
 	bool ultimResultat = false;

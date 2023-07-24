@@ -21,6 +21,7 @@ public:
 	// Shaders
 	int carregaShaders();
 	void usarShader(int i = 0);
+	ShaderProgram* obtShader();
 
 	unsigned int obtenirUniform(const char* uniform) const;
 

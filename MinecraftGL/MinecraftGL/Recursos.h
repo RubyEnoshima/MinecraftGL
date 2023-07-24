@@ -4,21 +4,8 @@
 #include "Items.h"
 #include "Renderer/Textura.h"
 #include "Renderer/TextRenderer.h"
+#include "Mates.h"
 using namespace std;
-
-struct Pla {
-public:
-	Pla(const glm::vec3& _pos, const glm::vec3& _normal) {
-		normal = _normal;
-		pos = _pos;
-	}
-	glm::vec3 normal = { 0, 0, 0 };
-	glm::vec3 pos = { 0,0,0 };
-
-	float distancia(const glm::vec3& p) const{
-		return glm::dot(normal, (p - pos));
-	}
-};
 
 class Recursos
 {

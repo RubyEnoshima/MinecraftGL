@@ -17,7 +17,7 @@
 #define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // true: La llum natural no es calcularà
-#define DEBUG_FRUSTUM false // true: apliquem Frustum Culling
+#define DEBUG_FRUSTUM true // true: apliquem Frustum Culling
 
 const struct CompararVec2 {
 	bool operator()(const glm::vec2& a, const glm::vec2& b) const {
@@ -140,8 +140,9 @@ public:
 		}
 	}
 
-	// Retorna tots els cubs al voltant d'una posició, tots els transparents (1) o tots els solids (2)
+	// Retorna tots els cubs (la posició y el tipus) al voltant d'una posició, tots els transparents (1) o tots els solids (2)
 	vector<pair<glm::vec3,uint8_t>> obtenirColindants(const glm::vec3& pos, int transparents = 0, bool ellMateix = false) const;
+	vector<AABB> obtenirAABB(const glm::vec3& pos);
 
 	bool potGenerar = true;
 	bool carregat = false;

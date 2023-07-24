@@ -18,7 +18,7 @@ Items::Items()
         json data = *it;
         int id = data.value("id", -1);
         string nom = data.value("nom", "");
-        dades[id] = new Item(id, data.value("classe", 0), nom, data.value("sprite", 0), data.value("bloc_id", -1));
+        dades[id] = new Item{ id, data.value("classe", 0), nom, (uint8_t)data.value("sprite", 0), (uint8_t)data.value("bloc_id", -1) };
         it++;
     }
 

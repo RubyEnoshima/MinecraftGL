@@ -19,27 +19,11 @@ enum TIPUS_ITEM {
 
 struct Item
 {
-	Item() {
-		id = -1;
-		classe = BLOC;
-		nom = "";
-		sprite = 0;
-		bloc_id = -1;
-
-	}
-	Item(int _id, int _classe, string _nom, uint8_t _sprite, uint8_t _bloc_id) {
-		id = _id;
-		classe = _classe;
-		nom = _nom;
-		sprite = _sprite;
-		bloc_id = _bloc_id;
-	}
-
 	int id = -1;
 	int classe = BLOC;
-	uint8_t bloc_id = -1;
 	string nom = "";
 	uint8_t sprite = 0; // Al mapa d'items, quin lloc ocupa
+	uint8_t bloc_id = -1;
 };
 
 class Items
