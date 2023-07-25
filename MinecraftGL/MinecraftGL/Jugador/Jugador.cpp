@@ -5,7 +5,7 @@ Jugador::Jugador(Camera* _camera, ShaderProgram* shader)
 	camera = _camera;
 	inventari = new Inventari();
 	aabb.tamany = glm::vec3(1,2,1);
-	aabb.shader = shader;
+	//aabb.shader = shader;
 }
 
 Jugador::~Jugador()

@@ -19,8 +19,7 @@ TextRenderer::TextRenderer(unsigned int width, unsigned int height)
     // load and configure shader
     shader = new ShaderProgram("VertexText.vert","FragmentText.frag");
     shader->carregaShaders();
-    shader->colocarMat4("projection", glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f));
-    shader->colocarInt("text", 0);
+
     // configure VAO/VBO for texture quads
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -97,16 +96,19 @@ void TextRenderer::Load(std::string font, unsigned int fontSize)
     FT_Done_FreeType(ft);
 }
 
-void TextRenderer::RenderText(std::string text, float x, float y, float scale, glm::vec3 color)
+void TextRenderer::RenderText(std::string text, float x, float y, float scale, bool fons, glm::vec3 color)
 {
     // activate corresponding render state	
     shader->usar();
+    shader->colocarMat4("projection", glm::ortho(0.0f, static_cast<float>(Recursos::width), static_cast<float>(Recursos::height), 0.0f));
     shader->colocarVec3("textColor", color);
+    shader->colocarInt("esBack", false);
+
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
-
     // iterate through all characters
     std::string::const_iterator c;
+    float minx = x+1, miny = y, maxx = -INFINITY, maxy = 20;
     for (c = text.begin(); c != text.end(); c++)
     {
         Character ch = Characters[*c];
@@ -116,6 +118,15 @@ void TextRenderer::RenderText(std::string text, float x, float y, float scale, g
 
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
+
+        if (fons) {
+            if (xpos < minx) minx = xpos;
+            if (ypos < miny) miny = ypos;
+            if (xpos + w > maxx) maxx = xpos + w;
+            if (ypos + h > maxy) maxy = ypos + h;
+
+        }
+        
         // update VBO for each character
         float vertices[6][4] = {
             { xpos,     ypos + h,   0.0f, 1.0f },
@@ -137,6 +148,31 @@ void TextRenderer::RenderText(std::string text, float x, float y, float scale, g
         // now advance cursors for next glyph
         x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
     }
+
+    if (fons) {
+        float marge = 3;
+        minx -= marge;
+        miny -= marge;
+        maxx += marge;
+        maxy += marge;
+        float vertices[6][4] = {
+            {minx, maxy, 0, 1},
+            {maxx, miny, 1, 0},
+            {minx, miny, 0, 0},
+
+            {minx, maxy, 0, 1},
+            {maxx, maxy, 1, 1},
+            {maxx, miny, 1, 0}
+        };
+        shader->colocarInt("esBack", true);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    }
+
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
 }

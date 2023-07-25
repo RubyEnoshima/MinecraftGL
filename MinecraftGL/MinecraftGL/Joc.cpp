@@ -51,6 +51,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 				Recursos::jocAcabat = true;
 				glfwSetWindowShouldClose(window, true);
 				break;
+			// C: canvia mode espectador <-> creatiu
+			case GLFW_KEY_C:
+				joc->CanviarMode();
+				break;
+			// E: obrir inventari
+			case GLFW_KEY_E:
+				joc->Inventari();
+				break;
 			
 			// F1: oculta HUD
 			case GLFW_KEY_F1:
@@ -61,9 +69,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_F2:
 				joc->Culling();
 				break;
-			// F3 = canvia el mode
+			// F3 = mostra text debug amb informació
 			case GLFW_KEY_F3:
-				joc->CanviarMode();
+				joc->HUDDebug();
 				break;
 			// F4: VSync
 			case GLFW_KEY_F4:
@@ -136,6 +144,23 @@ void Joc::Frustum()
 		cout << "Frustum Culling desactivat" << endl;
 
 	}
+}
+
+void Joc::HUDDebug()
+{
+	_HUD->modeDebug();
+}
+
+void Joc::Inventari()
+{
+	modeInventari = !modeInventari;
+	int mode = GLFW_CURSOR_DISABLED;
+	if (modeInventari) {
+		mode = GLFW_CURSOR_NORMAL;
+		glfwSetCursorPos(window, Recursos::width/2, Recursos::height/2);
+	}
+	canviarModeMouse(mode);
+
 }
 
 void Joc::moure()
@@ -287,13 +312,13 @@ void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
 	if (click == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
-		joc->DestruirCub();
+		if(!joc->modeInventari) joc->DestruirCub();
 	}
 
 	else if (click == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
-		joc->Usar();
+		if (!joc->modeInventari) joc->Usar();
 	}
 }
 
@@ -360,12 +385,9 @@ void Joc::loop() {
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		//jugador->obtCamera()->moure(deltaTime, window);
-		jugador->obtCamera()->girar(window);
+		if(!modeInventari) jugador->obtCamera()->girar(window);
 
-		//vector<pair<glm::vec3, uint8_t>> blocs = mon->obtenirColindants(jugador->obtPosBloc(), 2, true);
 		jugador->update(deltaTime, mon->obtenirAABB(jugador->obtPosBloc()));
-
 
 		// Canvia el color del fons
 		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
@@ -374,8 +396,6 @@ void Joc::loop() {
 		nuvols.update(jugador->obtPos2D(),deltaTime);
 		nuvols.render(view);
 
-		//
-		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 
 		bool sotaAigua = jugador->sotaAigua(mon->obtenirColindants(jugador->obtPosBloc(false), 1, true));
 		mon->render(&(jugador->obtCamera()->frustum), sotaAigua);
@@ -385,12 +405,15 @@ void Joc::loop() {
 
 
 		glfwPollEvents(); // Processar events
-		moure();
 
-		// Obtenim el cub al que estem mirant i el senyalem al mon
-		ObtenirCubMira();
-		if(CubActual.y >= 0 && mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
-			mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
+		if (!modeInventari) {
+			moure();
+			// Obtenim el cub al que estem mirant i el senyalem al mon
+			ObtenirCubMira();
+			if(CubActual.y >= 0 && mon->obtenirCub(CubActual.x,CubActual.y,CubActual.z)>0)
+				mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
+
+		}
 		/*renderer.activaBounding(1);
 		jugador->render();
 		renderer.activaBounding(0);*/
@@ -406,7 +429,7 @@ void Joc::loop() {
 		// Mostrem els frames que hi ha hagut en un segon (fps)
 		if (currentFrame-ant>=1.0f) { // Si la diferència és 1 és que ha passat un segon
 			ant = currentFrame;
-			//cout << "Fps: " << fps << endl; // Mostrem els frames que hem pogut processar
+			// Mostrem els frames que hem pogut processar
 			glfwSetWindowTitle(window, ("MinecraftGL - FPS: " + to_string(fps)).c_str());
 			fps = 0; // Resetejem el comptador
 			

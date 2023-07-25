@@ -172,8 +172,3 @@ void Camera::actualitzaPlans()
 	frustum.topFace = Pla(pos, glm::normalize(glm::cross(right, frontMultFar - cameraUp * halfVSide)) );
 	frustum.bottomFace = Pla(pos, glm::normalize(glm::cross(frontMultFar + cameraUp * halfVSide, right)) );
 }
-
-//vector<Pla> Camera::obtPlans() const
-//{
-//	return plansFrustum;
-//}

@@ -8,7 +8,7 @@ HUD::HUD(Renderer* _renderer, Inventari* _inventari)
 	iniciaSprites();
 	_inventari->iniciaSprites(renderer);
 	textRenderer = new TextRenderer(Recursos::width,Recursos::height);
-	textRenderer->Load("Fonts/OCRAEXT.TTF", 24);
+	textRenderer->Load("Fonts/Minecraft.otf", 72);
 }
 
 HUD::~HUD()
@@ -21,13 +21,18 @@ void HUD::render()
 {
 	if (visible) {
 		renderer->render();
-		textRenderer->RenderText("Hola hola hola", 1.0f, 1.0f, 1.0f);
+		if (debug) renderDebug();
 	}
 }
 
 void HUD::alternaVisibilitat()
 {
 	visible = !visible;
+}
+
+void HUD::modeDebug()
+{
+	debug = !debug;
 }
 
 void HUD::iniciaSprites()
@@ -38,4 +43,9 @@ void HUD::iniciaSprites()
 	crosshair->color.a = 0.85;
 	crosshair->textura->mapa = true;
 	renderer->afegirSprite(crosshair);
+}
+
+void HUD::renderDebug()
+{
+	textRenderer->RenderText("MinecraftGL per Ruben Lopez", 5, 5, 0.25, true);
 }

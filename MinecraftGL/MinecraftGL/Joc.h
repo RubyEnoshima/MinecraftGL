@@ -39,6 +39,8 @@ public:
 	void Culling();
 	void VSync();
 	void Frustum();
+	void HUDDebug();
+	void Inventari();
 
 	void moure();
 	void CanviarMode();
@@ -51,13 +53,14 @@ public:
 
 	// Es guarda si una tecla s'esta prement en el moment
 	map<int, bool> tecles = { {GLFW_KEY_W, false},{GLFW_KEY_A, false},{GLFW_KEY_S, false},{GLFW_KEY_D, false},{GLFW_KEY_SPACE, false},{GLFW_KEY_LEFT_SHIFT, false} };
+	bool modeInventari = false;
 
 private:
+	void canviarModeMouse(int mode);
+
 	// Posa en CubActual el vector del cub al que estem mirant
 	void ObtenirCubMira(); 
 	glm::vec3 ObtenirCostat();
-
-	void canviarModeMouse(int mode);
 
 	void loop();
 

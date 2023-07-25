@@ -691,7 +691,7 @@ vector<AABB> SuperChunk::obtenirAABB(const glm::vec3& pos)
 	for(const auto& b : blocs)
 	{
 		AABB aabb;
-		aabb.shader = renderer->obtShader();
+		//aabb.shader = renderer->obtShader();
 		aabb.pos = b.first;
 		aabb.tamany = glm::vec3(1, 1, 1);
 		res.push_back(aabb);

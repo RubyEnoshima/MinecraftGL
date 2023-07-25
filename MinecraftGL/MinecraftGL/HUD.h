@@ -9,11 +9,15 @@ public:
 	~HUD();
 
 	void render();
+
 	void alternaVisibilitat();
+	void modeDebug();
 private:
 	void iniciaSprites();
+	void renderDebug();
 
 	bool visible = true;
+	bool debug = false;
 
 	SpriteRenderer* renderer;
 	TextRenderer* textRenderer;

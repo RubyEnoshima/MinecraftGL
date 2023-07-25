@@ -3,7 +3,6 @@
 #include "Blocs/Blocs.h"
 #include "Items.h"
 #include "Renderer/Textura.h"
-#include "Renderer/TextRenderer.h"
 #include "Mates.h"
 using namespace std;
 

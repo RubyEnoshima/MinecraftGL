@@ -37,7 +37,7 @@ struct AABB {
 	glm::vec3 pos; //cantonada esquerra superior
 	glm::vec3 tamany;
 	glm::vec3 vel;
-    ShaderProgram* shader = NULL;
+    //ShaderProgram* shader = NULL;
 
     pair<glm::vec3,glm::vec3> MinMax() const{
         return {pos - tamany * 0.5f, pos + tamany * 0.5f};
@@ -205,7 +205,7 @@ struct AABB {
         }
     }
 
-	void render(bool centrat = false) const{
+	/*void render(bool centrat = false) const{
         static const float vertices[] = {
             pos.x,   pos.y,   pos.z,
             pos.x +  tamany.x,  pos.y,   pos.z,
@@ -254,4 +254,5 @@ struct AABB {
         glDeleteBuffers(1, &VBO);
         glDeleteBuffers(1, &EBO);
 	}
+    */
 };
