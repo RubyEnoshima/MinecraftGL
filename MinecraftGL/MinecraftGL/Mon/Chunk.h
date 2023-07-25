@@ -59,10 +59,10 @@ public:
 
 	void crearVertexs();
 	void update();
-	void render(bool semi = false);
-	bool esVisible(const glm::mat4& mvp) const;
-	bool esVisible(const vector<Pla>& plansFrustum) const;
+	void render(bool semi = false); // Semi indica si ha d'utilitzar el VBO transparent o no.
 	bool renderCub(int x, int y, int z);
+
+	bool esVisible(Frustum* frustum) const;
 
 	int nCubs() const;
 	glm::vec2 obtPos() const;

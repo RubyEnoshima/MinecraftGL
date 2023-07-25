@@ -16,6 +16,7 @@ Camera::Camera()
 void Camera::setProjection(float _fov, float _aspectRatio, float _near, float _far)
 {
 	projection = glm::perspective(_fov, _aspectRatio, _near, _far);
+
 	fov = _fov;
 	aspect = _aspectRatio;
 	near = _near;
@@ -48,8 +49,10 @@ void Camera::mirar() {
 	nouFront.y = sin(glm::radians(pitch));
 	nouFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	front = glm::normalize(nouFront);
-	right = glm::normalize(glm::cross(front,glm::vec3(0.0f, 1.0f, 0.0f)));
-	//cameraUp = glm::normalize(glm::cross(front, right));
+	right = glm::normalize(glm::cross(front,glm::vec3(0,1,0)));
+	cameraUp = glm::normalize(glm::cross(right, front));
+
+
 }
 
 void Camera::girar(GLFWwindow* window) {
@@ -153,22 +156,21 @@ void Camera::teletransporta(const glm::vec3& posNova)
 
 void Camera::actualitzaPlans()
 {
-	plansFrustum.clear();
+	// Tret de https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
 
-	const float halfVSide = far * tanf(fov * 0.5f);
+	const float halfVSide = far * tanf(fov * .5f);
 	const float halfHSide = halfVSide * aspect;
 	const glm::vec3 frontMultFar = far * front;
 
-	plansFrustum.push_back(Pla( pos + near * front, glm::normalize(front)));
-	plansFrustum.push_back(Pla( pos + frontMultFar, glm::normalize(-front)));
-	plansFrustum.push_back(Pla( pos, glm::normalize(glm::cross(frontMultFar - right * halfHSide, cameraUp))));
-	plansFrustum.push_back(Pla( pos, glm::normalize(glm::cross(cameraUp,frontMultFar + right * halfHSide))));
-	plansFrustum.push_back(Pla( pos, glm::normalize(glm::cross(right, frontMultFar - cameraUp * halfVSide))));
-	plansFrustum.push_back(Pla( pos, glm::normalize(glm::cross(frontMultFar + cameraUp * halfVSide, right))));
-
+	frustum.nearFace = Pla(pos + near * front, glm::normalize(front));
+	frustum.farFace = Pla(pos + frontMultFar, glm::normalize(-front));
+	frustum.rightFace = Pla(pos, glm::normalize(glm::cross(frontMultFar - right * halfHSide, cameraUp)) );
+	frustum.leftFace = Pla(pos, glm::normalize(glm::cross(cameraUp, frontMultFar + right * halfHSide)) );
+	frustum.topFace = Pla(pos, glm::normalize(glm::cross(right, frontMultFar - cameraUp * halfVSide)) );
+	frustum.bottomFace = Pla(pos, glm::normalize(glm::cross(frontMultFar + cameraUp * halfVSide, right)) );
 }
 
-vector<Pla> Camera::obtPlans() const
-{
-	return plansFrustum;
-}
+//vector<Pla> Camera::obtPlans() const
+//{
+//	return plansFrustum;
+//}

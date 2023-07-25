@@ -4,18 +4,33 @@
 #include <limits>
 
 struct Pla {
-public:
-	Pla(const glm::vec3& _pos, const glm::vec3& _normal) {
-		normal = _normal;
-		pos = _pos;
-	}
-	glm::vec3 normal = { 0, 0, 0 };
-	glm::vec3 pos = { 0,0,0 };
+    Pla(){}
+    Pla(const glm::vec3 _pos, const glm::vec3 _normal) {
+        pos = _pos;
+        normal = _normal;
+        d = glm::dot(normal, pos);
+    }
+    glm::vec3 pos = { 0,0,0 }, normal = { 0,1,0 };
+    float d = 0;
 
+    float distancia(const glm::vec3& p) const{
+        return glm::dot(normal, p) - d;
+    }
+};
 
-	float distancia(const glm::vec3& p) const {
-		return glm::dot(normal, (p - pos));
-	}
+struct Frustum {
+    Pla topFace;
+    Pla bottomFace;
+
+    Pla rightFace;
+    Pla leftFace;
+
+    Pla farFace;
+    Pla nearFace;
+
+    vector<Pla> obtPlans() const {
+        return {topFace,bottomFace,rightFace,leftFace,farFace,nearFace};
+    }
 };
 
 struct AABB {

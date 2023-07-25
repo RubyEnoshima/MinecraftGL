@@ -42,6 +42,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_LEFT_CONTROL:
 				joc->jugador->correr();
 				break;
+			// En cas de voler moure's, ens guardem l'estat de les tecles
 			case GLFW_KEY_W: case GLFW_KEY_A: case GLFW_KEY_S: case GLFW_KEY_D: case GLFW_KEY_SPACE: case GLFW_KEY_LEFT_SHIFT:
 				joc->tecles[key] = true;
 				break;
@@ -50,17 +51,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 				Recursos::jocAcabat = true;
 				glfwSetWindowShouldClose(window, true);
 				break;
-			// F10: es canvia entre mode normal i wireframe
-			case GLFW_KEY_F10:
-				int mode;
-				glGetIntegerv(GL_POLYGON_MODE, &mode);
-				if (mode == GL_FILL) {
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				}
-				else {
-					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-				}
-				break;
+			
 			// F1: oculta HUD
 			case GLFW_KEY_F1:
 				joc->_HUD->alternaVisibilitat();
@@ -74,7 +65,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_F3:
 				joc->CanviarMode();
 				break;
-			// F4: 
+			// F4: VSync
 			case GLFW_KEY_F4:
 				joc->VSync();
 				break;
@@ -82,7 +73,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_F5:
 				cout << "Cambiar camara" << endl;
 				break;
-			
+			// F6: frustum
+			case GLFW_KEY_F6:
+				joc->Frustum();
+				break;
+			// F10: es canvia entre mode normal i wireframe
+			case GLFW_KEY_F10:
+				int mode;
+				glGetIntegerv(GL_POLYGON_MODE, &mode);
+				if (mode == GL_FILL) {
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				}
+				else {
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				}
+				break;
 		}
 
 	}
@@ -90,7 +95,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		switch (key)
 		{
 			case GLFW_KEY_W: case GLFW_KEY_A: case GLFW_KEY_S: case GLFW_KEY_D: case GLFW_KEY_SPACE: case GLFW_KEY_LEFT_SHIFT:
-				//joc->jugador->moure(joc->deltaTime, key);
 				joc->tecles[key] = false;
 				joc->jugador->parar();
 				break;
@@ -107,9 +111,12 @@ void Joc::Culling() {
 	_Culling = !_Culling;
 	if (!_Culling) {
 		glDisable(GL_CULL_FACE);
+		cout << "Culling desactivat" << endl;
 	}
 	else {
 		glEnable(GL_CULL_FACE);
+		cout << "Culling activat" << endl;
+
 	}
 }
 
@@ -117,6 +124,18 @@ void Joc::VSync() {
 	_VSync = !_VSync;
 	glfwSwapInterval(_VSync);
 
+}
+
+void Joc::Frustum()
+{
+	mon->activaFrustum = !mon->activaFrustum;
+	if (mon->activaFrustum) {
+		cout << "Frustum Culling activat" << endl;
+	}
+	else {
+		cout << "Frustum Culling desactivat" << endl;
+
+	}
 }
 
 void Joc::moure()
@@ -359,7 +378,7 @@ void Joc::loop() {
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(255), rgb(255), 1.0f));
 
 		bool sotaAigua = jugador->sotaAigua(mon->obtenirColindants(jugador->obtPosBloc(false), 1, true));
-		mon->render(jugador->obtCamera()->obtPlans(), sotaAigua);
+		mon->render(&(jugador->obtCamera()->frustum), sotaAigua);
 		renderer.activaAigua(sotaAigua);
 
 		//renderer.canviarPosLlum(pos);

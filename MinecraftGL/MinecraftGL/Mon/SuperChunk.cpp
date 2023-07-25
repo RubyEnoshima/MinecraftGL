@@ -209,9 +209,20 @@ void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 			canviarCub(pos.x, pos.y, pos.z, flors[tipusFlor], false);
 		}
 	}
+
 	calculaLlumNatural(pos);
 	nou->preparat = true;
 	Chunks[pos] = nou;
+
+	// Mirem blocs que no s'hagin pogut posar, per si de cas algun es troba en aquest chunk
+	auto it = blocsNoPosats.find(pos);
+	if (it != blocsNoPosats.end()) {
+		for (auto& bloc : (*it).second) {
+			canviarCub(bloc.first.x, bloc.first.y, bloc.first.z, bloc.second, false);
+		}
+		blocsNoPosats.erase(it);
+	}
+	
 }
 
 void SuperChunk::calculaLlumNatural(const glm::vec2& pos)
@@ -380,10 +391,11 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador, char* color)
 {
-	if (esValid(x,y,z) && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
-		Chunk* chunk = Chunks[BlocChunk(x,z)];
-		uint8_t tipusBlocAbans = chunk->obtenirCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
-		chunk->canviarCub(Mon2Chunk(x,X), y, Mon2Chunk(z,Z), tipus, reemplacar, color);
+	bool valid = esValid(x, y, z);
+	if (valid && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
+		Chunk* chunk = Chunks[BlocChunk(x, z)];
+		uint8_t tipusBlocAbans = chunk->obtenirCub(Mon2Chunk(x, X), y, Mon2Chunk(z, Z));
+		chunk->canviarCub(Mon2Chunk(x, X), y, Mon2Chunk(z, Z), tipus, reemplacar, color);
 
 		//cout << "El bloc " << x << " " << y << " " << z << " es troba al chunk " << BlocChunk(x, z) << " i dins es el bloc " << Mon2Chunk(x, X) << " " << Mon2Chunk(z, Z) << endl;
 
@@ -408,13 +420,21 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 				canviarLlumArtificialCub(llum.x, llum.y, llum.z, 14);
 				afegirLlum(llum);
 			}
-			if(!Recursos::getBloc(tipus)->transparent) canviarLlumNaturalCub(x, y, z, 0);
+			if (!Recursos::getBloc(tipus)->transparent) canviarLlumNaturalCub(x, y, z, 0);
 		}
 
-		if(jugador) calculaLlumNatural(x, z);
+		if (jugador) calculaLlumNatural(x, z);
 
 		//chunk.unCanviat = true;
 		//chunk.cubCanviat = glm::vec3(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
+	}
+	else if (!valid) {
+		//cout << "No s'ha pogut posar " << (int)tipus << endl;
+		auto it = blocsNoPosats.find(BlocChunk(x, z));
+		if (it != blocsNoPosats.end()) {
+			(*it).second.push_back({ {x,y,z},tipus });
+		}
+		else blocsNoPosats.insert({ BlocChunk(x, z), {{ {x,y,z},tipus }} });
 	}
 	//cout << *color << " " << (int)tipus << endl;
 	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << Mon2Chunk(x,X) << ", " << Mon2Chunk(z,Z) << endl;
@@ -547,7 +567,7 @@ bool SuperChunk::existeixCub(int x, int y, int z, uint8_t tipus) const
 	return false;
 }
 
-void SuperChunk::render(const vector<Pla>& mvp, bool sotaAigua)
+void SuperChunk::render(Frustum* frustum, bool sotaAigua)
 {	
 	if (renderer) {
 
@@ -557,7 +577,7 @@ void SuperChunk::render(const vector<Pla>& mvp, bool sotaAigua)
 		
 		//loadedChunksMutex.lock();
 		for (auto chunk : Chunks) {
-			if (chunk.second == NULL || chunk.second->descarregant || (DEBUG_FRUSTUM && !chunk.second->esVisible(mvp))) continue;
+			if (chunk.second == NULL || chunk.second->descarregant || (activaFrustum && !chunk.second->esVisible(frustum))) continue;
 			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
 			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
@@ -568,7 +588,7 @@ void SuperChunk::render(const vector<Pla>& mvp, bool sotaAigua)
 		if(sotaAigua) glDisable(GL_CULL_FACE);
 		// RENDERITZAR L'AIGUA
 		for (auto chunk : Chunks) {
-			if (chunk.second == NULL || chunk.second->descarregant || (DEBUG_FRUSTUM && !chunk.second->esVisible(mvp))) continue;
+			if (chunk.second == NULL || chunk.second->descarregant || (activaFrustum && !chunk.second->esVisible(frustum))) continue;
 			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
 			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));

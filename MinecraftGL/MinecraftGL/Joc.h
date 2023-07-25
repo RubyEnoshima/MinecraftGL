@@ -38,6 +38,7 @@ public:
 	
 	void Culling();
 	void VSync();
+	void Frustum();
 
 	void moure();
 	void CanviarMode();

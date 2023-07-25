@@ -11,8 +11,8 @@
 
 #include <iostream>
 using namespace std;
-
 #define ALTURA_JUG 1
+
 
 class Camera
 {
@@ -48,9 +48,10 @@ public:
 	void teletransporta(const glm::vec3& posNova);
 	
 	void actualitzaPlans();
-	vector<Pla> obtPlans() const;
+	//vector<Pla> obtPlans() const;
+	Frustum frustum;
+
 private:
-	vector<Pla> plansFrustum;
 	const float sensibilitat = 0.1f;
 
 	void mirar();

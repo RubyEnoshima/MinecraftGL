@@ -17,7 +17,6 @@
 #define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // true: La llum natural no es calcularà
-#define DEBUG_FRUSTUM true // true: apliquem Frustum Culling
 
 const struct CompararVec2 {
 	bool operator()(const glm::vec2& a, const glm::vec2& b) const {
@@ -48,10 +47,7 @@ public:
 	void carregarChunks();
 	void eliminaCarregats();
 	void update(const glm::vec2& chunkJugador, const glm::mat4& mvp = glm::mat4());
-	void render(const vector<Pla>& mvp, bool sotaAigua = false);
-
-	float tempsCarrega = 0;
-
+	void render(Frustum* frustum, bool sotaAigua = false);
 
 	void generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets);
 
@@ -74,7 +70,6 @@ public:
 	void treureLlum(const glm::vec3 posLlum, uint8_t llumIni);
 
 	void afegirLlumNatural(const glm::vec3 posLlum);
-	void treureLlumNatural(const glm::vec3 posLlum, uint8_t llumIni);
 
 	void calculaLlumNatural(const glm::vec2& pos);
 	void calculaLlumNatural(int x, int z);
@@ -147,6 +142,8 @@ public:
 	bool potGenerar = true;
 	bool carregat = false;
 
+	bool activaFrustum = true; // true: fem servir Frustum culling
+
 private:
 	int tipusMon = Recursos::NORMAL;
 
@@ -160,7 +157,6 @@ private:
 
 	// FUNCIONS PER BLOCS
 	
-
 	bool esValid(int x, int y, int z) const;
 	bool esValid(const glm::vec3& pos) const;
 
@@ -205,6 +201,8 @@ private:
 
 	bool esCarregat(const glm::vec2& pos) const;
 	bool existeixCua(const deque<glm::vec2>& cua, const glm::vec2& e) const;
+
+	map<glm::vec2,vector<pair<glm::vec3, uint8_t>>, CompararVec2> blocsNoPosats; // es guarda els blocs que no s'han posat
 };
 
 #endif
