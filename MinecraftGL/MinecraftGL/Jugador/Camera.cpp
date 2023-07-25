@@ -154,8 +154,11 @@ void Camera::teletransporta(const glm::vec3& posNova)
 	pos = posNova;
 }
 
+//bool actualitza = false;
 void Camera::actualitzaPlans()
-{
+{	
+	//if (actualitza) return;
+	//actualitza = true;
 	// Tret de https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
 
 	const float halfVSide = far * tanf(fov * .5f);

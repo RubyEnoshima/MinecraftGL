@@ -36,7 +36,7 @@ struct Soroll {
 struct Cub {
 	uint8_t tipus = 0;
 	uint8_t llum = 0;
-	char* color;
+	int color;
 	bool top = false;
 };
 
@@ -47,7 +47,7 @@ public:
 	~Chunk();
 
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, char* color = (char*)"Blanc"); 
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, int color = Recursos::BLANC); 
 	// Canvia la llum d'un cub concret
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
@@ -87,10 +87,10 @@ public:
 
 	glm::vec3 cubCanviat;
 private:
-	void afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2, uint8_t costat = 0, const char* color = "Blanc");
+	void afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2, uint8_t costat = 0, int color = Recursos::BLANC);
 	void afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, bool r=1, bool g=1, bool b=1);
 
-	void afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, const char* _color);
+	void afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, int _color);
 	void afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
 	unsigned int VBO = 0, VBO_TRANSP = 0;
@@ -106,7 +106,7 @@ private:
 	Chunk* veiBaix = NULL;
 
 	// Probabilitats de generació: 1 == 100%
-	float probabilitatArbre = 0.025;
+	float probabilitatArbre = 0.015;
 	float probabilitatFlor = 0;
 };
 

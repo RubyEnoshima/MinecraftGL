@@ -52,7 +52,7 @@ public:
 	void generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets);
 
 	// Canvia el tipus d'un cub concret
-	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false, char* color = (char *)"Blanc");
+	void canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar=true, bool jugador=false, int color = Recursos::BLANC);
 	// Canvia quanta llum té un cub
 	void canviarLlumNaturalCub(int x, int y, int z, uint8_t llum);
 	void canviarLlumArtificialCub(int x, int y, int z, uint8_t llum);
@@ -85,10 +85,10 @@ public:
 
 	// MÉTODES PER GENERAR CUBS
 	// Emplena un rectangle centrat en una posició, extenent-se en amplitut i llargada, amb un tipus concret i una probabilitat que les cantonades puguin desapareixer.
-	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true, char* color = (char*)"Blanc");
+	void emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat = 1, bool reemplacar = true, int color = Recursos::BLANC);
 
 	// Emplena un àrea delimitada per dos punts amb un tipus determinat
-	void emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar = true, char* color = (char*)"Blanc");
+	void emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar = true, int color = Recursos::BLANC);
 
 	// VEGETACIÓ I GENERACIÓ
 	// Genera un arbre en una posicio concreta

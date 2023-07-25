@@ -207,7 +207,7 @@ void Slot::actualitzaSprite()
 	Item* i = Recursos::getItem(item);
 	if (i->classe == BLOC) {
 		if (Recursos::getBloc(i->bloc_id)->id == GESPA) {
-			glm::vec3* color = Recursos::obtColor("VerdGespa");
+			glm::vec3* color = Recursos::obtColor(Recursos::VERDGESPA);
 			sprite->color = glm::vec4(color->r/255,color->g/255,color->b/255, 1.0f);
 		}
 		else sprite->color = glm::vec4(1.0f);

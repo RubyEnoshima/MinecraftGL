@@ -45,20 +45,20 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	erosion.noise->SetFractalGain(0.8);
 	erosion.noise->SetFractalOctaves(3);
 	//erosion.punts = { glm::vec2(-1,100), glm::vec2(-0.75,100), glm::vec2(-0.25,60), glm::vec2(-0.2,70), glm::vec2(0,45), glm::vec2(0.25,30), glm::vec2(0.45,30), glm::vec2(0.5,25), glm::vec2(0.7,25), glm::vec2(0.75,10), glm::vec2(1,5) };
-	erosion.punts = { glm::vec2(-1,5), glm::vec2(1,120) };
+	erosion.punts = { glm::vec2(-1,5), glm::vec2(0,75), glm::vec2(0.75,80), glm::vec2(1,120) };
 	noises.push_back(erosion);
 
-	//Soroll pv;
-	//pv.noise = new FastNoiseLite(semilla);
-	//pv.noise->SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
-	//pv.noise->SetFrequency(0.05);
-	//pv.noise->SetFractalType(FastNoiseLite::FractalType_Ridged);
-	//pv.noise->SetFractalLacunarity(1);
-	//pv.noise->SetFractalGain(0.2);
-	//pv.noise->SetFractalOctaves(2);
-	////pv.punts = { glm::vec2(-1,5), glm::vec2(-0.75,20), glm::vec2(-0.25,30), glm::vec2(0,35), glm::vec2(0.5,100), glm::vec2(1,100) };
-	//pv.punts = { glm::vec2(-1,70), glm::vec2(-0.75,70), glm::vec2(-0.25,70), glm::vec2(0,70), glm::vec2(0.5,50), glm::vec2(1,40) };
-	//noises.push_back(pv);
+	Soroll pv;
+	pv.noise = new FastNoiseLite(semilla);
+	pv.noise->SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+	pv.noise->SetFrequency(0.05);
+	pv.noise->SetFractalType(FastNoiseLite::FractalType_Ridged);
+	pv.noise->SetFractalLacunarity(1);
+	pv.noise->SetFractalGain(0.2);
+	pv.noise->SetFractalOctaves(2);
+	//pv.punts = { glm::vec2(-1,5), glm::vec2(-0.75,20), glm::vec2(-0.25,30), glm::vec2(0,35), glm::vec2(0.5,100), glm::vec2(1,100) };
+	pv.punts = { glm::vec2(-1,70), glm::vec2(-0.75,70), glm::vec2(0.5,50), glm::vec2(1,40) };
+	noises.push_back(pv);
 	
 	renderer = _renderer;
 	glGenVertexArrays(1, &VAO);
@@ -218,7 +218,9 @@ void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 	auto it = blocsNoPosats.find(pos);
 	if (it != blocsNoPosats.end()) {
 		for (auto& bloc : (*it).second) {
-			canviarCub(bloc.first.x, bloc.first.y, bloc.first.z, bloc.second, false);
+			int color = Recursos::BLANC;
+			if (bloc.second == FULLES) color = Recursos::VERDFULLES;
+			canviarCub(bloc.first.x, bloc.first.y, bloc.first.z, bloc.second, false, false, color);
 		}
 		blocsNoPosats.erase(it);
 	}
@@ -389,7 +391,7 @@ void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
 }
 
 
-void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador, char* color)
+void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador, int color)
 {
 	bool valid = esValid(x, y, z);
 	if (valid && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
@@ -626,7 +628,7 @@ void SuperChunk::arbre(int x, int y, int z)
 	{
 		canviarCub(x, y + i, z, FUSTA);
 	}
-	char* color = (char*)"VerdFulles";
+	int color = Recursos::VERDFULLES;
 	// Copa del arbol
 	emplenar(x, y + max, z, 1, 1, FULLES, 0, false,color);
 	int segY = y + max - 1;
@@ -638,7 +640,7 @@ void SuperChunk::arbre(int x, int y, int z)
 	emplenar(x, segY, z, 2, 2, FULLES, probabilitat, false,color);
 }
 
-void SuperChunk::emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat, bool reemplacar, char* color) {
+void SuperChunk::emplenar(int x, int y, int z, int amplitut, int llargada, uint8_t tipus, float probabilitat, bool reemplacar, int color) {
 	for (int i = -amplitut; i <= amplitut; i++) {
 		for (int j = -llargada; j <= llargada; j++) {
 			if (abs(i) != amplitut || abs(i) != abs(j) || (float)(rand()) / (float)(RAND_MAX) <= probabilitat) {
@@ -652,7 +654,7 @@ void SuperChunk::emplenar(int x, int y, int z, int amplitut, int llargada, uint8
 	}
 }
 
-void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar, char* color)
+void SuperChunk::emplenarArea(int x1, int y1, int z1, int x2, int y2, int z2, uint8_t tipus, bool reemplacar, int color)
 {
 	for (int i = x1; i <= x2; i++) {
 		for (int j = y1; j <= y2; j++) {

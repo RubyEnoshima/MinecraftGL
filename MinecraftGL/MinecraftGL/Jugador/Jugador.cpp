@@ -16,42 +16,45 @@ Jugador::~Jugador()
 
 void Jugador::update(float deltaTime, const vector<AABB>& blocs)
 {
-	aabb.pos = obtPosBloc();
-	aabb.vel = vel;
-	_blocs = blocs;
-	float nx, ny = 0, nz; bool sota = false;
-	//cout << vel << endl;
-	for (const auto& b : _blocs)
-	{
-		//if (aabb.AABBtoAABB(b)) {
-		//	cout << aabb.pos - b.pos << endl;
-		//	vel = glm::vec3(0);
-		//	camera->teletransporta(antPos);
-		//	//if ((aabb.pos - b.pos).y == 1) enTerra = true;
-		//}
+	if (mode != ESPECTADOR) {
+		aabb.pos = obtPosBloc();
+		aabb.vel = vel;
+		_blocs = blocs;
+		float nx, ny = 0, nz; bool sota = false;
+		//cout << vel << endl;
+		for (const auto& b : _blocs)
+		{
+			//if (aabb.AABBtoAABB(b)) {
+			//	cout << aabb.pos - b.pos << endl;
+			//	vel = glm::vec3(0);
+			//	camera->teletransporta(antPos);
+			//	//if ((aabb.pos - b.pos).y == 1) enTerra = true;
+			//}
 		
-		float col = aabb.sweptAABB(b, nx, ny, nz);
-		float rem = 1 - col;
-		if (col < 1) {
-			//cout << nx << " " << ny << " " << nz << endl;
+			float col = aabb.sweptAABB(b, nx, ny, nz);
+			float rem = 1 - col;
+			if (col < 1) {
+				//cout << nx << " " << ny << " " << nz << endl;
 
-			float dotprod = (aabb.vel.x * nz + aabb.vel.z * nx) * rem;
-			vel.x = dotprod * nz; vel.z = dotprod * nx;
-			/*vel.x *= col;
-			vel.z *= col;*/
+				float dotprod = (aabb.vel.x * nz + aabb.vel.z * nx) * rem;
+				vel.x = dotprod * nz; vel.z = dotprod * nx;
+				/*vel.x *= col;
+				vel.z *= col;*/
 
-			// Colisió en la y: mirem la normal per aplicar o no gravetat
-			if (ny != 0) {
-				vel.y = 0;
-				if (ny == -1) enTerra = true;
+				// Colisió en la y: mirem la normal per aplicar o no gravetat
+				if (ny != 0) {
+					vel.y = 0;
+					if (ny == -1) enTerra = true;
 
+				}
 			}
+			if ((aabb.pos - b.pos).y == 1) { sota = true; }
 		}
-		if ((aabb.pos - b.pos).y == 1) { sota = true; }
-	}
-	if (!sota) enTerra = false;
-	if (mode != ESPECTADOR && !enTerra) {
-		vel.y -= GRAVETAT * deltaTime;
+		if (!sota) enTerra = false;
+		if (!enTerra) {
+			vel.y -= GRAVETAT * deltaTime;
+		}
+
 	}
 
 	antPos = obtPos();

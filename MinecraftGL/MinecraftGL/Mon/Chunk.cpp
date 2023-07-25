@@ -17,6 +17,7 @@ Chunk::Chunk(unsigned int _x, unsigned int _y)
 		glm::vec3(posX * X + X,0,posY * Z + 0),
 		glm::vec3(posX * X + 0,0,posY * Z + Z),
 		glm::vec3(posX * X + X,0,posY * Z + Z),
+
 		glm::vec3(posX * X + 0,Y,posY * Z + 0),
 		glm::vec3(posX * X + X,Y,posY * Z + 0),
 		glm::vec3(posX * X + 0,Y,posY * Z + Z),
@@ -46,7 +47,7 @@ Chunk::~Chunk()
 	}*/
 }
 
-void Chunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, char* color)
+void Chunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, int color)
 {
 	if ((x < 0 || x >= X || y < 0 || y >= Y || z < 0 || z >= Z) || (!reemplacar && obtenirCub(x, y, z) != AIRE)) return;
 
@@ -111,7 +112,7 @@ uint8_t Chunk::obtenirLlumArtificialCub(int x, int y, int z) const
 	return chunk[x][y][z].llum & 0xF; // Retornem els ultims 4
 }
 
-void Chunk::afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum, uint8_t costat, const char* color) {
+void Chunk::afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u, bool v, uint8_t llum, uint8_t costat, int color) {
 	// Posicio
 	vertices.push_back(x);
 	vertices.push_back(y);
@@ -138,10 +139,10 @@ void Chunk::afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z
 	vertices.push_back(_color->b);
 }
 
-void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus,const char* _color) {
+void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus,int _color) {
 	Bloc* b = Recursos::getBloc(tipus);
 	uint8_t llum = chunk[x][y][z].llum;
-	const char* color = _color;
+	int color = _color;
 	// Si es vegetació, la renderitzem amb 4 plans que sempre miren a la mateixa orientació
 	if (b->vegetacio) {
 		// Pla 1
@@ -177,7 +178,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	tipus = b->costats;
 	// Cara esq
-	if ((x == 0 and veiEsq != NULL and (!veiEsq->obtenirCub(X - 1, y, z) || (!b->transparent && Recursos::getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent))) or (x != 0 and (!chunk[x - 1][y][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x - 1][y][z].tipus)->transparent)))) {
+	if ((x == 0 and veiEsq != NULL and (tipus == FULLES || !veiEsq->obtenirCub(X - 1, y, z) || (!b->transparent && Recursos::getBloc(veiEsq->obtenirCub(X - 1, y, z))->transparent))) or (x != 0 and (!chunk[x - 1][y][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x - 1][y][z].tipus)->transparent)))) {
 		if (x == 0) llum = veiEsq->chunk[X - 1][y][z].llum;
 		else llum = chunk[x - 1][y][z].llum;
 
@@ -194,7 +195,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 		}
 	}
 	// Cara dre
-	if ((x == X - 1 and veiDre != NULL and (!veiDre->obtenirCub(0, y, z) || (!b->transparent && Recursos::getBloc(veiDre->obtenirCub(0, y, z))->transparent))) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x + 1][y][z].tipus)->transparent)))) {
+	if ((x == X - 1 and veiDre != NULL and (tipus == FULLES || !veiDre->obtenirCub(0, y, z) || (!b->transparent && Recursos::getBloc(veiDre->obtenirCub(0, y, z))->transparent))) or (x != X - 1 and (!chunk[x + 1][y][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x + 1][y][z].tipus)->transparent)))) {
 		if (x == X - 1) llum = veiDre->chunk[0][y][z].llum;
 		else llum = chunk[x + 1][y][z].llum;
 
@@ -212,7 +213,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp != NULL and (!veiUp->obtenirCub(x, y, 0) || (!b->transparent && Recursos::getBloc(veiUp->obtenirCub(x, y, 0))->transparent))) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y][z + 1].tipus)->transparent)))) {
+	if ((z == Z - 1 and veiUp != NULL and (tipus == FULLES || !veiUp->obtenirCub(x, y, 0) || (!b->transparent && Recursos::getBloc(veiUp->obtenirCub(x, y, 0))->transparent))) or (z != Z - 1 and (!chunk[x][y][z + 1].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y][z + 1].tipus)->transparent)))) {
 		if (z == Z - 1) llum = veiUp->chunk[x][y][0].llum;
 		else llum = chunk[x][y][z + 1].llum;
 
@@ -231,7 +232,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix != NULL and (!veiBaix->obtenirCub(x, y, Z - 1) || (!b->transparent && Recursos::getBloc(veiBaix->obtenirCub(x, y, Z - 1))->transparent))) or (z != 0 and (!chunk[x][y][z - 1].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y][z - 1].tipus)->transparent)))) {
+	if ((z == 0 and veiBaix != NULL and (tipus == FULLES || !veiBaix->obtenirCub(x, y, Z - 1) || (!b->transparent && Recursos::getBloc(veiBaix->obtenirCub(x, y, Z - 1))->transparent))) or (z != 0 and (!chunk[x][y][z - 1].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y][z - 1].tipus)->transparent)))) {
 		if (z == 0) llum = veiBaix->chunk[x][y][Z - 1].llum;
 		else llum = chunk[x][y][z - 1].llum;
 
@@ -251,12 +252,12 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	tipus = b->adalt;
 	// Cara adalt
-	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y + 1][z].tipus)->transparent)) {
+	if (tipus==FULLES or y == Y - 1 or !chunk[x][y + 1][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y + 1][z].tipus)->transparent)) {
 		if (y == Y - 1) llum = 0;
 		else llum = chunk[x][y + 1][z].llum;
 
 			if (tipus == GESPA) {
-				color = "VerdGespa";
+				color = Recursos::VERDGESPA;
 			}
 
 		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum, 0, color);
@@ -270,7 +271,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	tipus = b->sota;
 	// Cara sota
-	if (y == 0 or !chunk[x][y - 1][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y - 1][z].tipus)->transparent)) {
+	if (tipus == FULLES or y == 0 or !chunk[x][y - 1][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y - 1][z].tipus)->transparent)) {
 		if (y == Y - 1) llum = 0;
 		else if(y>0) llum = chunk[x][y - 1][z].llum;
 
@@ -485,11 +486,35 @@ void Chunk::render(bool semi)
 
 bool Chunk::esVisible(Frustum* frustum) const
 {
-	for (const Pla &pla : frustum->obtPlans()) {
+	/*for (const Pla &pla : frustum->obtPlans()) {
 		if (pla.distancia(glm::vec3(posX * X + X / 2, Y/2, posY * Z + Z / 2)) < 0) {
 			return false;
 		}
+	}*/
+
+	/*for (const Pla& pla : frustum->obtPlans()) {
+		int n = 0;
+		for (const glm::vec3& punt : cantonades) {
+			if (pla.distancia(punt) < 0) {
+				n++;
+			}
+
+		}
+		if (n == 8) return false;
+	}*/
+
+	glm::vec3 min = { posX * X, 0, posY * Z }, max = {posX*X + X, Y, posY * Z + Z};
+	for (const Pla& pla : frustum->obtPlans()) {
+
+		glm::vec3 centre = (min + max) * 0.5f;
+
+		float distancia = glm::dot(centre - pla.pos, pla.normal);
+
+		glm::vec3 extents = (max - min) * 0.5f;
+
+		if (distancia < -glm::length(extents) / 4) return false;
 	}
+	
 	
 	return true;
 }
@@ -552,11 +577,11 @@ vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus, const vector<Soroll>
 				}
 				else if (j < height - 3) tipus = PEDRA;
 				else if (j < 1) tipus = BEDROCK;
-				canviarCub(i, j, k, tipus, true, (char *)"Blanc");
+				canviarCub(i, j, k, tipus, true, Recursos::BLANC);
 
 			}
 			for (int j = 0; j < nivellMar; j++) {
-				canviarCub(i, j, k, AIGUA, false, (char*)"Aigua");
+				canviarCub(i, j, k, AIGUA, false, Recursos::AIGUA);
 
 			}
 		}
