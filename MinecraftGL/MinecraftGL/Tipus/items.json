@@ -14,6 +14,21 @@
         "classe": 0,
         "nom": "Terra"
     },
+    "fusta": {
+        "id": 5,
+        "classe": 0,
+        "nom": "Fusta"
+    },
+    "maons": {
+        "id": 8,
+        "classe": 0,
+        "nom": "Maons"
+    },
+    "teranyina": {
+        "id": 12,
+        "classe": 0,
+        "nom": "Teranyina"
+    },
     "rosa": {
         "id": 13,
         "classe": 0,
@@ -23,6 +38,11 @@
         "id": 14,
         "classe": 0,
         "nom": "Dent de lleo"
+    },
+    "roca": {
+        "id": 16,
+        "classe": 0,
+        "nom": "Roca"
     },
     "bedrock": {
         "id": 17,
@@ -39,22 +59,146 @@
         "classe": 0,
         "nom": "Tronc"
     },
+    "esclatasang": {
+        "id": 28,
+        "classe": 0,
+        "nom": "Esclatasang"
+    },
+    "xampinyo": {
+        "id": 29,
+        "classe": 0,
+        "nom": "Xampinyo"
+    },
+    "llibreria": {
+        "id": 35,
+        "classe": 0,
+        "nom": "Llibreria"
+    },
+    "roca_musgo": {
+        "id": 36,
+        "classe": 0,
+        "nom": "Roca mollosa"
+    },
+    "obsidiana": {
+        "id": 37,
+        "classe": 0,
+        "nom": "Obsidiana"
+    },
+    "arbust": {
+        "id": 39,
+        "classe": 0,
+        "nom": "Arbust"
+    },
+    "taula": {
+        "id": 43,
+        "classe": 0,
+        "nom": "Taula de crafteig"
+    },
     "cristal": {
         "id": 49,
         "classe": 0,
         "nom": "Cristal"
+    },
+    "llana": {
+        "id": 64,
+        "classe": 0,
+        "nom": "Llana"
     },
     "neu": {
         "id": 66,
         "classe": 0,
         "nom": "Neu"
     },
+    "gel": {
+        "id": 67,
+        "classe": 0,
+        "nom": "Gel"
+    },
+    "canya_de_sucre": {
+        "id": 73,
+        "classe": 0,
+        "nom": "Canya de sucre"
+    },
+    "tronc_fosc": {
+        "id": 116,
+        "classe": 0,
+        "nom": "Tronc fosc"
+    },
+    "carbassa": {
+        "id": 102,
+        "classe": 0,
+        "nom": "Carbassa"
+    },
+    "llana_vermella": {
+        "id": 129,
+        "classe": 0,
+        "nom": "Llana vermella"
+    },
+    "llana_rosa": {
+        "id": 130,
+        "classe": 0,
+        "nom": "Llana rosa"
+    },
+    "llana_verda": {
+        "id": 145,
+        "classe": 0,
+        "nom": "Llana verda"
+    },
+    "llana_groga": {
+        "id": 162,
+        "classe": 0,
+        "nom": "Llana groga"
+    },
+    "llana_blava": {
+        "id": 177,
+        "classe": 0,
+        "nom": "Llana blava"
+    },
+    "llana_taronja": {
+        "id": 210,
+        "classe": 0,
+        "nom": "Llana taronja"
+    },
+    "fulles": {
+        "id": 132,
+        "classe": 0,
+        "nom": "Fulles"
+    },
+    "sindria": {
+        "id": 137,
+        "classe": 0,
+        "nom": "Sindria"
+    },
     "tulipa_taronja": {
         "id": 169,
         "classe": 0,
         "nom": "Tulipa taronja"
     },
-    
+    "tronc_clar": {
+        "id": 170,
+        "classe": 0,
+        "nom": "Tronc clar"
+    },
+    "fusta_fosca": {
+        "id": 198,
+        "classe": 0,
+        "nom": "Fusta fosca"
+    },
+    "llum": {
+        "id": 212,
+        "classe": 0,
+        "nom": "Llum"
+    },
+    "fusta_clara": {
+        "id": 214,
+        "classe": 0,
+        "nom": "Fusta clara"
+    },
+    "maons_fosc": {
+        "id": 224,
+        "classe": 0,
+        "nom": "Maons foscos"
+    },
     
     "patata":{
         "id": 256,

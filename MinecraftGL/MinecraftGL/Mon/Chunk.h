@@ -107,7 +107,7 @@ private:
 
 	// Probabilitats de generació: 1 == 100%
 	float probabilitatArbre = 0.015;
-	float probabilitatFlor = 0;
+	float probabilitatFlor = 0.10;
 };
 
 #endif

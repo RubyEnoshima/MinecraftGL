@@ -145,34 +145,35 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 	int color = _color;
 	// Si es vegetació, la renderitzem amb 4 plans que sempre miren a la mateixa orientació
 	if (b->vegetacio) {
+		if (tipus == ARBUST) color = Recursos::VERDFULLES;
 		// Pla 1
-		afegirVertex(vertices, x, y, z, tipus, 0, 1, llum);
-		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, llum);
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum);
-		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum);
-		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, llum);
-		afegirVertex(vertices, x+1, y + 1, z + 1, tipus, 1, 0, llum);
+		afegirVertex(vertices, x, y, z, tipus, 0, 1, llum, 0, color);
+		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, llum, 0, color);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum, 0, color);
+		afegirVertex(vertices, x, y + 1, z, tipus, 0, 0, llum, 0, color);
+		afegirVertex(vertices, x+1, y, z + 1, tipus, 1, 1, llum, 0, color);
+		afegirVertex(vertices, x+1, y + 1, z + 1, tipus, 1, 0, llum, 0, color);
 
-		afegirVertex(vertices, x+1, y, z+1, tipus, 0, 1, llum); // 1
-		afegirVertex(vertices, x, y, z, tipus, 1, 1, llum); // 2
-		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, llum);
-		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, llum);
-		afegirVertex(vertices, x, y, z, tipus, 1, 1, llum); // 5
-		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, llum);
+		afegirVertex(vertices, x+1, y, z+1, tipus, 0, 1, llum, 0, color); // 1
+		afegirVertex(vertices, x, y, z, tipus, 1, 1, llum, 0, color); // 2
+		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, llum, 0, color);
+		afegirVertex(vertices, x+1, y + 1, z+1, tipus, 0, 0, llum, 0, color);
+		afegirVertex(vertices, x, y, z, tipus, 1, 1, llum, 0, color); // 5
+		afegirVertex(vertices, x, y + 1, z, tipus, 1, 0, llum, 0, color);
 		// Pla 2
-		afegirVertex(vertices, x+1, y, z, tipus, 0, 1, llum);
-		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum);
-		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, llum);
-		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, llum);
-		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, llum);
+		afegirVertex(vertices, x+1, y, z, tipus, 0, 1, llum, 0, color);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum, 0, color);
+		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, llum, 0, color);
+		afegirVertex(vertices, x+1, y + 1, z, tipus, 0, 0, llum, 0, color);
+		afegirVertex(vertices, x, y, z + 1, tipus, 1, 1, llum, 0, color);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 1, 0, llum, 0, color);
 
-		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1, llum);
-		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, llum);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, llum);
-		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, llum);
-		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, llum);
-		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum);
+		afegirVertex(vertices, x, y, z + 1, tipus, 0, 1, llum, 0, color);
+		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, llum, 0, color);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, llum, 0, color);
+		afegirVertex(vertices, x, y + 1, z + 1, tipus, 0, 0, llum, 0, color);
+		afegirVertex(vertices, x + 1, y, z, tipus, 1, 1, llum, 0, color);
+		afegirVertex(vertices, x + 1, y + 1, z, tipus, 1, 0, llum, 0, color);
 		return;
 	}
 

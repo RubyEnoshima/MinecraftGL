@@ -96,7 +96,7 @@ void TextRenderer::Load(std::string font, unsigned int fontSize)
     FT_Done_FreeType(ft);
 }
 
-void TextRenderer::RenderText(std::string text, float x, float y, float scale, bool fons, glm::vec3 color, bool ombra)
+void TextRenderer::RenderText(std::string text, float x, float y, float scale, bool fons, glm::vec3 color, bool ombra, float indexZ)
 {
     float xOriginal = x;
     // activate corresponding render state	
@@ -104,6 +104,7 @@ void TextRenderer::RenderText(std::string text, float x, float y, float scale, b
     shader->colocarMat4("projection", glm::ortho(0.0f, static_cast<float>(Recursos::width), static_cast<float>(Recursos::height), 0.0f));
     shader->colocarVec3("textColor", color);
     shader->colocarInt("esBack", false);
+    shader->colocarFloat("indexZ", indexZ);
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
@@ -183,7 +184,7 @@ void TextRenderer::RenderText(std::string text, float x, float y, float scale, b
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void TextRenderer::RenderText(std::string text, glm::vec2 pos, float scale, bool fons, glm::vec3 color, bool ombra)
+void TextRenderer::RenderText(std::string text, glm::vec2 pos, float scale, bool fons, glm::vec3 color, bool ombra, float indexZ)
 {
-    RenderText(text, pos.x, pos.y, scale, fons, color, ombra);
+    RenderText(text, pos.x, pos.y, scale, fons, color, ombra, indexZ);
 }

@@ -16,7 +16,7 @@
 #define DISTANCIA 13
 #define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
-#define DEBUG true // true: La llum natural no es calcularà
+#define DEBUG true // true: La llum no es calcularà
 
 const struct CompararVec2 {
 	bool operator()(const glm::vec2& a, const glm::vec2& b) const {
@@ -176,7 +176,7 @@ private:
 	int semilla = 874;
 	vector<Soroll> noises; // 0: continentalness, 1: erosion, 2: peaks and valleys
 
-	const vector<int> flors = { ROSA,DENT_DE_LLEO,TULIPA_TARONJA,ESCLATASANG,XAMPINYO };
+	const vector<int> flors = { ROSA,TULIPA_TARONJA,ARBUST }; //ESCLATASANG,XAMPINYO,DENT_DE_LLEO
 
 	// Propagació de llums "artificials"
 	queue<glm::vec3> llums;

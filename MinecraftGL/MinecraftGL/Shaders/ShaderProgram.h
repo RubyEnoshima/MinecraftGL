@@ -26,6 +26,7 @@ public:
 	void colocarVec3(const string uniform, const glm::vec3 vector);
 	void colocarVec2(const string uniform, const glm::vec2 vector);
 	void colocarInt(const string uniform, int i);
+	void colocarFloat(const string uniform, float i);
 private:
 	// Arxius pels shaders
 	string vertexShaderSource = "VertexShader.vert";

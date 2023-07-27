@@ -31,6 +31,8 @@ public:
 		return item;
 	}
 
+	bool mouseSobre(const glm::vec2& posMouse) const;
+
 	void render(ShaderProgram* shader, int VAO);
 
 	int id = 0; // id de l'slot
@@ -65,7 +67,7 @@ public:
 	// Obre i tanca  l'inventari
 	void obrir(); 
 
-	void render();
+	void render(const glm::vec2& mousePos);
 private:
 	bool creatiu = true; // Si true, comencem amb un inventari ple de blocs infinits
 	bool visible = true;
@@ -77,6 +79,7 @@ private:
 	void emplenarInventariGran();
 
 	Sprite* spriteSlot = NULL;
+	Sprite* caixeta = NULL;
 	int slotSeleccionat = 0;
 	glm::vec2 posInicial;
 	

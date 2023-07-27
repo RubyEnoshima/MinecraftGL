@@ -317,6 +317,7 @@ void SuperChunk::eliminarLlum(glm::vec3 pos, uint8_t llum) {
 
 void SuperChunk::afegirLlum(const glm::vec3 posLlum)
 {
+	if (DEBUG) return;
 	// Fem una cua de posicions i afegim la llum
 	cuaLlum.emplace(posLlum);
 
@@ -336,6 +337,8 @@ void SuperChunk::afegirLlum(const glm::vec3 posLlum)
 
 void SuperChunk::treureLlum(const glm::vec3 posLlum, uint8_t llumIni)
 {
+	if (DEBUG) return;
+
 	cuaLlumTreure.emplace(pair<glm::vec3, uint8_t>(posLlum,llumIni));
 	canviarLlumArtificialCub(posLlum.x, posLlum.y, posLlum.z, 0);
 

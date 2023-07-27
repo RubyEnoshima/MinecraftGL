@@ -5,6 +5,13 @@ Joc::~Joc() {
 	delete jugador;
 }
 
+glm::vec2 Joc::obtMousePos() const
+{
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	return glm::vec2(xpos,ypos);
+}
+
 void Joc::canviarModeMouse(int mode)
 {
 	glfwSetInputMode(window, GLFW_CURSOR, mode);
@@ -425,7 +432,7 @@ void Joc::loop() {
 		view = jugador->obtCamera()->lookAt();
 		renderer.colocarMat4("view", view);
 
-		jugador->inventari->render();
+		jugador->inventari->render(obtMousePos());
 		_HUD->render();
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra
@@ -476,6 +483,8 @@ void Joc::gameLoop() {
 		jugador->inventari->afegirItem("Espasa de fusta");
 		jugador->inventari->afegirItem("Pic de fusta");
 		jugador->inventari->afegirItem("Tulipa taronja");
+		jugador->inventari->afegirItem("Canya de sucre");
+		jugador->inventari->afegirItem("Llum");
 
 		// Posem el color taronja
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));

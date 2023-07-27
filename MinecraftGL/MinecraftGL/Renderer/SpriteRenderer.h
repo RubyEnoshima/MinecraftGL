@@ -22,6 +22,8 @@ public:
 	// Canvia el zIndex d'un sprite
 	void canviaIndex(string nom, int nouIndex);
 	
+	// Renderitza un sprite
+	void DrawSprite(Sprite* sprite);
 	float width, height;
 
 	ShaderProgram* shader;
@@ -29,8 +31,6 @@ private:
 	// Inicia els vertex que pot tenir un sprite (sempre seran un quadrat)
 	void initRenderData();
 
-	// Renderitza un sprite
-	void DrawSprite(Sprite* sprite);
 
 	
 

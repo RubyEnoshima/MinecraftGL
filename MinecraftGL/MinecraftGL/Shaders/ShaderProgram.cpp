@@ -135,3 +135,9 @@ void ShaderProgram::colocarInt(const string uniform, int i)
 	glUniform1i(obtenirUniform(uniform.c_str()),i);
 }
 
+void ShaderProgram::colocarFloat(const string uniform, float i)
+{
+	glUniform1f(obtenirUniform(uniform.c_str()), i);
+
+}
+

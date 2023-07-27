@@ -19,6 +19,24 @@
         "nom": "Terra",
         "id": 3
     },
+    "fusta": {
+        "nom": "Fusta",
+        "id": 5
+    },
+    "maons": {
+        "nom": "Maons",
+        "id": 8
+    },
+    "roca": {
+        "nom": "Roca",
+        "id": 16
+    },
+    "teranyina": {
+        "nom": "Teranyina",
+        "id": 12,
+        "vegetacio": true,
+        "transparent": true
+    },
     "rosa": {
         "nom": "Rosa",
         "id": 13,
@@ -63,15 +81,51 @@
         "adalt": 21,
         "sota": 21
     },
+    "llibreria": {
+        "nom": "llibreria",
+        "id": 35,
+        "adalt": 5,
+        "sota": 5
+    },
+    "roca_musgo": {
+        "nom": "Roca mollosa",
+        "id": 36
+    },
+    "obsidiana": {
+        "nom": "Obsidiana",
+        "id": 37
+    },
+    "arbust": {
+        "nom": "Arbust",
+        "id": 39,
+        "vegetacio": true,
+        "transparent": true
+    },
     "cristal": {
         "nom": "Cristal",
         "id": 49,
         "transparent": true
     },
+    "taula": {
+        "nom": "Taula de crafteig",
+        "id": 43,
+        "costats": 59,
+        "sota": 5
+    },
+    "forn": {
+        "nom": "Forn",
+        "id": 44,
+        "costats": 45,
+        "sota": 62
+    },
     "fulles": {
         "nom": "Fulles",
         "id": 132,
         "transparent": true
+    },
+    "llana": {
+        "nom": "Llana",
+        "id": 64
     },
     "neu": {
         "nom": "Neu",
@@ -79,11 +133,94 @@
         "costats": 68,
         "sota": 3
     },
+    "gel": {
+        "nom": "Gel",
+        "id": 67,
+        "transparent": true,
+        "semitransparent": true
+    },
+    "cactus": {
+        "nom": "Cactus",
+        "id": 69,
+        "costats": 70,
+        "sota": 71,
+        "transparent": true,
+        "semitransparent": true
+    },
+    "sucre": {
+        "nom": "Canya de sucre",
+        "id": 73,
+        "vegetacio": true,
+        "transparent": true
+    },
+    "tronc_fosc": {
+        "nom": "Tronc fosc",
+        "id": 116,
+        "sota": 21,
+        "adalt": 21
+    },
+    "carbassa": {
+        "nom": "Carbassa",
+        "id": 102,
+        "costats": 118,
+        "sota": 118
+    },
+    "llana_vermella": {
+        "nom": "Llana vermella",
+        "id": 129
+    },
+    "llana_rosa": {
+        "nom": "Llana rosa",
+        "id": 130
+    },
+    "sindria": {
+        "nom": "Sindria",
+        "id": 137,
+        "costats": 136
+    },
+    "llana_verda": {
+        "nom": "Llana verda",
+        "id": 145
+    },
+    "llana_groga": {
+        "nom": "Llana groga",
+        "id": 162
+    },
+    "llana_blava": {
+        "nom": "Llana blava",
+        "id": 177
+    },
+    "llana_taronja": {
+        "nom": "Llana taronja",
+        "id": 210
+    },
+    "tronc_clar": {
+        "nom": "Tronc blanc",
+        "id": 170,
+        "costats": 117,
+        "sota": 170
+    },
+    "fusta_fosca": {
+        "nom": "Fusta fosca",
+        "id": 198
+    },
+    "fusta_clara": {
+        "nom": "Fusta clara",
+        "id": 214
+    },
+    "llum": {
+        "nom": "Llum",
+        "id": 212
+    },
     "aigua": {
         "nom": "Aigua",
         "id": 205,
         "transparent": true,
         "semitransparent": true,
         "solid": false
+    },
+    "maons_fosc": {
+        "nom": "Maons foscos",
+        "id": 224
     }
 }
