@@ -30,7 +30,8 @@ public:
     // pre-compiles a list of characters from the given font
     void Load(std::string font, unsigned int fontSize);
     // renders a string of text using the precompiled list of characters
-    void RenderText(std::string text, float x, float y, float scale, bool fons = false, glm::vec3 color = glm::vec3(1.0f));
+    void RenderText(std::string text, float x, float y, float scale, bool fons = false, glm::vec3 color = glm::vec3(1.0f), bool ombra = false);
+    void RenderText(std::string text, glm::vec2 pos, float scale, bool fons = false, glm::vec3 color = glm::vec3(1.0f), bool ombra = false);
 private:
     // render state
     unsigned int VAO, VBO;

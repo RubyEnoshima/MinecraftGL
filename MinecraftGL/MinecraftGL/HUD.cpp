@@ -6,9 +6,9 @@ HUD::HUD(Renderer* _renderer, Inventari* _inventari)
 	ShaderProgram* shader = new ShaderProgram("VertexSprite.vert", "FragmentSprite.frag");
 	renderer = new SpriteRenderer(shader,_renderer);
 	iniciaSprites();
-	_inventari->iniciaSprites(renderer);
 	textRenderer = new TextRenderer(Recursos::width,Recursos::height);
-	textRenderer->Load("Fonts/Minecraft.otf", 72);
+	textRenderer->Load("Fonts/Minecraft.otf", 72*2);
+	_inventari->iniciaSprites(renderer,textRenderer);
 }
 
 HUD::~HUD()
@@ -47,5 +47,5 @@ void HUD::iniciaSprites()
 
 void HUD::renderDebug()
 {
-	textRenderer->RenderText("MinecraftGL per Ruben Lopez", 5, 5, 0.25, true);
+	textRenderer->RenderText("MinecraftGL - Ruben Lopez", 5, 5, 0.25, true, {1,1,1}, true);
 }

@@ -47,8 +47,8 @@ void main()
 	}
 
 	if(sotaAigua){
-		distanciaFog = 0.6;
-		fogcolor = vec4(0.25,0.45,1.0,1);
+		distanciaFog = 0.35;
+		fogcolor = vec4(0.25,0.3,1.0,1);
 	}
 
 	// Textura
@@ -97,5 +97,5 @@ void main()
 	color = mix(fogcolor, color, fog);
 	color.a = alfa;
 	// Si som a l'aigua, fem que els blocs tinguin un color blau
-	if(sotaAigua) color *= vec4(0.25,0.45,1.0,1);
+	if(sotaAigua) color *= vec4(0.25,0.3,0.375,1);
 }

@@ -11,7 +11,7 @@ Inventari::Inventari()
 	for (int i = 0; i < MAX_FILES; i++) {
 		inventariGran.push_back(vector<Slot*>());
 		for (int j = 0; j < MAX_ITEMS; j++) {
-			inventariGran[i].push_back(new Slot(mapaItems, (10 * i + 1 + i * j + j)+9));
+			inventariGran[i].push_back(new Slot(mapaItems, j + 10 * i + 10));
 		}
 	}
 	initRenderData();
@@ -36,8 +36,10 @@ Inventari::~Inventari()
 	//delete mapaItems;
 }
 
-void Inventari::iniciaSprites(SpriteRenderer* renderer)
+void Inventari::iniciaSprites(SpriteRenderer* _renderer, TextRenderer* _text)
 {
+	text = _text;
+	renderer = _renderer;
 	Sprite* spriteInventari = new Sprite(Recursos::obtTextura("inventari.png"), "Inventari", glm::vec2(), glm::vec2(7), true);
 	spriteInventari->teletransportar(glm::vec2(renderer->width / 2, renderer->height - spriteInventari->obtTamany().y * 1.7));
 	renderer->afegirSprite(spriteInventari);
@@ -48,22 +50,45 @@ void Inventari::iniciaSprites(SpriteRenderer* renderer)
 	spriteSlot->indexZ = 3;
 	renderer->afegirSprite(spriteSlot);
 
+	Sprite* fons = new Sprite(Recursos::obtTextura("seleccio.png"), "Fons", glm::vec2(), glm::vec2(renderer->width, renderer->height));
+	fons->color = { 0.1,0.1,0.1,0.5 };
+	fons->posicioMapa = { 2, 0 };
+	fons->tamanyMapa = { 1,1 };
+	fons->indexZ = -1;
+	fons->visible = false;
+	renderer->afegirSprite(fons);
+
+	Sprite* spriteCreatiu = new Sprite(Recursos::obtTextura("creatiu.png"), "Creatiu", glm::vec2(renderer->width / 2, renderer->height / 2), glm::vec2(7), true);
+	spriteCreatiu->indexZ = 1;
+	spriteCreatiu->visible = false;
+	renderer->afegirSprite(spriteCreatiu);
+
+
 	for (auto slot : inventari)
 	{
 		slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70 * 4 + 70 * slot->id, renderer->height - 32 - 5));
 		renderer->afegirSprite(slot->sprite);
 	}
+	int i = 1;
 	for (auto vector : inventariGran)
 	{
+		int j = 1;
 		for (auto slot : vector)
 		{
+			float q = (slot->id - 10 * i);
+			slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70.75 * 4 + 63 * (slot->id - 10 * i), renderer->height/2 - 20 - 191 + 64 * i));
 			renderer->afegirSprite(slot->sprite);
+			j++;
 		}
+		i++;
 	}
+
+	if(creatiu) emplenarInventariGran();
 }
 
 void Inventari::canviaSeleccionat(const uint8_t seleccio)
 {
+	if (dintre) return;
 	if (seleccio >= 0 && seleccio < MAX_ITEMS) {
 		slotSeleccionat = seleccio;
 		glm::vec2 novaPos = posInicial + glm::vec2(seleccio * 70, 0);
@@ -73,6 +98,8 @@ void Inventari::canviaSeleccionat(const uint8_t seleccio)
 
 void Inventari::canviaSelecccionatPer1(int seleccio)
 {
+	if (dintre) return;
+
 	slotSeleccionat += seleccio;
 	if (slotSeleccionat < 0) slotSeleccionat = MAX_ITEMS - 1;
 	else if (slotSeleccionat >= MAX_ITEMS) slotSeleccionat = 0;
@@ -81,7 +108,7 @@ void Inventari::canviaSelecccionatPer1(int seleccio)
 
 Item* Inventari::obtenirItemActual() const
 {
-	return Recursos::getItem(inventari[slotSeleccionat]->item);
+	return Recursos::getItem(inventari[slotSeleccionat]->obtItem());
 }
 
 void Inventari::afegirItem(int id, uint8_t _quantitat)
@@ -91,14 +118,13 @@ void Inventari::afegirItem(int id, uint8_t _quantitat)
 	int i = 0;
 	while (i < MAX_ITEMS) {
 		Slot* actual = inventari[i];
-		if (actual->item == id) {
+		if (actual->obtItem() == id) {
 			actual->quantitat += _quantitat;
 			break;
 		}
-		else if (actual->item == -1) {
-			actual->item = id;
+		else if (actual->obtItem() == -1) {
+			actual->setItem(id);
 			actual->quantitat = _quantitat;
-			actual->actualitzaSprite();
 			break;
 		}
 		i++;
@@ -110,7 +136,7 @@ void Inventari::afegirItem(string nom, uint8_t _quantitat)
 {
 	Item* i = Recursos::getItem(nom);
 	if (i == NULL) return;
-	afegirItem(i->id,quantitat);
+	afegirItem(i->id,_quantitat);
 }
 
 void Inventari::alternaVisibilitat()
@@ -118,32 +144,51 @@ void Inventari::alternaVisibilitat()
 	visible = !visible;
 }
 
+void Inventari::obrir()
+{
+	dintre = !dintre;
+	renderer->obtSprite("Seleccio")->visible = !dintre;
+	renderer->obtSprite("Inventari")->visible = !dintre;
+	renderer->obtSprite("Fons")->visible = dintre;
+	renderer->obtSprite("Creatiu")->visible = dintre;
+	for (auto slot : inventari)
+	{
+		if (slot->obtItem() == -1) continue;
+		if(dintre) slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70.75 * 4 + 63 * (slot->id), renderer->height / 2 - 20 - 191 + 64 * 6.125));
+		else slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70 * 4 + 70 * slot->id, renderer->height - 32 - 5));
+	}
+	for (auto fila : inventariGran) {
+		for (auto slot : fila) {
+			int item = slot->obtItem();
+			if (item == -1) continue;
+			slot->visible = dintre;
+			if (Recursos::getItem(item)->classe == BLOC && Recursos::getBloc(item)->vegetacio) slot->sprite->visible = dintre;
+		}
+	}
+}
+
 void Inventari::render()
 {
 	if (!visible) return;
 	for (auto slot : inventari)
 	{
-		if (!slot->visible) continue;
-		Item* i = Recursos::getItem(slot->item);
-		if (i->classe == BLOC) {
-			Bloc* b = Recursos::getBloc(i->bloc_id);
-			shader->usar();
-			glm::mat4 model = slot->sprite->model;
-			//model = glm::scale(model, glm::vec3(.75));
-			shader->colocarMat4("model", model);
+		if (!slot->visible || slot->obtItem() == -1) continue;
 
-			mapaBlocs->use();
-			
-			shader->colocarVec2("posicioSprite", glm::vec2(16 * (b->costats % 16), 16 * (int)(b->costats / 16)));
-			shader->colocarVec2("tamanyTextura", slot->sprite->textura->obtTamany());
+		// Renderitzem la quantitat d'objectes a l'slot
+		if(slot->quantitat > 1) text->RenderText(to_string(slot->quantitat), slot->sprite->obtPos() + glm::vec2(10, 6), 0.16,false,glm::vec3(1),true);
 
-			glBindVertexArray(VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 12);
-			shader->colocarVec4("spriteColor", slot->sprite->color);
-			shader->colocarVec2("posicioSprite", glm::vec2(16 * (b->adalt % 16), 16 * (int)(b->adalt / 16)));
-			glDrawArrays(GL_TRIANGLES, 12, 6);
-			shader->colocarVec4("spriteColor", glm::vec4(1));
-			glBindVertexArray(0);
+		mapaBlocs->use();
+		slot->render(shader,VAO);
+	}
+	if (dintre) {
+		text->RenderText("Inventari creatiu", {renderer->width/2 - 310,renderer->height/2 - 215},0.175,false,glm::vec3(1), true);
+		mapaBlocs->use();
+
+		for (auto fila : inventariGran) {
+			for (auto slot : fila) {
+				if (slot->obtItem() == -1) continue;
+				slot->render(shader,VAO);
+			}
 		}
 	}
 }
@@ -196,6 +241,20 @@ void Inventari::initRenderData()
 	glBindVertexArray(0);
 }
 
+void Inventari::emplenarInventariGran()
+{
+	int quants = 0;
+	for (int i = 0; i < MAX_BLOCS; i++) {
+		if (quants >= MAX_ITEMS * MAX_FILES) return;
+		Item* item = Recursos::getItem(i);
+		if (item) {
+			inventariGran[quants / MAX_ITEMS][quants % MAX_ITEMS]->setItem(item->id);
+			quants++;
+		}
+		
+	}
+}
+
 void Slot::actualitzaSprite()
 {
 	if (item == -1) {
@@ -206,16 +265,53 @@ void Slot::actualitzaSprite()
 	visible = true;
 	Item* i = Recursos::getItem(item);
 	if (i->classe == BLOC) {
-		if (Recursos::getBloc(i->bloc_id)->id == GESPA) {
-			glm::vec3* color = Recursos::obtColor(Recursos::VERDGESPA);
-			sprite->color = glm::vec4(color->r/255,color->g/255,color->b/255, 1.0f);
+		Bloc* b = Recursos::getBloc(item);
+		if (b->vegetacio) {
+			sprite->color = glm::vec4(1.0f);
+			sprite->textura = Recursos::obtTextura("minecraft_transp.png");
+			sprite->posicioMapa = glm::vec2(b->id * 16, (b->id/16 * 16));
 		}
-		else sprite->color = glm::vec4(1.0f);
+		else {
+			if (i->id == GESPA) {
+				glm::vec3* color = Recursos::obtColor(Recursos::VERDGESPA);
+				sprite->color = glm::vec4(color->r/255,color->g/255,color->b/255, 1.0f);
+			}
+			else sprite->color = glm::vec4(1.0f);
+
+		}
 		sprite->visible = false;
 		return;
 	}
-	else sprite->color = glm::vec4(1.0f);
+	sprite->textura = Recursos::obtTextura("items.png");
+	sprite->color = glm::vec4(1.0f);
 	uint8_t posSprite = i->sprite;
 	sprite->posicioMapa = glm::vec2((posSprite % 16) * 16, (int)(posSprite / 16) * 16);
 	sprite->visible = true;
+}
+
+void Slot::render(ShaderProgram* shader, int VAO)
+{
+	Item* i = Recursos::getItem(item);
+	if (i->classe != BLOC) return; // Només renderitzem blocs, els sprites ja s'encarrega l'SpriteRenderer
+	Bloc* b = Recursos::getBloc(i->id);
+	if (b->vegetacio) {
+		sprite->visible = true;
+		return;
+	}
+	shader->usar();
+	glm::mat4 model = sprite->model;
+	//model = glm::scale(model, glm::vec3(.75));
+	shader->colocarMat4("model", model);
+
+
+	shader->colocarVec2("posicioSprite", glm::vec2(16 * (b->costats % 16), 16 * (int)(b->costats / 16)));
+	shader->colocarVec2("tamanyTextura", sprite->textura->obtTamany());
+
+	glBindVertexArray(VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 12);
+	shader->colocarVec4("spriteColor", sprite->color);
+	shader->colocarVec2("posicioSprite", glm::vec2(16 * (b->adalt % 16), 16 * (int)(b->adalt / 16)));
+	glDrawArrays(GL_TRIANGLES, 12, 6);
+	shader->colocarVec4("spriteColor", glm::vec4(1));
+	glBindVertexArray(0);
 }

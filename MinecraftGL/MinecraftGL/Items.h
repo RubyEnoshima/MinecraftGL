@@ -9,7 +9,7 @@
 using json = nlohmann::json;
 using namespace std;
 
-#define MAX_ITEMS 256
+#define MAX_ITEMS 512
 
 enum TIPUS_ITEM {
 	BLOC=0,
@@ -23,7 +23,6 @@ struct Item
 	int classe = BLOC;
 	string nom = "";
 	uint8_t sprite = 0; // Al mapa d'items, quin lloc ocupa
-	uint8_t bloc_id = -1;
 };
 
 class Items
@@ -32,7 +31,7 @@ public:
 	Items();
 	~Items();
 	Item* getItem(int id) const {
-		if (id == -1) return NULL;
+		if (id == -1 || dades.at(id)->id == -1) return NULL;
 		return dades.at(id);
 	}
 	Item* getItem(string nom) const {

@@ -7,7 +7,7 @@ Recursos::VecColors Recursos::COLORS = {
 	glm::vec3(63, 118, 228) // Aigua
 };
 
-Recursos::NomTextures Recursos::texturesPrecarrega = { "icon.png","icons.png","items.png","inventari.png","minecraft_transp.png","nuvols.png","seleccio.png" };
+Recursos::NomTextures Recursos::texturesPrecarrega = { "icon.png","icons.png","items.png","inventari.png","minecraft_transp.png","nuvols.png","seleccio.png","creatiu.png", "caixeta.png"};
 
 int Recursos::width = 0;
 int Recursos::height = 0;

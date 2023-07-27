@@ -96,8 +96,9 @@ void TextRenderer::Load(std::string font, unsigned int fontSize)
     FT_Done_FreeType(ft);
 }
 
-void TextRenderer::RenderText(std::string text, float x, float y, float scale, bool fons, glm::vec3 color)
+void TextRenderer::RenderText(std::string text, float x, float y, float scale, bool fons, glm::vec3 color, bool ombra)
 {
+    float xOriginal = x;
     // activate corresponding render state	
     shader->usar();
     shader->colocarMat4("projection", glm::ortho(0.0f, static_cast<float>(Recursos::width), static_cast<float>(Recursos::height), 0.0f));
@@ -173,6 +174,16 @@ void TextRenderer::RenderText(std::string text, float x, float y, float scale, b
 
     }
 
+    if (ombra) {
+        float offsetOmbra = 3;
+        RenderText(text, xOriginal + offsetOmbra, y + offsetOmbra, scale, false, { color.x * 0.25, color.y * 0.25, color.z * 0.25 }, false);
+    }
+
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void TextRenderer::RenderText(std::string text, glm::vec2 pos, float scale, bool fons, glm::vec3 color, bool ombra)
+{
+    RenderText(text, pos.x, pos.y, scale, fons, color, ombra);
 }

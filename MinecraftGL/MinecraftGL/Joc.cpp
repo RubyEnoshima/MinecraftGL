@@ -157,10 +157,11 @@ void Joc::Inventari()
 	int mode = GLFW_CURSOR_DISABLED;
 	if (modeInventari) {
 		mode = GLFW_CURSOR_NORMAL;
-		glfwSetCursorPos(window, Recursos::width/2, Recursos::height/2);
+		jugador->parar();
 	}
 	canviarModeMouse(mode);
-
+	glfwSetCursorPos(window, Recursos::width/2, Recursos::height/2);
+	jugador->inventari->obrir();
 }
 
 void Joc::moure()
@@ -290,7 +291,8 @@ void Joc::PosarCub(uint8_t tipus) {
 	glm::vec3 posNova = glm::vec3(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z);
 	if (jugador->obtPosBloc() == posNova) return;
 	// Canviem el cub
-	mon->canviarCub(posNova.x, posNova.y, posNova.z, tipus, false, true);
+	bool subst = mon->obtenirCub(posNova.x, posNova.y, posNova.z) == AIGUA;
+	mon->canviarCub(posNova.x, posNova.y, posNova.z, tipus, subst, true);
 
 }
 
@@ -300,7 +302,7 @@ void Joc::Usar()
 	if (item == NULL) return;
 
 	if (item->classe == BLOC) {
-		PosarCub(Recursos::getBloc(item->bloc_id)->id);
+		PosarCub(item->id);
 	}
 	else {
 		cout << "Encara no esta fet..." << endl;
@@ -399,7 +401,6 @@ void Joc::loop() {
 
 		bool sotaAigua = jugador->sotaAigua(mon->obtenirColindants(jugador->obtPosBloc(false), 1, true));
 		mon->render(&(jugador->obtCamera()->frustum), sotaAigua);
-		renderer.activaAigua(sotaAigua);
 
 		//renderer.canviarPosLlum(pos);
 
@@ -414,6 +415,9 @@ void Joc::loop() {
 				mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
 
 		}
+
+		renderer.activaAigua(sotaAigua);
+
 		/*renderer.activaBounding(1);
 		jugador->render();
 		renderer.activaBounding(0);*/
@@ -464,11 +468,14 @@ void Joc::gameLoop() {
 		jugador = new Jugador(new Camera(), renderer.obtShader());
 		_HUD = new HUD(&renderer,jugador->inventari);
 		jugador->inventari->afegirItem("Gespa");
+		jugador->inventari->afegirItem("Gespa");
+		jugador->inventari->afegirItem("Gespa");
 		jugador->inventari->afegirItem("Patata");
 		jugador->inventari->afegirItem("Terra");
 		jugador->inventari->afegirItem("Cristal");
 		jugador->inventari->afegirItem("Espasa de fusta");
 		jugador->inventari->afegirItem("Pic de fusta");
+		jugador->inventari->afegirItem("Tulipa taronja");
 
 		// Posem el color taronja
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));

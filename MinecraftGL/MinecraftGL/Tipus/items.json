@@ -1,42 +1,69 @@
 {
     "gespa": {
-        "id": 0,
-        "classe": 0,
-        "bloc_id": 1,
-        "nom": "Gespa"
-    },
-    "terra": {
         "id": 1,
         "classe": 0,
-        "bloc_id": 3,
-        "nom": "Terra"
+        "nom": "Gespa"
     },
-    "cristal": {
+    "pedra": {
         "id": 2,
         "classe": 0,
-        "bloc_id": 49,
-        "nom": "Cristal"
+        "nom": "Pedra"
     },
-    "aigua": {
+    "terra": {
         "id": 3,
         "classe": 0,
-        "bloc_id": 205,
-        "nom": "Aigua"
+        "nom": "Terra"
+    },
+    "rosa": {
+        "id": 13,
+        "classe": 0,
+        "nom": "Rosa"
+    },
+    "dent_de_lleo": {
+        "id": 14,
+        "classe": 0,
+        "nom": "Dent de lleo"
+    },
+    "bedrock": {
+        "id": 17,
+        "classe": 0,
+        "nom": "Roca mare"
+    },
+    "sorra": {
+        "id": 18,
+        "classe": 0,
+        "nom": "Sorra"
+    },
+    "tronc": {
+        "id": 20,
+        "classe": 0,
+        "nom": "Tronc"
+    },
+    "cristal": {
+        "id": 49,
+        "classe": 0,
+        "nom": "Cristal"
     },
     "neu": {
-        "id": 4,
+        "id": 66,
         "classe": 0,
-        "bloc_id": 66,
         "nom": "Neu"
     },
+    "tulipa_taronja": {
+        "id": 169,
+        "classe": 0,
+        "nom": "Tulipa taronja"
+    },
+    
+    
     "patata":{
-        "id": 119,
+        "id": 256,
         "classe": 2,
         "nom": "Patata",
         "sprite": 119
     },
     "destral_fusta":{
-        "id": 112,
+        "id": 257,
         "classe": 1,
         "nom": "Destral de fusta",
         "sprite": 112,
@@ -44,7 +71,7 @@
         "durabilitat": 50
     },
     "espasa_fusta":{
-        "id": 64,
+        "id": 258,
         "classe": 1,
         "nom": "Espasa de fusta",
         "sprite": 64,
@@ -52,7 +79,7 @@
         "durabilitat": 50
     },
     "pic_de_fusta":{
-        "id": 96,
+        "id": 259,
         "classe": 1,
         "nom": "Pic de fusta",
         "sprite": 96,

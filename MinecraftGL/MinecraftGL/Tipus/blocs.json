@@ -31,13 +31,13 @@
         "vegetacio": true,
         "transparent": true
     },
-    "sorra": {
-        "nom": "Sorra",
-        "id": 18
-    },
     "bedrock": {
         "nom": "Roca mare",
         "id": 17
+    },
+    "sorra": {
+        "nom": "Sorra",
+        "id": 18
     },
     "tulipa_taronja": {
         "nom": "Tulipà taronja",
@@ -57,8 +57,8 @@
         "vegetacio": true,
         "transparent": true
     },
-    "fusta": {
-        "nom": "Fusta",
+    "tronc": {
+        "nom": "Tronc",
         "id": 20,
         "adalt": 21,
         "sota": 21
