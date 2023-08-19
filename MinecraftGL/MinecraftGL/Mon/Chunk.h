@@ -31,6 +31,7 @@ using namespace std;
 struct Soroll {
 	FastNoiseLite* noise;
 	vector<glm::vec2> punts;
+	float importancia = 1;
 };
 
 struct Cub {

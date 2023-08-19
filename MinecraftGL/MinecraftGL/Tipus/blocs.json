@@ -35,18 +35,21 @@
         "nom": "Teranyina",
         "id": 12,
         "vegetacio": true,
+        "solid": false,
         "transparent": true
     },
     "rosa": {
         "nom": "Rosa",
         "id": 13,
         "vegetacio": true,
+        "solid": false,
         "transparent": true
     },
     "dent_de_lleo": {
         "nom": "Dent de lleó",
         "id": 14,
         "vegetacio": true,
+        "solid": false,
         "transparent": true
     },
     "bedrock": {
@@ -61,18 +64,21 @@
         "nom": "Tulipà taronja",
         "id": 169,
         "vegetacio": true,
+        "solid": false,
         "transparent": true
     },
     "esclatasang": {
         "nom": "Esclatasang",
         "id": 28,
         "vegetacio": true,
+        "solid": false,
         "transparent": true
     },
     "xampinyo": {
         "nom": "Xampinyó",
         "id": 29,
         "vegetacio": true,
+        "solid": false,
         "transparent": true
     },
     "tronc": {
@@ -99,6 +105,7 @@
         "nom": "Arbust",
         "id": 39,
         "vegetacio": true,
+        "solid": false,
         "transparent": true
     },
     "cristal": {
@@ -151,6 +158,7 @@
         "nom": "Canya de sucre",
         "id": 73,
         "vegetacio": true,
+        "solid": false,
         "transparent": true
     },
     "tronc_fosc": {

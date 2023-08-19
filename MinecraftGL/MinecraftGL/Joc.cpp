@@ -53,10 +53,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_W: case GLFW_KEY_A: case GLFW_KEY_S: case GLFW_KEY_D: case GLFW_KEY_SPACE: case GLFW_KEY_LEFT_SHIFT:
 				joc->tecles[key] = true;
 				break;
-			// ESC: es tanca la finestra i tanca el joc
+			// ESC: es tanca la finestra i tanca el joc si no es a dins d'un inventari
 			case GLFW_KEY_ESCAPE:
-				Recursos::jocAcabat = true;
-				glfwSetWindowShouldClose(window, true);
+				if (joc->modeInventari) {
+					joc->Inventari();
+				}
+				else {
+					Recursos::jocAcabat = true;
+					glfwSetWindowShouldClose(window, true);
+
+				}
 				break;
 			// C: canvia mode espectador <-> creatiu
 			case GLFW_KEY_C:
@@ -321,7 +327,8 @@ void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
 	if (click == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
-		if(!joc->modeInventari) joc->DestruirCub();
+		if (!joc->modeInventari) joc->DestruirCub();
+		else joc->jugador->inventari->agafarItem();
 	}
 
 	else if (click == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
@@ -433,7 +440,7 @@ void Joc::loop() {
 		renderer.colocarMat4("view", view);
 
 		jugador->inventari->render(obtMousePos());
-		_HUD->render();
+		_HUD->render(jugador->obtPosBloc(), CubActual);
 
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra
 
@@ -477,14 +484,14 @@ void Joc::gameLoop() {
 		jugador->inventari->afegirItem("Gespa");
 		jugador->inventari->afegirItem("Gespa");
 		jugador->inventari->afegirItem("Gespa");
-		jugador->inventari->afegirItem("Patata");
 		jugador->inventari->afegirItem("Terra");
 		jugador->inventari->afegirItem("Cristal");
-		jugador->inventari->afegirItem("Espasa de fusta");
-		jugador->inventari->afegirItem("Pic de fusta");
 		jugador->inventari->afegirItem("Tulipa taronja");
-		jugador->inventari->afegirItem("Canya de sucre");
 		jugador->inventari->afegirItem("Llum");
+		jugador->inventari->afegirItem("Llana");
+		jugador->inventari->afegirItem("Llana taronja");
+		jugador->inventari->afegirItem("Llana blava");
+		jugador->inventari->afegirItem("Llana vermella");
 
 		// Posem el color taronja
 		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));

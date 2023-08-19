@@ -17,6 +17,7 @@
 #define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // true: La llum no es calcularà
+#define SEMILLA_RANDOM false // true: la llavor per generar el mapa serà escollida a l'atzar
 
 const struct CompararVec2 {
 	bool operator()(const glm::vec2& a, const glm::vec2& b) const {

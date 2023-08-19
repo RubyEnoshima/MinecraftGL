@@ -14,6 +14,7 @@ Inventari::Inventari()
 			inventariGran[i].push_back(new Slot(mapaItems, j + 10 * i + 10));
 		}
 	}
+	slotMouse = new Slot(mapaItems, -1);
 	initRenderData();
 }
 
@@ -33,7 +34,7 @@ Inventari::~Inventari()
 	glDeleteBuffers(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	delete shader;
-	//delete mapaItems;
+	delete slotMouse;
 }
 
 void Inventari::iniciaSprites(SpriteRenderer* _renderer, TextRenderer* _text)
@@ -88,7 +89,7 @@ void Inventari::iniciaSprites(SpriteRenderer* _renderer, TextRenderer* _text)
 		}
 		i++;
 	}
-
+	renderer->afegirSprite(slotMouse->sprite);
 	if(creatiu) emplenarInventariGran();
 }
 
@@ -172,6 +173,50 @@ void Inventari::obrir()
 			if (Recursos::getItem(item)->classe == BLOC && Recursos::getBloc(item)->vegetacio) slot->sprite->visible = dintre;
 		}
 	}
+	if (dintre) {
+	}
+	else if (!dintre) {
+		if (slotMouse->obtItem() != -1) {
+			ultim->setItem(slotMouse->obtItem());
+			ultim->quantitat = slotMouse->quantitat;
+			slotMouse->setItem(-1);
+			slotMouse->sprite->visible = false;
+			ultim = NULL;
+		}
+		sobre = NULL;
+	}
+}
+
+void Inventari::agafarItem()
+{
+	if (sobre) {
+		int i = sobre->obtItem();
+		if (slotMouse->obtItem() != -1) { // Deixar-lo 
+			if (i == slotMouse->obtItem()) {
+				slotMouse->setItem(-1);
+				sobre->quantitat += slotMouse->quantitat;
+				slotMouse->quantitat = 0;
+			}
+			else {
+				// Intercanviar amb l'slot
+				uint8_t aux = sobre->quantitat;
+				sobre->setItem(slotMouse->obtItem());
+				sobre->quantitat = slotMouse->quantitat;
+				slotMouse->setItem(i);
+				slotMouse->quantitat = aux;
+
+			}
+			if (i == -1) ultim = NULL;
+		}
+		else if (i != -1) { // Agafar l'item
+			slotMouse->setItem(i);
+			slotMouse->quantitat = sobre->quantitat;
+			sobre->setItem(-1);
+			sobre->quantitat = 0;
+			ultim = sobre;
+		}
+
+	}
 }
 
 void Inventari::render(const glm::vec2& mousePos)
@@ -189,40 +234,49 @@ void Inventari::render(const glm::vec2& mousePos)
 			mapaBlocs->use();
 			slot->render(shader,VAO);
 		}
-
 	}
 	else {
 		bool mouse = false;
-		Item* sobre = NULL;
 
 		for (auto slot : inventari)
 		{
-			if (!slot->visible || slot->obtItem() == -1) continue;
-
+			//if (!slot->visible || slot->obtItem() == -1) continue;
 			
 			if (!mouse && dintre && slot->mouseSobre(mousePos)) {
-				caixeta->visible = true;
-				caixeta->teletransportar(mousePos - glm::vec2(0, caixeta->tamanyMapa.y + 15));
+				if (slot->obtItem() != -1) {
+					caixeta->visible = true;
+					caixeta->teletransportar(mousePos - glm::vec2(0, caixeta->tamanyMapa.y + 15));
+
+				}
 				mouse = true;
-				sobre = Recursos::getItem(slot->obtItem());
+				sobre = slot;
 			}
 		}
 		for (auto fila : inventariGran) {
 			for (auto slot : fila) {
-				if (slot->obtItem() == -1) continue;
+				//if (slot == agafat) continue;
+				//if (slot->obtItem() == -1) continue;
 
 				if (!mouse && slot->mouseSobre(mousePos)) {
-					//cout << Recursos::getItem(slot->obtItem())->nom << endl;
-					caixeta->visible = true;
-					caixeta->teletransportar(mousePos - glm::vec2(0, caixeta->tamanyMapa.y + 15));
+					if (slot->obtItem() != -1) {
+						caixeta->visible = true;
+						caixeta->teletransportar(mousePos - glm::vec2(0, caixeta->tamanyMapa.y + 15));
+
+					}
 					mouse = true;
-					sobre = Recursos::getItem(slot->obtItem());
+					sobre = slot;
 				}
 			}
 		}
-
-		if (!mouse) caixeta->visible = false;
-		else renderer->DrawSprite(caixeta);
+		if (!mouse) sobre = NULL;
+		if (sobre == NULL || sobre && sobre->obtItem() == -1) {
+			caixeta->visible = false;
+		}
+		if(slotMouse->obtItem() == -1) renderer->DrawSprite(caixeta);
+		else{
+			slotMouse->sprite->teletransportar(mousePos);
+			slotMouse->render(shader, VAO);
+		}
 
 		for (auto slot : inventari)
 		{
@@ -245,7 +299,8 @@ void Inventari::render(const glm::vec2& mousePos)
 		
 
 		text->RenderText("Inventari creatiu", { renderer->width / 2 - 310,renderer->height / 2 - 215 }, 0.175, false, glm::vec3(1), true);
-		if(mouse) text->RenderText(sobre->nom, caixeta->obtPos() + glm::vec2(10,caixeta->tamanyMapa.y/2 - 1), 0.15, false, glm::vec3(1), true, 1);
+		if (sobre && sobre->obtItem() != -1 && slotMouse->obtItem() == -1) text->RenderText(Recursos::getItem(sobre->obtItem())->nom, caixeta->obtPos() + glm::vec2(10, caixeta->tamanyMapa.y / 2 - 1), 0.15, false, glm::vec3(1), true, 1);
+
 	}
 	
 	
@@ -307,6 +362,7 @@ void Inventari::emplenarInventariGran()
 		Item* item = Recursos::getItem(i);
 		if (item) {
 			inventariGran[quants / MAX_ITEMS][quants % MAX_ITEMS]->setItem(item->id);
+			inventariGran[quants / MAX_ITEMS][quants % MAX_ITEMS]->quantitat = 1;
 			quants++;
 		}
 		

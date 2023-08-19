@@ -26,13 +26,14 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	Soroll continentalness;
 	continentalness.noise = new FastNoiseLite(semilla);
 	continentalness.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	continentalness.noise->SetFrequency(0.02);
+	continentalness.noise->SetFrequency(0.0075);
 	continentalness.noise->SetFractalType(FastNoiseLite::FractalType_FBm);
 	continentalness.noise->SetFractalLacunarity(2);
 	continentalness.noise->SetFractalGain(0.3);
 	continentalness.noise->SetFractalOctaves(7);
+	continentalness.importancia = 0.75;
 	//continentalness.punts = { glm::vec2(-1,5), glm::vec2(-0.25,5), glm::vec2(-0.15,50), glm::vec2(0.1,50), glm::vec2(0.12,90), glm::vec2(0.13,90), glm::vec2(0.15,100), glm::vec2(0.5,120), glm::vec2(1,125) };
-	continentalness.punts = { glm::vec2(-1,5), glm::vec2(0,60), glm::vec2(0.5,80), glm::vec2(0.7,100), glm::vec2(1,120) };
+	continentalness.punts = { glm::vec2(-1,0), glm::vec2(0,70), glm::vec2(0.5,95), glm::vec2(0.7,105), glm::vec2(1,110) };
 
 	noises.push_back(continentalness);
 
@@ -44,21 +45,22 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	erosion.noise->SetFractalLacunarity(0.05);
 	erosion.noise->SetFractalGain(0.8);
 	erosion.noise->SetFractalOctaves(3);
-	//erosion.punts = { glm::vec2(-1,100), glm::vec2(-0.75,100), glm::vec2(-0.25,60), glm::vec2(-0.2,70), glm::vec2(0,45), glm::vec2(0.25,30), glm::vec2(0.45,30), glm::vec2(0.5,25), glm::vec2(0.7,25), glm::vec2(0.75,10), glm::vec2(1,5) };
-	erosion.punts = { glm::vec2(-1,5), glm::vec2(0,75), glm::vec2(0.75,80), glm::vec2(1,120) };
+	erosion.importancia = 0.5;
+	erosion.punts = { glm::vec2(-1,0), glm::vec2(0,15), glm::vec2(0.75,20), glm::vec2(1,20) };
 	noises.push_back(erosion);
 
-	Soroll pv;
-	pv.noise = new FastNoiseLite(semilla);
-	pv.noise->SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
-	pv.noise->SetFrequency(0.05);
-	pv.noise->SetFractalType(FastNoiseLite::FractalType_Ridged);
-	pv.noise->SetFractalLacunarity(1);
-	pv.noise->SetFractalGain(0.2);
-	pv.noise->SetFractalOctaves(2);
-	//pv.punts = { glm::vec2(-1,5), glm::vec2(-0.75,20), glm::vec2(-0.25,30), glm::vec2(0,35), glm::vec2(0.5,100), glm::vec2(1,100) };
-	pv.punts = { glm::vec2(-1,70), glm::vec2(-0.75,70), glm::vec2(0.5,50), glm::vec2(1,40) };
-	noises.push_back(pv);
+	//Soroll pv;
+	//pv.noise = new FastNoiseLite(semilla);
+	//pv.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	//pv.noise->SetFrequency(0.05);
+	//pv.noise->SetFractalType(FastNoiseLite::FractalType_Ridged);
+	//pv.noise->SetFractalLacunarity(1);
+	//pv.noise->SetFractalGain(0.2);
+	//pv.noise->SetFractalOctaves(2);
+	//pv.importancia = 0.1;
+	////pv.punts = { glm::vec2(-1,5), glm::vec2(-0.75,20), glm::vec2(-0.25,30), glm::vec2(0,35), glm::vec2(0.5,100), glm::vec2(1,100) };
+	//pv.punts = { glm::vec2(-1,0), glm::vec2(-0.75,50), glm::vec2(0.5,40), glm::vec2(1,20) };
+	//noises.push_back(pv);
 	
 	renderer = _renderer;
 	glGenVertexArrays(1, &VAO);
@@ -680,8 +682,8 @@ vector<pair<glm::vec3, uint8_t>> SuperChunk::obtenirColindants(const glm::vec3& 
 		if (transparents == 0) res.push_back({ act, tipus});
 		else {
 			Bloc* b = Recursos::getBloc(tipus);
-			bool esTransparent = !b->solid;
-			if(transparents == 1 && esTransparent || transparents == 2 && !esTransparent) res.push_back({act,tipus});
+			bool esSolid = b->solid;
+			if ((transparents == 1 && !esSolid) || (transparents == 2 && esSolid)) res.push_back({ act,tipus });
 		}
 	}
 	return res;

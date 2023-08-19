@@ -17,11 +17,11 @@ HUD::~HUD()
 	delete textRenderer;
 }
 
-void HUD::render()
+void HUD::render(const glm::vec3&posJug, const glm::vec3&posMira)
 {
 	if (visible) {
 		renderer->render();
-		if (debug) renderDebug();
+		if (debug) renderDebug(posJug,posMira);
 	}
 }
 
@@ -45,7 +45,9 @@ void HUD::iniciaSprites()
 	renderer->afegirSprite(crosshair);
 }
 
-void HUD::renderDebug()
+void HUD::renderDebug(const glm::vec3& posJug, const glm::vec3& posMira)
 {
-	textRenderer->RenderText("MinecraftGL - Ruben Lopez", 5, 5, 0.25, true, {1,1,1}, true);
+	textRenderer->RenderText("MinecraftGL - Ruben Lopez", 5, 5, 0.2, true, { 1,1,1 }, true);
+	textRenderer->RenderText("Jugador - X: " + to_string((int)posJug.x) + ", Y: " + to_string((int)posJug.y) + ", Z: " + to_string((int)posJug.z), 5, 35, 0.2, true, { 1,1,1 }, true);
+	textRenderer->RenderText("Cub mira - X: "+to_string((int)posMira.x)+", Y: "+ to_string((int)posMira.y) +", Z: " + to_string((int)posMira.z), 5, 65, 0.2, true, {1,1,1}, true);
 }

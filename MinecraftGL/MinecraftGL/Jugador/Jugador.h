@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include "Inventari.h"
 
-#define GRAVETAT 10
+#define GRAVETAT 20
 #define SALT 7
 
 enum MODE_JOC {

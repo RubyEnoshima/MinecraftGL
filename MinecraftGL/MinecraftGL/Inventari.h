@@ -66,6 +66,7 @@ public:
 
 	// Obre i tanca  l'inventari
 	void obrir(); 
+	void agafarItem();
 
 	void render(const glm::vec2& mousePos);
 private:
@@ -80,6 +81,11 @@ private:
 
 	Sprite* spriteSlot = NULL;
 	Sprite* caixeta = NULL;
+	Slot* sobre = NULL; // l'slot a sota del mouse
+	Slot* ultim = NULL; // ultim slot clicat
+
+	Slot* slotMouse = NULL; // un slot que sempre segueix al mouse
+
 	int slotSeleccionat = 0;
 	glm::vec2 posInicial;
 	

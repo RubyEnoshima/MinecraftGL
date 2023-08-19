@@ -541,18 +541,20 @@ vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus, const vector<Soroll>
 			float x = (W + i + X * posX);
 			float y = (H + k + Z * posY);
 			//if (tipus == Recursos::NORMAL) height = Y / 2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 12);
+
 			if (tipus == Recursos::NORMAL) {
 				int i = 0;
 				for (const Soroll& noise : noises)
 				{
 					double soroll = noise.noise->GetNoise(x, y);
-					height += Recursos::interpolarSegments(noise.punts, soroll);
+					height += Recursos::interpolarSegments(noise.punts, soroll) * noise.importancia;
+					if (height <= 60) height *= .99;
 					//else height -= Recursos::interpolarSegments(noise.punts, soroll);
 					i++;
 				}
 			}
 			
-			height /= noises.size();
+			//height /= noises.size();
 			height += 5;
 			float nivellMar = 60, nivellNeu = 90;
 			
