@@ -64,7 +64,7 @@ void Inventari::iniciaSprites(SpriteRenderer* _renderer, TextRenderer* _text)
 	spriteCreatiu->visible = false;
 	renderer->afegirSprite(spriteCreatiu);
 
-	Sprite* _caixeta = new Sprite(Recursos::obtTextura("caixeta.png"), "Caixeta", glm::vec2(renderer->width / 2, renderer->height / 2), glm::vec2(3), true);
+	Sprite* _caixeta = new Sprite(Recursos::obtTextura("caixeta.png"), "Caixeta", glm::vec2(renderer->width / 2, renderer->height / 2), glm::vec2(4.2,3), true);
 	_caixeta->indexZ = 50;
 	_caixeta->centrar(false);
 	//renderer->afegirSprite(_caixeta);
