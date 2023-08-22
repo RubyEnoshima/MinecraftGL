@@ -13,7 +13,7 @@
 //#define YC 3
 
 //#define SIZE 11
-#define DISTANCIA 13
+#define DISTANCIA 15
 #define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
 #define DEBUG true // true: La llum no es calcularà
@@ -95,47 +95,6 @@ public:
 	// Genera un arbre en una posicio concreta
 	void arbre(int x, int y, int z);
 
-	// RAYCAST
-	glm::vec3 raycast(const Ray& ray,const glm::vec3& pos) const{
-		float minDistance = std::numeric_limits<float>::max();
-		glm::vec3 closestVoxel;
-		int rango = 10;
-		for (int i = -rango; i < rango; i++) {
-			for (int j = -rango; j < rango; j++) {
-				for (int k = -rango; k < rango; k++) {
-					float t = intersectRayVoxel(ray, glm::vec3(pos.x+i, pos.y + j, pos.z + k));
-					if (t > 0 && t < minDistance) {
-						minDistance = t;
-						closestVoxel = glm::vec3(pos.x + i, pos.y + j, pos.z + k);
-					}
-				}
-			}
-		}
-			
-		
-
-		return closestVoxel;
-	}
-
-	float intersectRayVoxel(const Ray& ray, const glm::vec3& voxel) const{
-		if (!obtenirCub(voxel.x, voxel.y, voxel.z)) return -1;
-		glm::vec3 tMin = (voxel - ray.origen) / ray.direccion;
-		glm::vec3 tMax = (voxel + glm::vec3(1.0f) - ray.origen) / ray.direccion;
-
-		glm::vec3 tEnter = glm::min(tMin, tMax);
-		glm::vec3 tExit = glm::max(tMin, tMax);
-
-		float tNear = glm::max(glm::max(tEnter.x, tEnter.y), tEnter.z);
-		float tFar = glm::min(glm::min(tExit.x, tExit.y), tExit.z);
-
-		if (tNear <= tFar && tFar >= 0) {
-			return tNear;
-		}
-		else {
-			return -1.0f;
-		}
-	}
-
 	// Retorna tots els cubs (la posició y el tipus) al voltant d'una posició, tots els transparents (1) o tots els solids (2)
 	vector<pair<glm::vec3,uint8_t>> obtenirColindants(const glm::vec3& pos, int transparents = 0, bool ellMateix = false) const;
 	vector<AABB> obtenirAABB(const glm::vec3& pos);
@@ -146,7 +105,6 @@ public:
 	bool activaFrustum = true; // true: fem servir Frustum culling
 
 private:
-	int tipusMon = Recursos::NORMAL;
 
 	glm::vec2 chunkInicial;
 
@@ -154,7 +112,6 @@ private:
 	void eliminarLlum(glm::vec3 pos, uint8_t llum);
 
 	void posarLlumNatural(glm::vec3 pos, uint8_t llum, bool avall=false);
-	void eliminarLlumNatural(glm::vec3 pos, uint8_t llum);
 
 	// FUNCIONS PER BLOCS
 	
@@ -166,16 +123,16 @@ private:
 	glm::vec2 BlocChunk(int x, int z) const;
 	int Mon2Chunk(int n, int m) const; // Converteix una coordenada en mon (podria ser -79, 980...) a coordenada de chunk (-79 => 1, 980 => 4)
 
-	mutable map<glm::vec2,Chunk*,CompararVec2> Chunks;
+	mutable map<glm::vec2,Chunk*,CompararVec2> Chunks; // Conjunt dels chunks carregats actualment
 
 	Renderer* renderer;
 
 	unsigned int VAO;
 
 	// GENERACIÓ DE MON
-
+	int tipusMon = Recursos::NORMAL;
 	int semilla = 874;
-	vector<Soroll> noises; // 0: continentalness, 1: erosion, 2: peaks and valleys
+	vector<Soroll> noises; // Conjunt de soroll que es pot barrejar.
 
 	const vector<int> flors = { ROSA,TULIPA_TARONJA,ARBUST }; //ESCLATASANG,XAMPINYO,DENT_DE_LLEO
 
@@ -188,8 +145,9 @@ private:
 	// Llum natural
 	queue<glm::vec3> cuaLlumNatural;
 
-	uint8_t llumNatural = 15;
+	uint8_t llumNatural = 15; // Nivell de llum natural
 
+	// Totes les direccions que poden haber al voltant d'un voxel
 	glm::vec3 posicions[7] = { glm::vec3(-1,0,0),glm::vec3(0,-1,0),glm::vec3(0,0,-1),glm::vec3(1,0,0),glm::vec3(0,1,0),glm::vec3(0,0,1),glm::vec3(0,0,0) };
 	
 	// GESTIÓ DE CHUNKS

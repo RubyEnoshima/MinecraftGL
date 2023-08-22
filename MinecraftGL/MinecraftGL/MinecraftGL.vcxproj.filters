@@ -78,6 +78,9 @@
     <ClCompile Include="..\Llibreries\src\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mon\Generador.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Joc.h">
@@ -141,6 +144,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mon\Generador.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,7 +2,7 @@
 
 vec4 fogcolor = vec4(0.7, 0.8, 1.0, 1.0);
 const float densitat = .0005;
-float distanciaFog = 7;
+float distanciaFog = 8;
 
 in vec3 FragPos;
 out vec4 color;

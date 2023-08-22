@@ -123,9 +123,10 @@ void SuperChunk::update(const glm::vec2& chunkJugador, const glm::mat4& mvp)
 {
 	std::lock_guard<std::recursive_mutex> lock(descarregarMutex);
 
+	// Mirem al voltant del jugador. DISTANCIA ens marca quants chunks mirem al voltant
 	for (int i = -DISTANCIA+1; i < DISTANCIA; i++) {
 		for (int j = -DISTANCIA+1; j < DISTANCIA; j++) {
-			if (abs(i) + abs(j) > DISTANCIA) continue;
+			if (abs(i) + abs(j) > DISTANCIA) continue; // Fem que sigui un "cercle"
 			glm::vec2 chunk = chunkJugador + glm::vec2(i, j);
 
 			if (esCarregat(chunk)) {

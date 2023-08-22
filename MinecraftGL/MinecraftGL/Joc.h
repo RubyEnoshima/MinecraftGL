@@ -22,7 +22,7 @@ public:
 	~Joc();
 
 	// Fa que comenci el joc i executa el loop
-	void gameLoop(); 
+	void start(); 
 
 	// Retorna 1 si s'ha pogut crear la finestra
 	int crearFinestra(); 

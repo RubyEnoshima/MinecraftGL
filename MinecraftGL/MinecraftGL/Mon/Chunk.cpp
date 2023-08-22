@@ -504,7 +504,7 @@ bool Chunk::esVisible(Frustum* frustum) const
 		if (n == 8) return false;
 	}*/
 
-	glm::vec3 min = { posX * X, 0, posY * Z }, max = {posX*X + X, Y, posY * Z + Z};
+	glm::vec3 min = { posX * X, -Y/1.5, posY * Z }, max = {posX*X + X, Y, posY * Z + Z};
 	for (const Pla& pla : frustum->obtPlans()) {
 
 		glm::vec3 centre = (min + max) * 0.5f;

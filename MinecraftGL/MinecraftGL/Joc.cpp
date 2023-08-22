@@ -213,18 +213,16 @@ void Joc::ObtenirCubMira() {
 	//r.origen = jugador->obtCamera()->obtPos();// +jugador->obtCamera()->obtDireccio();
 	//r.origen = glm::vec3(floor(r.origen.x+0.5), floor(r.origen.y+0.5), floor(r.origen.z+0.5));
 	//r.direccion = jugador->obtCamera()->obtDireccio();
-	////cout << r.origen << " " << r.direccion << endl;
 	//int i = 0; int passes = 10;
 	//while (mon->obtenirCub(r.origen.x, r.origen.y, r.origen.z) == AIRE && i < passes) { r.origen += jugador->obtCamera()->obtDireccio(); i++; }
 	//CubActual = glm::vec3(floor(r.origen.x), floor(r.origen.y), floor(r.origen.z));
-	////cout << CubActual << jugador->obtCamera()->obtPos() << endl;
 	//return;
 
 	// Desprojectant coordenades de pantalla
 	int ww = renderer.obtenirTamany().first;
 	int wh = renderer.obtenirTamany().second;
 	float depth;
-	glReadPixels(ww / 2, wh / 2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	glReadPixels(ww / 2, wh / 2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth); // Llegim la profunditat del pixel al que estem mirant
 	if (depth <= 0 || depth >= 1) {
 		CubActual = glm::vec3(-1, -1, -1);
 		return;
@@ -235,7 +233,7 @@ void Joc::ObtenirCubMira() {
 	glm::vec3 objcoord = glm::unProject(wincoord, jugador->obtCamera()->getView(), jugador->obtCamera()->getProjection(), viewport);
 	CubActual = glm::vec3(floorf(objcoord.x), floorf(objcoord.y), floorf(objcoord.z));
 	if((mon->obtenirCub(CubActual)) == AIGUA) CubActual = glm::vec3(-1, -1, -1);
-	//cout << CubActual << endl;
+
 }
 
 void Joc::DestruirCub() {
@@ -349,8 +347,6 @@ void Joc::loop() {
 	glm::mat4 model = glm::mat4(1.0f);
 	jugador->obtCamera()->setModel(model);
 	renderer.colocarMat4("model", model);
-	/*model = glm::rotate(model, glm::radians(i), glm::vec3(1.0f, 1.0f, 1.0f));
-	  model = glm::scale(model, glm::vec3(j,j,j));*/
 
 	// Matriu de projecció
 	canviarProjeccio();
@@ -363,15 +359,11 @@ void Joc::loop() {
 	float ant = 0.0f;
 
 	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
-	//glm::vec3 pos = glm::vec3(0, Y, 0.0f);
 
 	Nuvols nuvols(jugador->obtCamera()->getProjection());
 
+	// Fem que un thread s'encarregui de la gestió de chunks
 	thread t([&]() {
-		
-		auto start = std::chrono::high_resolution_clock::now();
-		auto end = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> duration;
 		while (!glfwWindowShouldClose(window)) {
 			mon->comprovarChunks(jugador->chunkActual());
 			mon->eliminaCarregats();
@@ -380,12 +372,11 @@ void Joc::loop() {
 			
 		}
 	});
+
+	// En un thread apart fem que s'actualitzi el món
 	thread t2([&]() {
 		while (!glfwWindowShouldClose(window)) { 
 			mon->update(jugador->chunkActual()); 
-			if (mon->carregat) {
-				
-			}
 			/*ObtenirCubMira();*/ 
 		} 
 	});
@@ -460,7 +451,7 @@ void Joc::loop() {
 	t2.join();
 }
 
-void Joc::gameLoop() {
+void Joc::start() {
 	cout << "Joc start\n\n\n";
 
 	if (renderer.carregaShaders()) {
@@ -481,6 +472,8 @@ void Joc::gameLoop() {
 		mon = new SuperChunk(&renderer);
 		jugador = new Jugador(new Camera(), renderer.obtShader());
 		_HUD = new HUD(&renderer,jugador->inventari);
+
+		// Li podem dir a l'inventari que comenci amb uns items específics
 		jugador->inventari->afegirItem("Gespa");
 		jugador->inventari->afegirItem("Gespa");
 		jugador->inventari->afegirItem("Gespa");
@@ -492,9 +485,6 @@ void Joc::gameLoop() {
 		jugador->inventari->afegirItem("Llana taronja");
 		jugador->inventari->afegirItem("Llana blava");
 		jugador->inventari->afegirItem("Llana vermella");
-
-		// Posem el color taronja
-		//renderer.canviarColor(glm::vec4(rgb(255), rgb(148), rgb(73), 1.0f));
 
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1, 0);

@@ -49,7 +49,7 @@ public:
 
 private:
 	int mode = ESPECTADOR; // Veure adalt la llista de modes
-	const float velocitat = 6;
+	const float velocitat = 10;
 	vector<AABB> _blocs;
 
 	bool enTerra = false;

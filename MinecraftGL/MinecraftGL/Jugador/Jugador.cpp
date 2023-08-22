@@ -130,14 +130,12 @@ void Jugador::caminar()
 
 bool Jugador::colisiona(const vector<pair<glm::vec3, uint8_t>>& blocs)
 {
-	//if (blocs == anteriors) return ultimResultat; // tecnicament false???
-	//anteriors = blocs;
-	//glm::vec3 pos = obtPosBloc();
+	
 	for (const auto &bloc : blocs)
 	{
 		if (colisiona(bloc.first)) return true;
 	}
-	//ultimResultat = false;
+
 	return false;
 }
 
