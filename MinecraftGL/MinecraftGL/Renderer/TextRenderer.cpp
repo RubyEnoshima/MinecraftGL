@@ -96,6 +96,7 @@ void TextRenderer::Load(std::string font, unsigned int fontSize)
     FT_Done_FreeType(ft);
 }
 
+// Editat per poder posar més opcions: fons, color, ombra i indexZ
 void TextRenderer::RenderText(std::string text, float x, float y, float scale, bool fons, glm::vec3 color, bool ombra, float indexZ)
 {
     float xOriginal = x;

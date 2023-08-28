@@ -8,7 +8,7 @@
 #include "Shaders/ShaderProgram.h"
 #include "Recursos.h"
 
-// Tret de https://learnopengl.com/code_viewer_gh.php?code=src/7.in_practice/3.2d_game/0.full_source/text_renderer.h
+// Modificat de https://learnopengl.com/code_viewer_gh.php?code=src/7.in_practice/3.2d_game/0.full_source/text_renderer.h
 
 struct Character {
     unsigned int TextureID; // ID handle of the glyph texture

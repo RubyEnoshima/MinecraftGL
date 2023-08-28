@@ -273,7 +273,7 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 // LLUM ARTIFICIAL
 
 void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum) {
-	// Mirem si és transparent i si hem de pujar la llum
+	// Mirem si Ã©s transparent i si hem de pujar la llum
 	if (Recursos::getBloc(obtenirCub(pos.x, pos.y, pos.z))->transparent && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
 		uint8_t resLlum = llum - 1;
 		canviarLlumArtificialCub(pos.x, pos.y, pos.z, resLlum);
@@ -338,38 +338,6 @@ void SuperChunk::treureLlum(const glm::vec3 posLlum, uint8_t llumIni)
 		llums.pop();
 	}
 }
-
-// LLUM NATURAL
-
-void SuperChunk::posarLlumNatural(glm::vec3 pos, uint8_t llum, bool avall) {
-	// Mirem si és transparent (de moment 0, aire) i si hem de pujar la llum
-	if (obtenirCub(pos.x, pos.y, pos.z) == AIRE && obtenirLlumNaturalCub(pos.x, pos.y, pos.z) + 2 <= llum) {
-		uint8_t resLlum = llum - 1;
-		if(avall && llum == llumNatural) resLlum = llum;
-		canviarLlumNaturalCub(pos.x, pos.y, pos.z, resLlum);
-		cuaLlumNatural.emplace(pos);
-	}
-}
-
-void SuperChunk::afegirLlumNatural(const glm::vec3 posLlum)
-{
-	// Fem una cua de posicions i afegim la llum
-	cuaLlumNatural.emplace(posLlum);
-
-	while (!cuaLlumNatural.empty()) {
-		glm::vec3 bloc = cuaLlumNatural.front();
-		cuaLlumNatural.pop();
-		uint8_t llum = obtenirLlumNaturalCub(bloc.x, bloc.y, bloc.z);
-		posarLlumNatural(bloc + glm::vec3(1, 0, 0), llum);
-		posarLlumNatural(bloc + glm::vec3(-1, 0, 0), llum);
-		posarLlumNatural(bloc + glm::vec3(0, 1, 0), llum, true);
-		posarLlumNatural(bloc + glm::vec3(0, -1, 0), llum, true);
-		posarLlumNatural(bloc + glm::vec3(0, 0, 1), llum);
-		posarLlumNatural(bloc + glm::vec3(0, 0, -1), llum);
-
-	}
-}
-
 
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador, int color)
 {
@@ -591,7 +559,7 @@ bool SuperChunk::renderCub(int x, int y, int z)
 {
 	glBindVertexArray(VAO);
 	if (esValid(x,y,z)) {
-		// Hem d'aplicar la mateixa transformació que abans
+		// Hem d'aplicar la mateixa transformaciÃ³ que abans
 		glm::vec2 chunk = BlocChunk(x, z);
 		glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.x * X, 0, chunk.y * Z));
 		renderer->colocarMat4("model", model);
@@ -707,7 +675,7 @@ glm::vec2 SuperChunk::BlocChunk(int x, int z) const
 
 int SuperChunk::Mon2Chunk(int n, int m) const
 {
-	// És l'equivalent a fer n % m, però fent que tracti bé els negatius
+	// Ã‰s l'equivalent a fer n % m, perÃ² fent que tracti bÃ© els negatius
 	return ((n % m) + m) % m;
 }
 
