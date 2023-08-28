@@ -2,7 +2,8 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <limits>
-
+#include <vector>
+using namespace std;
 struct Pla {
     Pla(){}
     Pla(const glm::vec3 _pos, const glm::vec3 _normal) {

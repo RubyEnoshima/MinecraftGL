@@ -86,7 +86,7 @@ void Chunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
 
 	chunk[x][y][z].llum = (chunk[x][y][z].llum & 0xF) | (llum << 4);
 	canviat = true;
-
+	generat = false;
 }
 
 void Chunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
@@ -95,6 +95,7 @@ void Chunk::canviarLlumArtificialCub(int x, int y, int z, uint8_t llum)
 
 	chunk[x][y][z].llum = (chunk[x][y][z].llum & 0xF0) | llum;
 	canviat = true;
+	generat = false;
 
 }
 
@@ -253,7 +254,7 @@ void Chunk::afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, u
 
 	tipus = b->adalt;
 	// Cara adalt
-	if (tipus==FULLES or y == Y - 1 or !chunk[x][y + 1][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y + 1][z].tipus)->transparent)) {
+	if (tipus==FULLES or y == Y - 1 or !chunk[x][y + 1][z].tipus or (!b->transparent && Recursos::getBloc(chunk[x][y + 1][z].tipus)->transparent) or (tipus==AIGUA && chunk[x][y + 1][z].tipus == CRISTAL)) {
 		if (y == Y - 1) llum = 0;
 		else llum = chunk[x][y + 1][z].llum;
 
@@ -439,7 +440,6 @@ void Chunk::update()
 {
 	if (VBO == 0) { glGenBuffers(1, &VBO); glGenBuffers(1, &VBO_TRANSP); }
 	if (!generat || elements == 0) return;
-	//crearVertexs();
 	
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_TRANSP);
 	glBufferData(GL_ARRAY_BUFFER, elements_transp, _vertices_transp.data(), GL_STATIC_DRAW);
@@ -504,7 +504,7 @@ bool Chunk::esVisible(Frustum* frustum) const
 		if (n == 8) return false;
 	}*/
 
-	glm::vec3 min = { posX * X, -Y/1.5, posY * Z }, max = {posX*X + X, Y, posY * Z + Z};
+	glm::vec3 min = { posX * X, -Y/1.5, posY * Z }, max = {posX*X + X, Y*1.5, posY * Z + Z};
 	for (const Pla& pla : frustum->obtPlans()) {
 
 		glm::vec3 centre = (min + max) * 0.5f;
@@ -530,61 +530,46 @@ glm::vec2 Chunk::obtPos() const
 	return glm::vec2(posX,posY);
 }
 
-vector<pair<int,glm::vec3>> Chunk::emplenarChunk(int tipus, const vector<Soroll>& noises)
+vector<pair<int,glm::vec3>> Chunk::emplenarChunk(const Generador&generador)
 {
 	vector<pair<int, glm::vec3>> res;
-	const int W = 500, H = 500;
+	const int W = 0, H = 0;
 	for (int i = 0; i < X; i++) {
 		for (int k = 0; k < Z; k++) {
 
-			int height = 0;
+			int height = Y/2;
 			float x = (W + i + X * posX);
 			float y = (H + k + Z * posY);
 			//if (tipus == Recursos::NORMAL) height = Y / 2 + (int)(glm::perlin(glm::vec2((float)(W + i + X * posX) / X, (float)(H + k + Z * posY) / Z)) * 12);
 
-			if (tipus == Recursos::NORMAL) {
-				int i = 0;
-				for (const Soroll& noise : noises)
-				{
-					double soroll = noise.noise->GetNoise(x, y);
-					height += Recursos::interpolarSegments(noise.punts, soroll) * noise.importancia;
-					if (height <= 60) height *= .99;
-					//else height -= Recursos::interpolarSegments(noise.punts, soroll);
-					i++;
-				}
+			if (generador.tipusMon == NORMAL) {
+				//height = sin(k) * 9 + Y/2;
+				height = generador.obtAltura(x,y);
 			}
 			
-			//height /= noises.size();
 			height += 5;
-			float nivellMar = 60, nivellNeu = 90;
-			
 
 			for (int j = 0; j <= height; j++) {
-				uint8_t tipus = TERRA;
-				if (j <= nivellMar && j > height - 3) tipus = SORRA;
-				else if (j == height) { // Capa d'adalt
-					if (height >= nivellNeu) tipus = NEU;
-					else tipus = GESPA;
-					//color = glm::vec3(0.8f, 0.8f, 0.5f);
+				int tipus = generador.obtTipus(j, height);
+				if (tipus == GESPA || tipus == NEU) {
 					float probArbre = (float)(rand()) / (float)(RAND_MAX);
 					float probFlor = (float)(rand()) / (float)(RAND_MAX);
 
-					if (probArbre < probabilitatArbre) {
+					if (probArbre < generador.probabilitatArbre) {
 						// Marquem l'arbre
 						res.push_back({ 0, glm::vec3(i + X * posX,j + 1,k + Z * posY) });
 					}
-					else if (probFlor < probabilitatFlor) {
+					else if (probFlor < generador.probabilitatFlor) {
 						// Marquem la flor
 						res.push_back({ 1, glm::vec3(i + X * posX,j + 1,k + Z * posY) });
 					}
+
 				}
-				else if (j < height - 3) tipus = PEDRA;
-				else if (j < 1) tipus = BEDROCK;
 				canviarCub(i, j, k, tipus, true, Recursos::BLANC);
 
 			}
-			for (int j = 0; j < nivellMar; j++) {
-				canviarCub(i, j, k, AIGUA, false, Recursos::AIGUA);
+			for (int j = 0; j < generador.nivellMar; j++) {
+				canviarCub(i, j, k, generador.aigua, false, Recursos::AIGUA);
 
 			}
 		}

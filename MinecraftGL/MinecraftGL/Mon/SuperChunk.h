@@ -16,8 +16,7 @@
 #define DISTANCIA 15
 #define NCHUNKS 5 // Quants chunks pot processar en un sol frame
 
-#define DEBUG true // true: La llum no es calcularà
-#define SEMILLA_RANDOM false // true: la llavor per generar el mapa serà escollida a l'atzar
+#define DEBUG true // true: La llum natural no es calcularà
 
 const struct CompararVec2 {
 	bool operator()(const glm::vec2& a, const glm::vec2& b) const {
@@ -129,13 +128,6 @@ private:
 
 	unsigned int VAO;
 
-	// GENERACIÓ DE MON
-	int tipusMon = Recursos::NORMAL;
-	int semilla = 874;
-	vector<Soroll> noises; // Conjunt de soroll que es pot barrejar.
-
-	const vector<int> flors = { ROSA,TULIPA_TARONJA,ARBUST }; //ESCLATASANG,XAMPINYO,DENT_DE_LLEO
-
 	// Propagació de llums "artificials"
 	queue<glm::vec3> llums;
 	queue<glm::vec3> cuaLlum;
@@ -161,7 +153,10 @@ private:
 	bool esCarregat(const glm::vec2& pos) const;
 	bool existeixCua(const deque<glm::vec2>& cua, const glm::vec2& e) const;
 
-	map<glm::vec2,vector<pair<glm::vec3, uint8_t>>, CompararVec2> blocsNoPosats; // es guarda els blocs que no s'han posat
+	map<glm::vec2,vector<pair<glm::vec3, uint8_t>>, CompararVec2> blocsNoPosats; // es guarda els blocs que no s'han posat (posChunk -> (posBloc, tipus))
+	map<glm::vec2, vector<pair<glm::vec3, uint8_t>>, CompararVec2> blocsColocats; // es guarda els blocs colocats pel jugador
+
+	Generador generador;
 };
 
 #endif

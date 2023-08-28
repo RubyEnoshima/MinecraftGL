@@ -129,22 +129,22 @@ void Renderer::colocarInt(const string uniform, int n)
 
 void Renderer::activaAigua(bool aigua)
 {
-	glUniform1i(obtenirUniform("sotaAigua"), aigua);
+	colocarInt("sotaAigua", aigua);
 }
 
 void Renderer::activaBounding(bool bounding)
 {
-	glUniform1i(obtenirUniform("bounding"), bounding);
+	colocarInt("bounding", bounding);
+}
+
+void Renderer::activaNit(bool nit)
+{
+	colocarInt("nit",nit);
 }
 
 void Renderer::canviarColorLlum(const glm::vec3 color)
 {
 	glUniform3f(obtenirUniform("lightColor"), color[0], color[1], color[2]);
-}
-
-void Renderer::canviarPosLlum(const glm::vec3 pos)
-{
-	glUniform3f(obtenirUniform("lightPos"), pos[0], pos[1], pos[2]);
 }
 
 float Renderer::rgb(int color) const

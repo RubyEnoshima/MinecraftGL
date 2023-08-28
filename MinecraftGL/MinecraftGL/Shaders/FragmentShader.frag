@@ -1,8 +1,8 @@
 #version 330 core
 
 vec4 fogcolor = vec4(0.7, 0.8, 1.0, 1.0);
-const float densitat = .0005;
-float distanciaFog = 8;
+const float densitat = .000375;
+float distanciaFog = 7.5;
 
 in vec3 FragPos;
 out vec4 color;
@@ -17,14 +17,12 @@ flat in int offsetX;
 flat in int offsetY;
 
 uniform vec3 lightColor;
-uniform vec3 lightPos;
-
 
 uniform sampler2D textura;
-//uniform sampler2D lightMap;
 
 uniform bool bounding;
 uniform bool sotaAigua;
+uniform bool nit;
 
 float tamanyMapaX = 16.0;
 float tamanyMapaY = 16.0;
@@ -79,7 +77,12 @@ void main()
 	float resArtificial = pow(llumArtificial / 15f, gamma);
 
 	float intensitatNatural = 0.9; // FER-HO UNIFORM
-	float resNatural = 15;//pow(llumNatural / 15f, gamma) * intensitatNatural;
+	float resNatural = 15;// pow(llumNatural / 15f, gamma) * intensitatNatural;
+
+	if(nit){
+		resNatural = 0;
+		fogcolor *= 0.01;
+	}
 
 	vec3 colorLlum = vec3(0.98,0.98,0.98);
 	if(resArtificial > resNatural) colorLlum = vec3(1.0,1.0,0.87);
@@ -96,6 +99,7 @@ void main()
 	
 	color = mix(fogcolor, color, fog);
 	color.a = alfa;
+
 	// Si som a l'aigua, fem que els blocs tinguin un color blau
 	if(sotaAigua) color *= vec4(0.25,0.3,0.375,1);
 }

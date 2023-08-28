@@ -17,51 +17,10 @@ SuperChunk::~SuperChunk() {
 		if(!chunk.second->descarregant) delete chunk.second;
 	}
 	glDeleteBuffers(1, &VAO);
-	for(auto noise : noises) delete noise.noise;
 }
 
 SuperChunk::SuperChunk(Renderer* _renderer)
-{
-	srand(semilla);
-	Soroll continentalness;
-	continentalness.noise = new FastNoiseLite(semilla);
-	continentalness.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	continentalness.noise->SetFrequency(0.0075);
-	continentalness.noise->SetFractalType(FastNoiseLite::FractalType_FBm);
-	continentalness.noise->SetFractalLacunarity(2);
-	continentalness.noise->SetFractalGain(0.3);
-	continentalness.noise->SetFractalOctaves(7);
-	continentalness.importancia = 0.75;
-	//continentalness.punts = { glm::vec2(-1,5), glm::vec2(-0.25,5), glm::vec2(-0.15,50), glm::vec2(0.1,50), glm::vec2(0.12,90), glm::vec2(0.13,90), glm::vec2(0.15,100), glm::vec2(0.5,120), glm::vec2(1,125) };
-	continentalness.punts = { glm::vec2(-1,0), glm::vec2(0,70), glm::vec2(0.5,95), glm::vec2(0.7,105), glm::vec2(1,110) };
-
-	noises.push_back(continentalness);
-
-	Soroll erosion;
-	erosion.noise = new FastNoiseLite(semilla);
-	erosion.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	erosion.noise->SetFrequency(0.018);
-	erosion.noise->SetFractalType(FastNoiseLite::FractalType_FBm);
-	erosion.noise->SetFractalLacunarity(0.05);
-	erosion.noise->SetFractalGain(0.8);
-	erosion.noise->SetFractalOctaves(3);
-	erosion.importancia = 0.5;
-	erosion.punts = { glm::vec2(-1,0), glm::vec2(0,15), glm::vec2(0.75,20), glm::vec2(1,20) };
-	noises.push_back(erosion);
-
-	//Soroll pv;
-	//pv.noise = new FastNoiseLite(semilla);
-	//pv.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	//pv.noise->SetFrequency(0.05);
-	//pv.noise->SetFractalType(FastNoiseLite::FractalType_Ridged);
-	//pv.noise->SetFractalLacunarity(1);
-	//pv.noise->SetFractalGain(0.2);
-	//pv.noise->SetFractalOctaves(2);
-	//pv.importancia = 0.1;
-	////pv.punts = { glm::vec2(-1,5), glm::vec2(-0.75,20), glm::vec2(-0.25,30), glm::vec2(0,35), glm::vec2(0.5,100), glm::vec2(1,100) };
-	//pv.punts = { glm::vec2(-1,0), glm::vec2(-0.75,50), glm::vec2(0.5,40), glm::vec2(1,20) };
-	//noises.push_back(pv);
-	
+{	
 	renderer = _renderer;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -73,7 +32,6 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 
 void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 {
-	//cout << "Jugador: " << chunkJugador;
 	vector<glm::vec2> descarregar;
 	for (auto chunk : Chunks) {
 		//std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
@@ -191,31 +149,38 @@ void SuperChunk::eliminaCarregats()
 
 void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 {
-	Chunk* nou = new Chunk(pos.x, pos.y);
+	Chunk* nou = new Chunk(pos.x, pos.y); // Creem el chunk
+
+	// Li donem referències dels seus veïns
 	Chunk* up = NULL;
 	Chunk* left = NULL;
 	Chunk* right = NULL; 
 	Chunk* down = NULL;
+	// Només si és carregat
 	if (esCarregat(glm::vec2(pos.x-1,pos.y))) left = Chunks[glm::vec2(pos.x - 1, pos.y)];
 	if (esCarregat(glm::vec2(pos.x + 1, pos.y))) right = Chunks[glm::vec2(pos.x + 1, pos.y)];
 	if (esCarregat(glm::vec2(pos.x, pos.y - 1))) down = Chunks[glm::vec2(pos.x, pos.y - 1)];
 	if (esCarregat(glm::vec2(pos.x, pos.y + 1))) up = Chunks[glm::vec2(pos.x, pos.y + 1)];
 	nou->afegirVeins(left, right, up, down);
-	vector<pair<int, glm::vec3>> estructures = nou->emplenarChunk(tipusMon, noises);
+
+	// Emplenem el chunk i posem qualsevol estructura que s'hagi generat
+	vector<pair<int, glm::vec3>> estructures = nou->emplenarChunk(generador);
 	for (int i = 0; i < estructures.size(); i++) {
 		int tipus = estructures[i].first;
 		glm::vec3 pos = estructures[i].second;
 
 		if (tipus == 0) arbrets.push_back(pos);
 		else if (tipus == 1) {
-			int tipusFlor = rand() % flors.size();
-			canviarCub(pos.x, pos.y, pos.z, flors[tipusFlor], false);
+			int tipusFlor = generador.obtFlor();
+			canviarCub(pos.x, pos.y, pos.z, tipusFlor, false);
 		}
 	}
 
-	calculaLlumNatural(pos);
+	// No aconsellable si no es un mon estatic
+	if(!DEBUG) calculaLlumNatural(pos);
+
 	nou->preparat = true;
-	Chunks[pos] = nou;
+	Chunks[pos] = nou; // Ens guardem el chunk
 
 	// Mirem blocs que no s'hagin pogut posar, per si de cas algun es troba en aquest chunk
 	auto it = blocsNoPosats.find(pos);
@@ -228,6 +193,15 @@ void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
 		blocsNoPosats.erase(it);
 	}
 	
+	// Mirem si és un chunk que el jugador ha modificat i posem els blocs modificats
+	it = blocsColocats.find(pos);
+	if (it != blocsColocats.end()) {
+		for (auto& bloc : (*it).second) {
+			int color = Recursos::BLANC;
+			if (bloc.second == FULLES) color = Recursos::VERDFULLES;
+			canviarCub(bloc.first.x, bloc.first.y, bloc.first.z, bloc.second, false, false, color);
+		}
+	}
 }
 
 void SuperChunk::calculaLlumNatural(const glm::vec2& pos)
@@ -307,20 +281,8 @@ void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum) {
 	}
 }
 
-void SuperChunk::eliminarLlum(glm::vec3 pos, uint8_t llum) {
-	uint8_t llumCub = obtenirLlumArtificialCub(pos.x, pos.y, pos.z);
-	if (llumCub != 0 && llumCub < llum) {
-		canviarLlumArtificialCub(pos.x, pos.y, pos.z, 0);
-		cuaLlumTreure.emplace(pair<glm::vec3, uint8_t>(pos,llumCub));
-	}
-	else if (llumCub >= llum) {
-		llums.emplace(pos);
-	}
-}
-
 void SuperChunk::afegirLlum(const glm::vec3 posLlum)
 {
-	if (DEBUG) return;
 	// Fem una cua de posicions i afegim la llum
 	cuaLlum.emplace(posLlum);
 
@@ -338,8 +300,20 @@ void SuperChunk::afegirLlum(const glm::vec3 posLlum)
 	}
 }
 
+void SuperChunk::eliminarLlum(glm::vec3 pos, uint8_t llum) {
+	uint8_t llumCub = obtenirLlumArtificialCub(pos.x, pos.y, pos.z);
+	if (llumCub != 0 && llumCub < llum) {
+		canviarLlumArtificialCub(pos.x, pos.y, pos.z, 0);
+		cuaLlumTreure.emplace(pair<glm::vec3, uint8_t>(pos,llumCub));
+	}
+	else if (llumCub >= llum) {
+		llums.emplace(pos);
+	}
+}
+
 void SuperChunk::treureLlum(const glm::vec3 posLlum, uint8_t llumIni)
 {
+
 	if (DEBUG) return;
 
 	cuaLlumTreure.emplace(pair<glm::vec3, uint8_t>(posLlum,llumIni));
@@ -405,8 +379,6 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 		uint8_t tipusBlocAbans = chunk->obtenirCub(Mon2Chunk(x, X), y, Mon2Chunk(z, Z));
 		chunk->canviarCub(Mon2Chunk(x, X), y, Mon2Chunk(z, Z), tipus, reemplacar, color);
 
-		//cout << "El bloc " << x << " " << y << " " << z << " es troba al chunk " << BlocChunk(x, z) << " i dins es el bloc " << Mon2Chunk(x, X) << " " << Mon2Chunk(z, Z) << endl;
-
 		if (tipus == LLUM) {
 			// Afegim la llum
 			canviarLlumArtificialCub(x, y, z, 14);
@@ -431,7 +403,14 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 			if (!Recursos::getBloc(tipus)->transparent) canviarLlumNaturalCub(x, y, z, 0);
 		}
 
-		if (jugador) calculaLlumNatural(x, z);
+		if (jugador) {
+			calculaLlumNatural(x, z);
+			auto it = blocsColocats.find(BlocChunk(x, z));
+			if (it != blocsColocats.end()) {
+				(*it).second.push_back({ {x,y,z},tipus });
+			}
+			else blocsColocats.insert({ BlocChunk(x, z), {{ {x,y,z},tipus }} });
+		}
 
 		//chunk.unCanviat = true;
 		//chunk.cubCanviat = glm::vec3(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
@@ -444,8 +423,6 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 		}
 		else blocsNoPosats.insert({ BlocChunk(x, z), {{ {x,y,z},tipus }} });
 	}
-	//cout << *color << " " << (int)tipus << endl;
-	//cout << "Chunk: " << x/X << ", " << z/Z << "    " << Mon2Chunk(x,X) << ", " << Mon2Chunk(z,Z) << endl;
 }
 
 void SuperChunk::canviarLlumNaturalCub(int x, int y, int z, uint8_t llum)
@@ -627,6 +604,7 @@ bool SuperChunk::renderCub(int x, int y, int z)
 
 void SuperChunk::arbre(int x, int y, int z)
 {
+	if (obtenirCub(x, y, z) != AIRE) return;
 	// Tronco
 	const int MIN_TRONCO = 5, MAX_TRONCO = 3;
 	int max = MIN_TRONCO + (rand() % MAX_TRONCO);

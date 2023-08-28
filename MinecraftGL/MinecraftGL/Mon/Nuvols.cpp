@@ -27,6 +27,7 @@ void Nuvols::render(const glm::mat4& view)
     shader->colocarMat4("view", view);
     shader->colocarVec2("tamanySprite", glm::vec2(15));
     shader->colocarMat4("projection", projection);
+    shader->colocarInt("nit", nit);
 
     glm::mat4 model;
     model = glm::translate(model, glm::vec3(pos.x,0,pos.y));
@@ -44,6 +45,11 @@ void Nuvols::update(const glm::vec2& _pos, float deltaTime)
 	offset.y += (pos.y - _pos.y)/25 + velocitat * deltaTime;
 	offset.x += (_pos.x - pos.x)/25 + velocitat * deltaTime / 3;
     pos = _pos;
+}
+
+void Nuvols::canviaHora(bool _nit)
+{
+    nit = _nit;
 }
 
 void Nuvols::initRenderData()

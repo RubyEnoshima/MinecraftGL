@@ -3,6 +3,7 @@ Joc::~Joc() {
 	delete mon;
 	delete _HUD;
 	delete jugador;
+	delete nuvols;
 }
 
 glm::vec2 Joc::obtMousePos() const
@@ -98,6 +99,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_F6:
 				joc->Frustum();
 				break;
+			case GLFW_KEY_F7:
+				joc->CanviaHora();
+				break;
 			// F10: es canvia entre mode normal i wireframe
 			case GLFW_KEY_F10:
 				int mode;
@@ -177,15 +181,16 @@ void Joc::Inventari()
 	jugador->inventari->obrir();
 }
 
+void Joc::CanviaHora()
+{
+	nit = !nit;
+	renderer.activaNit(nit);
+	nuvols->canviaHora(nit);
+}
+
 void Joc::moure()
 {
-	/*for (auto tecla : tecles) {
-		if (tecla.second) {
-			jugador->moure(deltaTime, tecla.first);
-		}
-	}*/
 	jugador->moure(deltaTime, tecles);
-
 }
 
 void Joc::CanviarMode()
@@ -360,7 +365,8 @@ void Joc::loop() {
 
 	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
 
-	Nuvols nuvols(jugador->obtCamera()->getProjection());
+	nuvols = new Nuvols(jugador->obtCamera()->getProjection());
+	nuvols->canviaHora(nit);
 
 	// Fem que un thread s'encarregui de la gestió de chunks
 	thread t([&]() {
@@ -397,11 +403,12 @@ void Joc::loop() {
 		jugador->update(deltaTime, mon->obtenirAABB(jugador->obtPosBloc()));
 
 		// Canvia el color del fons
-		glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
+		if(!nit) glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
+		else glClearColor(rgb(10), rgb(31), rgb(61), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		nuvols.update(jugador->obtPos2D(),deltaTime);
-		nuvols.render(view);
+		nuvols->update(jugador->obtPos2D(),deltaTime);
+		nuvols->render(view);
 
 
 		bool sotaAigua = jugador->sotaAigua(mon->obtenirColindants(jugador->obtPosBloc(false), 1, true));
@@ -422,10 +429,6 @@ void Joc::loop() {
 		}
 
 		renderer.activaAigua(sotaAigua);
-
-		/*renderer.activaBounding(1);
-		jugador->render();
-		renderer.activaBounding(0);*/
 
 		view = jugador->obtCamera()->lookAt();
 		renderer.colocarMat4("view", view);

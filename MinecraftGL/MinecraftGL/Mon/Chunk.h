@@ -7,7 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/noise.hpp>
-#include "FastNoiseLite.h"
 
 #include <string.h>
 #include <iostream>
@@ -21,6 +20,7 @@
 #include <chrono>
 #include "Blocs/Blocs.h"
 #include "Recursos.h"
+#include "Generador.h"
 
 using namespace std;
 
@@ -28,11 +28,7 @@ using namespace std;
 #define Y 128
 #define Z 16
 
-struct Soroll {
-	FastNoiseLite* noise;
-	vector<glm::vec2> punts;
-	float importancia = 1;
-};
+
 
 struct Cub {
 	uint8_t tipus = 0;
@@ -69,7 +65,7 @@ public:
 	glm::vec2 obtPos() const;
 
 	// Genera el chunk amb Perlin noise i posa la llum on toca. Retorna un vector de posicions amb el nombre de l'estructura generada (0: arbre, 1: amapola)
-	vector<pair<int, glm::vec3>> emplenarChunk(int tipus, const vector<Soroll>& noises);
+	vector<pair<int, glm::vec3>> emplenarChunk(const Generador& generador);
 	void afegirVeins(Chunk* left=NULL, Chunk* right= NULL, Chunk* up = NULL, Chunk* down = NULL);
 
 	bool cubTop(int8_t x, int8_t y, int8_t z) const;
@@ -106,9 +102,6 @@ private:
 	Chunk* veiUp = NULL;
 	Chunk* veiBaix = NULL;
 
-	// Probabilitats de generació: 1 == 100%
-	float probabilitatArbre = 0.015;
-	float probabilitatFlor = 0.10;
 };
 
 #endif
