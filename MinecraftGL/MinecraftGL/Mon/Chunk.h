@@ -35,6 +35,7 @@ struct Cub {
 	uint8_t llum = 0;
 	int color;
 	bool top = false;
+	vector<pair<glm::vec3,uint8_t>> infoLlum;
 };
 
 class Chunk
