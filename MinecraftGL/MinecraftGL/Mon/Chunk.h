@@ -28,13 +28,10 @@ using namespace std;
 #define Y 128
 #define Z 16
 
-
-
 struct Cub {
 	uint8_t tipus = 0;
 	uint8_t llum = 0;
 	int color;
-	bool top = false;
 };
 
 class Chunk
@@ -68,21 +65,16 @@ public:
 	vector<pair<int, glm::vec3>> emplenarChunk(const Generador& generador);
 	void afegirVeins(Chunk* left=NULL, Chunk* right= NULL, Chunk* up = NULL, Chunk* down = NULL);
 
-	bool cubTop(int8_t x, int8_t y, int8_t z) const;
-
 	vector<GLubyte> _vertices, _vertices_transp;
 	unsigned int elements = 0, elements_transp = 0;
 
 	bool canviat = true; // Ens diu si ha canviat o no el chunk
-	bool unCanviat = false;
-	uint8_t veiCanviat = -1; 
 
 	bool descarregant = false;
 	bool preparat = false;
 	bool carregat = false;
 	bool generat = false;
 
-	glm::vec3 cubCanviat;
 private:
 	void afegirVertex(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, bool u=0, bool v=0, uint8_t llum = 2, uint8_t costat = 0, int color = Recursos::BLANC);
 	void afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, bool r=1, bool g=1, bool b=1);
@@ -90,9 +82,9 @@ private:
 	void afegirCub(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus, int _color);
 	void afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus);
 
-	unsigned int VBO = 0, VBO_TRANSP = 0;
+	bool esValid(int x, int y, int z) const;
 
-	vector<glm::vec3> cantonades;
+	unsigned int VBO = 0, VBO_TRANSP = 0;
 
 	int posX, posY;
 	Cub chunk[X][Y][Z];

@@ -19,8 +19,9 @@ void Joc::canviarModeMouse(int mode)
 }
 
 void Joc::canviarProjeccio() {
-	jugador->obtCamera()->setProjection(glm::radians(3000.0f), renderer.aspectRatio(), 0.1f, 1000.0f);
-	renderer.colocarMat4("projection", jugador->obtCamera()->getProjection());
+	Camera* c = jugador->obtCamera();
+	c->setProjection(renderer.aspectRatio());
+	renderer.colocarMat4("projection", c->getProjection());
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -33,7 +34,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	Recursos::height = height;
 }
 
-// Funció per processar tots els inputs
+// Funciï¿½ per processar tots els inputs
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
@@ -41,8 +42,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (key >= GLFW_KEY_1 && key <= GLFW_KEY_9)
 		{
 			uint8_t num = key % 48;
-			/*if (key == GLFW_KEY_9) joc->tipusCub = TULIPA_TARONJA;
-			else joc->tipusCub = num;*/
 			joc->jugador->inventari->canviaSeleccionat(num-1);
 			return;
 		}
@@ -83,7 +82,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_F2:
 				joc->Culling();
 				break;
-			// F3 = mostra text debug amb informació
+			// F3 = mostra text debug amb informaciï¿½
 			case GLFW_KEY_F3:
 				joc->HUDDebug();
 				break;
@@ -91,7 +90,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			case GLFW_KEY_F4:
 				joc->VSync();
 				break;
-			// F5: es canvia la posició de la camera
+			// F5: es canvia la posiciï¿½ de la camera
 			case GLFW_KEY_F5:
 				cout << "Cambiar camara" << endl;
 				break;
@@ -190,7 +189,7 @@ void Joc::CanviaHora()
 
 void Joc::moure()
 {
-	jugador->moure(deltaTime, tecles);
+	jugador->moure(tecles);
 }
 
 void Joc::CanviarMode()
@@ -204,10 +203,6 @@ int Joc::crearFinestra() {
 	int success = renderer.crearFinestra();
 	if (success > 0) {
 		window = renderer.finestra();
-		
-		// Funció per tractar l'input
-		glfwSetKeyCallback(window, key_callback);
-
 	}
 	return success;
 }
@@ -224,8 +219,8 @@ void Joc::ObtenirCubMira() {
 	//return;
 
 	// Desprojectant coordenades de pantalla
-	int ww = renderer.obtenirTamany().first;
-	int wh = renderer.obtenirTamany().second;
+	int ww = Recursos::width;
+	int wh = Recursos::height;
 	float depth;
 	glReadPixels(ww / 2, wh / 2, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth); // Llegim la profunditat del pixel al que estem mirant
 	if (depth <= 0 || depth >= 1) {
@@ -242,22 +237,16 @@ void Joc::ObtenirCubMira() {
 }
 
 void Joc::DestruirCub() {
-	// Si és un cub vàlid
+	// Si ï¿½s un cub vï¿½lid
 	if (CubActual.y != -1)
-		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, 0, true, true);
+		mon->canviarCub(CubActual.x, CubActual.y, CubActual.z, AIRE, true, true);
 }
 
 glm::vec3 Joc::ObtenirCostat() {
 
-	// Renderitzem només el cub que estem mirant d'una manera especial
+	// Renderitzem nomÃ©s el cub que estem mirant d'una manera especial
 	renderer.DibuixarDarrera();
 	glClearColor(rgb(0), rgb(0), rgb(0), 1.0f);
-
-	GLenum err;
-	while ((err = glGetError()) == GL_INVALID_OPERATION) {
-		cerr << "OpenGL error: " << err << endl;
-		cerr << glfwGetVersionString();
-	}
 
 	// Canviem el shader que fem servir per un mes senzill
 	renderer.usarShader(1);
@@ -272,43 +261,34 @@ glm::vec3 Joc::ObtenirCostat() {
 		return glm::vec3(-1,-1,-1);
 	}
 
-	int ww = renderer.obtenirTamany().first;
-	int wh = renderer.obtenirTamany().second;
+	int ww = Recursos::width;
+	int wh = Recursos::height;
 	// Llegim el color del costat que estem mirant
 	glm::vec3 color;
 	glReadPixels(ww / 2, wh / 2, 1, 1, GL_RGB, GL_FLOAT, &color);
 	
 	// Tornem a posar el buffer i el shader per defecte i aixi dibuixem l'escena tal qual
 	renderer.DibuixarFront();
-	
 
-	// Mirem quin costat és pel color que hem obtingut abans
-	if (color[0] > 0) {
-		if (color[2] > 0) return glm::vec3(0,0,-1);
-		if (color[1] > 0) return glm::vec3(0,-1,0);
-		return glm::vec3(0, 0, 1);
-	}
-	if (color[1] > 0) {
-		if (color[2] > 0) return glm::vec3(-1,0,0);
-		return glm::vec3(0,1,0);
-	}
-	if (color[2] > 0) return glm::vec3(1, 0, 0);
-	return glm::vec3(-1, -1, -1);
+	// Mirem quin costat Ã©s pel color que hem obtingut abans
+	auto it = colorsCostat.find(color);
+	if (it != colorsCostat.end()) return it->second;
+	return glm::vec3(-1);
 }
 
 void Joc::PosarCub(uint8_t tipus) {
-	// Si és un cub vàlid
+	// Si Ã©s un cub vÃ lid
 	if (CubActual.y == -1) return;
 
 	// Obtenim el costat al que estem mirant
 	glm::vec3 Costat = ObtenirCostat();
 	if (Costat.x==-1 && Costat.y==-1) return;
 	
-	glm::vec3 posNova = glm::vec3(CubActual.x + Costat.x, CubActual.y + Costat.y, CubActual.z + Costat.z);
-	if (jugador->obtPosBloc() == posNova) return;
+	glm::vec3 posNova = CubActual + Costat;
+	if (jugador->obtPosBloc() == posNova || jugador->obtPosBloc(false) == posNova) return;
+
 	// Canviem el cub
-	bool subst = mon->obtenirCub(posNova.x, posNova.y, posNova.z) == AIGUA;
-	mon->canviarCub(posNova.x, posNova.y, posNova.z, tipus, subst, true);
+	mon->canviarCub(posNova.x, posNova.y, posNova.z, tipus, false, true);
 
 }
 
@@ -327,16 +307,14 @@ void Joc::Usar()
 
 void mouse_click_callback(GLFWwindow* window, int click, int action, int mods) {
 
+	Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 	if (click == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
 
 		if (!joc->modeInventari) joc->DestruirCub();
 		else joc->jugador->inventari->agafarItem();
 	}
 
 	else if (click == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-		Joc* joc = reinterpret_cast<Joc*>(glfwGetWindowUserPointer(window));
-
 		if (!joc->modeInventari) joc->Usar();
 	}
 }
@@ -353,7 +331,7 @@ void Joc::loop() {
 	jugador->obtCamera()->setModel(model);
 	renderer.colocarMat4("model", model);
 
-	// Matriu de projecció
+	// Matriu de projecciï¿½
 	canviarProjeccio();
 	
 	// Matriu view
@@ -363,34 +341,29 @@ void Joc::loop() {
 	int fps = 0;
 	float ant = 0.0f;
 
-	renderer.canviarColorLlum(glm::vec3(0.75f, 0.75f, 0.75f));
-
 	nuvols = new Nuvols(jugador->obtCamera()->getProjection());
 	nuvols->canviaHora(nit);
 
-	// Fem que un thread s'encarregui de la gestió de chunks
+	// Fem que un thread s'encarregui de la gestiï¿½ de chunks
 	thread t([&]() {
 		while (!glfwWindowShouldClose(window)) {
 			mon->comprovarChunks(jugador->chunkActual());
-			mon->eliminaCarregats();
 			mon->descarregarChunks();
 			mon->carregarChunks();
 			
 		}
 	});
 
-	// En un thread apart fem que s'actualitzi el món
+	// En un thread apart fem que s'actualitzi el mï¿½n
 	thread t2([&]() {
 		while (!glfwWindowShouldClose(window)) { 
 			mon->update(jugador->chunkActual()); 
-			/*ObtenirCubMira();*/ 
 		} 
 	});
-	
-	renderer.activaBounding(0);
-	bool aigua = false;
-	renderer.activaAigua(aigua);
 
+	const glm::vec3* colorCelDia = Recursos::obtColor(Recursos::CEL);
+	const glm::vec3* colorCelNit = Recursos::obtColor(Recursos::CEL_NIT);
+	renderer.activaBounding(0);
 	// El loop del joc, mentre no es tanqui la finestra...
 	while (!glfwWindowShouldClose(window))
 	{
@@ -399,23 +372,20 @@ void Joc::loop() {
 		lastFrame = currentFrame;
 
 		if(!modeInventari) jugador->obtCamera()->girar(window);
-
+		
 		jugador->update(deltaTime, mon->obtenirAABB(jugador->obtPosBloc()));
 
 		// Canvia el color del fons
-		if(!nit) glClearColor(rgb(110), rgb(170), rgb(255), 1.0f);
-		else glClearColor(rgb(10), rgb(31), rgb(61), 1.0f);
+		if(!nit) glClearColor(rgb(colorCelDia->x), rgb(colorCelDia->y), rgb(colorCelDia->z), 1.0f);
+		else glClearColor(rgb(colorCelNit->x), rgb(colorCelNit->y), rgb(colorCelNit->z), 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		nuvols->update(jugador->obtPos2D(),deltaTime);
 		nuvols->render(view);
 
-
-		bool sotaAigua = jugador->sotaAigua(mon->obtenirColindants(jugador->obtPosBloc(false), 1, true));
+		bool sotaAigua = mon->obtenirCub(jugador->obtPosBloc(false)) == AIGUA;
+		if (mon->obtenirCub(jugador->obtPosBloc(false)) != AIRE) cout << "!!!!" << endl;
 		mon->render(&(jugador->obtCamera()->frustum), sotaAigua);
-
-		//renderer.canviarPosLlum(pos);
-
 
 		glfwPollEvents(); // Processar events
 
@@ -439,14 +409,14 @@ void Joc::loop() {
 		glfwSwapBuffers(window); // Volcar l'array de color a la finestra
 
 		// Mostrem els frames que hi ha hagut en un segon (fps)
-		if (currentFrame-ant>=1.0f) { // Si la diferència és 1 és que ha passat un segon
+		if (currentFrame-ant>=1.0f) { // Si la diferï¿½ncia ï¿½s 1 ï¿½s que ha passat un segon
 			ant = currentFrame;
 			// Mostrem els frames que hem pogut processar
 			glfwSetWindowTitle(window, ("MinecraftGL - FPS: " + to_string(fps)).c_str());
 			fps = 0; // Resetejem el comptador
 			
 		}
-		//mon->potGenerar = true;
+
 		fps++;
 	}
 
@@ -460,6 +430,8 @@ void Joc::start() {
 	if (renderer.carregaShaders()) {
 		cout << "-------------\n\n\n\n";
 
+		// Funcions de GLFW per contexte
+		glfwSetKeyCallback(window, key_callback);
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
 		glfwSetMouseButtonCallback(window, mouse_click_callback);
 		glfwSetScrollCallback(window, scroll_callback);
@@ -471,28 +443,14 @@ void Joc::start() {
 
 		// Treure el cursor
 		canviarModeMouse(GLFW_CURSOR_DISABLED);
-
-		mon = new SuperChunk(&renderer);
-		jugador = new Jugador(new Camera(), renderer.obtShader());
-		_HUD = new HUD(&renderer,jugador->inventari);
-
-		// Li podem dir a l'inventari que comenci amb uns items específics
-		jugador->inventari->afegirItem("Gespa");
-		jugador->inventari->afegirItem("Gespa");
-		jugador->inventari->afegirItem("Gespa");
-		jugador->inventari->afegirItem("Terra");
-		jugador->inventari->afegirItem("Cristal");
-		jugador->inventari->afegirItem("Tulipa taronja");
-		jugador->inventari->afegirItem("Llum");
-		jugador->inventari->afegirItem("Llana");
-		jugador->inventari->afegirItem("Llana taronja");
-		jugador->inventari->afegirItem("Llana blava");
-		jugador->inventari->afegirItem("Llana vermella");
-
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1, 0);
 
 		glfwSwapInterval(_VSync);
+
+		mon = new SuperChunk(&renderer);
+		jugador = new Jugador(new Camera(), renderer.obtShader());
+		_HUD = new HUD(jugador->inventari);
 
 		// El loop de veritat
 		loop();

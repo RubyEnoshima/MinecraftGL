@@ -6,7 +6,7 @@
 class HUD
 {
 public:
-	HUD(Renderer* _renderer, Inventari* _inventari);
+	HUD(Inventari* _inventari);
 	~HUD();
 
 	void render(const glm::vec3& posJug, const glm::vec3& posMira);

@@ -18,7 +18,8 @@ private:
 	void initRenderData();
 
 	float velocitat = 0.075;
-	float tamany = 16;
+	float altura = 200;
+	float tamany = 25;
 
 	glm::vec2 offset;
 	glm::vec2 pos;

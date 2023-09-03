@@ -22,9 +22,6 @@ public:
 		centrat = _centrat;
 		transformar();
 	};
-	~Sprite() {
-		//		delete textura;
-	}
 
 	// Funcions per transformar l'sprite. Faran que el seu model sigui modificat
 	void teletransportar(const glm::vec2& novaPos);
@@ -58,8 +55,6 @@ private:
 	glm::vec2 pos = glm::vec2(0.0f);
 	glm::vec2 tamany = glm::vec2(0.0f);
 	glm::vec2 escala = glm::vec2(1.0f);
-
-	float rotacio = 0.0f;
 
 	// Si fals, es renderitzarà a partir de la cantonada esquerra superior. Si true, es renderitzarà a partir del centre del sprite.
 	bool centrat = false;

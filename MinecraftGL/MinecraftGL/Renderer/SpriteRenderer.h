@@ -8,7 +8,7 @@
 class SpriteRenderer
 {
 public:
-	SpriteRenderer(ShaderProgram* _shader, Renderer* _renderer);
+	SpriteRenderer();
 	~SpriteRenderer();
 
 	// Renderitza tots els sprites afegits que siguin visibles
@@ -24,19 +24,14 @@ public:
 	
 	// Renderitza un sprite
 	void DrawSprite(Sprite* sprite);
-	float width, height;
 
 	ShaderProgram* shader;
 private:
 	// Inicia els vertex que pot tenir un sprite (sempre seran un quadrat)
 	void initRenderData();
 
-
-	
-
 	multimap<int,Sprite*> SpritesOrdenats;
 	map<string,Sprite*> Sprites;
-	Renderer* renderer;
 	unsigned int quadVAO, VBO;
 };
 

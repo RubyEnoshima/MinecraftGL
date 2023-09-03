@@ -74,6 +74,9 @@ private:
 	bool visible = true;
 	bool dintre = false;
 
+	// Li podem dir a l'inventari que comenci amb uns items específics
+	vector<string> itemsInicials = { "Gespa", "Gespa", "Gespa", "Terra", "Cristal", "Tulipa taronja", "Llum", "Llana", "Llana taronja","Llana blava","Llana vermella" };
+
 	void initRenderData();
 
 	// Emplena l'inventari amb tots els blocs del json

@@ -25,7 +25,7 @@ void Nuvols::render(const glm::mat4& view)
 	shader->colocarVec2("posicioSprite", offset);
 	shader->colocarVec2("tamanyTextura", t->obtTamany());
     shader->colocarMat4("view", view);
-    shader->colocarVec2("tamanySprite", glm::vec2(15));
+    shader->colocarVec2("tamanySprite", glm::vec2(tamany));
     shader->colocarMat4("projection", projection);
     shader->colocarInt("nit", nit);
 
@@ -56,7 +56,6 @@ void Nuvols::initRenderData()
 {
     shader->carregaShaders();
 
-    float altura = 200;
     float vertices[] = {
         // pos      // tex
         -500, altura, -500.0f, 0.0f, 1.0f,

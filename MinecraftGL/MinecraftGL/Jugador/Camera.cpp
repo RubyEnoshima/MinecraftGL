@@ -2,25 +2,15 @@
 
 Camera::Camera()
 {
-	//pos = glm::vec3(X * SIZE / 2 + 0.5, Y / 2 + altura, Z * SIZE / 2 + 0.5);
-	pos = glm::vec3(0, 90 + altura, 0);
-	altura = Y / 2 + altura;
-	objectiu = glm::vec3(0.0, 0.0f, -1.0f);
-	front = glm::normalize(pos - objectiu);
-	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	right = glm::normalize(glm::cross(front,cameraUp));
+	pos = glm::vec3(0, 90, 0);
 
 	mirar();
 }
 
-void Camera::setProjection(float _fov, float _aspectRatio, float _near, float _far)
+void Camera::setProjection(float _aspectRatio)
 {
-	projection = glm::perspective(_fov, _aspectRatio, _near, _far);
-
-	fov = _fov;
+	projection = glm::perspective(fov, _aspectRatio, near, far);
 	aspect = _aspectRatio;
-	near = _near;
-	far = _far;
 }
 
 void Camera::setModel(const glm::mat4& _model)
@@ -51,8 +41,6 @@ void Camera::mirar() {
 	front = glm::normalize(nouFront);
 	right = glm::normalize(glm::cross(front,glm::vec3(0,1,0)));
 	cameraUp = glm::normalize(glm::cross(right, front));
-
-
 }
 
 void Camera::girar(GLFWwindow* window) {
@@ -108,59 +96,14 @@ glm::mat4 Camera::lookAt()
 	return view;
 }
 
-glm::mat4 Camera::mvp() const
-{
-	return projection*view;
-}
-
-void Camera::moureDreta(float deltaTime, float vel)
-{
-	pos += glm::normalize(glm::cross(front, cameraUp)) * vel * deltaTime;
-}
-
-void Camera::moureEsquerra(float deltaTime, float vel)
-{
-	pos -= glm::normalize(glm::cross(front, cameraUp)) * vel * deltaTime;
-}
-
-void Camera::moureDavant(float deltaTime, float vel)
-{
-	pos += vel * deltaTime * glm::normalize(glm::vec3(front.x * 2, 0, front.z * 2));
-	//pos.y = altura;
-}
-
-void Camera::moureDarrera(float deltaTime, float vel)
-{
-	pos -= vel * deltaTime * glm::normalize(glm::vec3(front.x * 2, 0, front.z * 2));
-	//pos.y = altura;
-
-}
-
-void Camera::moureAmunt(float deltaTime, float vel)
-{
-	pos.y += vel * deltaTime;
-	altura = pos.y;
-}
-
-void Camera::moureAvall(float deltaTime, float vel)
-{
-	pos.y -= vel * deltaTime;
-	altura = pos.y;
-
-}
-
 void Camera::teletransporta(const glm::vec3& posNova)
 {
 	pos = posNova;
 }
 
-//bool actualitza = false;
+// Tret de https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
 void Camera::actualitzaPlans()
 {	
-	//if (actualitza) return;
-	//actualitza = true;
-	// Tret de https://learnopengl.com/Guest-Articles/2021/Scene/Frustum-Culling
-
 	const float halfVSide = far * tanf(fov * .5f);
 	const float halfHSide = halfVSide * aspect;
 	const glm::vec3 frontMultFar = far * front;

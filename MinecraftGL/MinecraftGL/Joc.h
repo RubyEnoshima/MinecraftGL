@@ -16,6 +16,26 @@
 
 using namespace std;
 
+const struct CompararVec3 {
+	bool operator()(const glm::vec3& a, const glm::vec3& b) const {
+		if (a.x < b.x) {
+			return true;
+		}
+		if (a.x > b.x) {
+			return false;
+		}
+
+		if (a.y < b.y) {
+			return true;
+		}
+		if (a.y > b.y) {
+			return false;
+		}
+
+		return a.z < b.z;
+	}
+};
+
 class Joc
 {
 public:
@@ -71,6 +91,15 @@ private:
 	bool _Culling = true;
 	int mode = ESPECTADOR;
 	bool nit = false;
+
+	const map<glm::vec3, glm::vec3, CompararVec3> colorsCostat = {
+		{ {1,0,1},{0,0,-1}},
+		{ {1,1,0},{0,-1,0}},
+		{ {1,0,0},{0,0,1}},
+		{ {0,1,1},{-1,0,0}},
+		{ {0,1,0},{0,1,0}},
+		{ {0,0,1},{1,0,0}}
+	};
 	
 	GLFWwindow* window;
 	glm::vec3 CubActual;

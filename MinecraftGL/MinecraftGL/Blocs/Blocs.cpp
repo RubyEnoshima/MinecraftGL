@@ -18,7 +18,6 @@ Blocs::Blocs() {
         json data = *it;
         int id = data.value("id", 0);
         string nom = data.value("nom", "");
-        glm::vec3 color = glm::vec3(1.0f);
         dades[id] = new Bloc{ nom, id, data.value("transparent", false), data.value("semitransparent", false), data.value("solid", true), data.value("vegetacio",false), data.value("costats", id), data.value("sota", id), data.value("adalt", id)};
         it++;
     }

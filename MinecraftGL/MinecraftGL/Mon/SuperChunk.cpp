@@ -3,10 +3,6 @@
 SuperChunk::SuperChunk()
 {
 	renderer = nullptr;
-	/*for (int x = 0; x < SIZE; x++)
-		for (int y = 0; y < SIZE; y++)
-			Chunks[glm::vec2(x, y)] = nullptr;*/
-	//generarChunk(glm::vec2(i, j), arbrets);
 }
 
 SuperChunk::~SuperChunk() {
@@ -25,46 +21,33 @@ SuperChunk::SuperChunk(Renderer* _renderer)
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	vector<glm::vec3> arbrets;
-
-	//carregat = true;
 }
 
 void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 {
-	vector<glm::vec2> descarregar;
 	for (auto chunk : Chunks) {
-		//std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
 
 		if (chunk.second) {
 			if (chunk.second->descarregant) continue;
 			int distanciaX = abs(chunkJugador.x - chunk.first.x);
 			int distanciaY = abs(chunkJugador.y - chunk.first.y);
-			//cout << "\t" << chunk.first << ": " << distanciaX << " " << distanciaY;
+
 			if (distanciaX + distanciaY > DISTANCIA) {
-				//cout << " {DESCARTAT}";
+
 				chunksDescarregar.push_back(chunk.second);
-				descarregar.push_back(chunk.first);
 				chunk.second->descarregant = true;
 			}
 
 		}
-		//cout << endl;
 	}
-
-	for (auto chunk : descarregar) {
-		std::lock_guard<std::recursive_mutex> lock(descarregarMutex);
-
-		Chunks.erase(chunk);
-
-	}
-
 	
-	// MIRAR AL VOLTANT DEL JUGADOR Y POSAR EN CUA CHUNKS NOUS
+	// Prioritzem el chunk on es troba el jugador
 	if (!esCarregat(chunkJugador) && !existeixCua(chunksCarregar, chunkJugador)) {
 		chunksCarregar.push_front(chunkJugador);
 		chunkInicial = chunkJugador;
 	}
+
+	// MIRAR AL VOLTANT DEL JUGADOR Y POSAR EN CUA CHUNKS NOUS
 	for (int i = -DISTANCIA; i <= DISTANCIA; i++) {
 		for (int j = -DISTANCIA; j <= DISTANCIA; j++) {
 			if (abs(i) + abs(j) > DISTANCIA) continue;
@@ -73,11 +56,11 @@ void SuperChunk::comprovarChunks(const glm::vec2& chunkJugador)
 				
 		}
 	}
-	//cout << "--------" << endl;
+
 
 }
 
-void SuperChunk::update(const glm::vec2& chunkJugador, const glm::mat4& mvp)
+void SuperChunk::update(const glm::vec2& chunkJugador)
 {
 	std::lock_guard<std::recursive_mutex> lock(descarregarMutex);
 
@@ -105,8 +88,8 @@ void SuperChunk::descarregarChunks()
 			Chunk* c = chunksDescarregar.back();
 			chunksDescarregar.pop_back();
 
+			Chunks.erase(c->obtPos());
 			delete c;
-			/*Chunks.erase(pos);*/
 		}
 	}
 
@@ -114,8 +97,8 @@ void SuperChunk::descarregarChunks()
 
 void SuperChunk::carregarChunks()
 {
-	if (!chunksCarregar.empty() && potGenerar) {
-		//std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+	if (!chunksCarregar.empty()) {
+
 		for (int i = 0; i < NCHUNKS; i++) {
 			if (chunksCarregar.empty()) break;
 			std::lock_guard<std::recursive_mutex> lock(cuaMutex);
@@ -129,22 +112,10 @@ void SuperChunk::carregarChunks()
 					arbre(posArbre.x, posArbre.y, posArbre.z);
 				}
 
-				//potGenerar = false;
 			}
 
 		}
 	}
-}
-
-void SuperChunk::eliminaCarregats()
-{
-	/*for (int i = 0; i < NCHUNKS; i++) {
-		if (ChunksReady.empty()) break;
-		std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
-
-		Chunks[ChunksReady.back().first] = ChunksReady.back().second;
-		ChunksReady.pop_back();
-	}*/
 }
 
 void SuperChunk::generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets)
@@ -273,7 +244,7 @@ void SuperChunk::calculaLlumNatural(int x, int z)
 // LLUM ARTIFICIAL
 
 void SuperChunk::posarLlum(glm::vec3 pos, uint8_t llum) {
-	// Mirem si Ã©s transparent i si hem de pujar la llum
+	// Mirem si és transparent i si hem de pujar la llum
 	if (Recursos::getBloc(obtenirCub(pos.x, pos.y, pos.z))->transparent && obtenirLlumArtificialCub(pos.x, pos.y, pos.z) + 2 <= llum) {
 		uint8_t resLlum = llum - 1;
 		canviarLlumArtificialCub(pos.x, pos.y, pos.z, resLlum);
@@ -351,24 +322,6 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 			// Afegim la llum
 			canviarLlumArtificialCub(x, y, z, 14);
 			afegirLlum(glm::vec3(x, y, z));
-			llistaLlums.push_back(glm::vec3(x, y, z));
-		}
-		else if (tipus == AIRE) {
-
-			if (tipusBlocAbans == LLUM) {
-				treureLlum(glm::vec3(x, y, z), 14);
-				llistaLlums.remove(glm::vec3(x, y, z));
-			}
-			else treureLlum(glm::vec3(x, y, z), 0);
-		}
-		else {
-			// NO ES EFICIENT!!!
-			for (const glm::vec3 llum : llistaLlums) {
-				treureLlum(llum, 14);
-				canviarLlumArtificialCub(llum.x, llum.y, llum.z, 14);
-				afegirLlum(llum);
-			}
-			if (!Recursos::getBloc(tipus)->transparent) canviarLlumNaturalCub(x, y, z, 0);
 		}
 
 		if (jugador) {
@@ -380,11 +333,9 @@ void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar,
 			else blocsColocats.insert({ BlocChunk(x, z), {{ {x,y,z},tipus }} });
 		}
 
-		//chunk.unCanviat = true;
-		//chunk.cubCanviat = glm::vec3(Mon2Chunk(x,X), y, Mon2Chunk(z,Z));
 	}
 	else if (!valid) {
-		//cout << "No s'ha pogut posar " << (int)tipus << endl;
+		// Si no s'ha pogut posar un vòxel perquè no era vàlid, es guarda
 		auto it = blocsNoPosats.find(BlocChunk(x, z));
 		if (it != blocsNoPosats.end()) {
 			(*it).second.push_back({ {x,y,z},tipus });
@@ -442,7 +393,6 @@ uint8_t SuperChunk::obtenirLlumArtificialCub(int x, int y, int z)
 void SuperChunk::BoundingBox(int x, int y, int z)
 {
 	if (!obtenirCub(x, y, z)) return;
-	renderer->activaBounding(1);
 	glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(BlocChunk(x, z).x * X, 0, BlocChunk(x, z).y * Z));
 	renderer->colocarMat4("model", model);
 	x -= X*BlocChunk(x,z).x;
@@ -528,10 +478,9 @@ void SuperChunk::render(Frustum* frustum, bool sotaAigua)
 		renderer->usarTexturaMon();
 		glBindVertexArray(VAO);
 		
-		//loadedChunksMutex.lock();
 		for (auto chunk : Chunks) {
 			if (chunk.second == NULL || chunk.second->descarregant || (activaFrustum && !chunk.second->esVisible(frustum))) continue;
-			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+
 			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
 			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
 			renderer->colocarMat4("model", model);
@@ -542,14 +491,14 @@ void SuperChunk::render(Frustum* frustum, bool sotaAigua)
 		// RENDERITZAR L'AIGUA
 		for (auto chunk : Chunks) {
 			if (chunk.second == NULL || chunk.second->descarregant || (activaFrustum && !chunk.second->esVisible(frustum))) continue;
-			std::lock_guard<std::recursive_mutex> lock(loadedChunksMutex);
+
 			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
 			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
 			renderer->colocarMat4("model", model);
 			chunk.second->render(true);
 		}
 		if (sotaAigua) glEnable(GL_CULL_FACE);
-		//loadedChunksMutex.unlock();
+
 		glBindVertexArray(0);
 	}
 	
@@ -643,7 +592,6 @@ vector<AABB> SuperChunk::obtenirAABB(const glm::vec3& pos)
 	for(const auto& b : blocs)
 	{
 		AABB aabb;
-		//aabb.shader = renderer->obtShader();
 		aabb.pos = b.first;
 		aabb.tamany = glm::vec3(1, 1, 1);
 		res.push_back(aabb);
@@ -653,9 +601,7 @@ vector<AABB> SuperChunk::obtenirAABB(const glm::vec3& pos)
 
 bool SuperChunk::esValid(int x, int y, int z) const
 {
-	//return x>=0 && x / X < XC && y>=0 && y<Y && z>=0 && z / Z < YC;
 	return esCarregat(BlocChunk(x, z));
-
 }
 
 bool SuperChunk::esValid(const glm::vec3& pos) const
@@ -675,7 +621,7 @@ glm::vec2 SuperChunk::BlocChunk(int x, int z) const
 
 int SuperChunk::Mon2Chunk(int n, int m) const
 {
-	// Ã‰s l'equivalent a fer n % m, perÃ² fent que tracti bÃ© els negatius
+	// És l'equivalent a fer n % m, però fent que tracti bé els negatius
 	return ((n % m) + m) % m;
 }
 

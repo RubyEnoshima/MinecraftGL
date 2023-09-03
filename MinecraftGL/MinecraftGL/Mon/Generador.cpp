@@ -2,15 +2,15 @@
 
 Generador::Generador()
 {
-	if (SEMILLA_RANDOM) {
-		semilla = time(NULL);
+	if (LLAVOR_RANDOM) {
+		llavor = time(NULL);
 	}
-	srand(semilla);
+	srand(llavor);
 
 	// Aquí podem definir diferents tipus de sorolls i la seva importància.
 
 	Soroll continentalness;
-	continentalness.noise = new FastNoiseLite(semilla);
+	continentalness.noise = new FastNoiseLite(llavor);
 	continentalness.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	continentalness.noise->SetFrequency(0.0075);
 	continentalness.noise->SetFractalType(FastNoiseLite::FractalType_FBm);
@@ -23,7 +23,7 @@ Generador::Generador()
 	noises.push_back(continentalness);
 
 	Soroll erosion;
-	erosion.noise = new FastNoiseLite(semilla);
+	erosion.noise = new FastNoiseLite(llavor);
 	erosion.noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	erosion.noise->SetFrequency(0.005);
 	erosion.noise->SetFractalType(FastNoiseLite::FractalType_FBm);
@@ -79,7 +79,7 @@ int Generador::obtAltura(float x, float y) const
 	{
 		double soroll = noise.noise->GetNoise(x, y);
 		res += interpolarSegments(noise.punts, soroll) * noise.importancia;
-		if (res <= 60) res *= .99;
+		//if (res <= 60) res *= .99;
 		i++;
 	}
 	return res;

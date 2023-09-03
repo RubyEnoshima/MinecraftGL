@@ -19,17 +19,11 @@ public:
 
 	// MOVIMENT
 	void update(float deltaTime, const vector<AABB>& blocs);
-	void render();
 
-	void moure(float deltaTime, const map<int, bool>& tecles);
+	void moure(const map<int, bool>& tecles);
 	void parar();
 	void correr();
 	void caminar();
-
-	// Retorna true si està colidint
-	bool colisiona(const vector<pair<glm::vec3, uint8_t>>& blocs);
-	bool colisiona(const glm::vec3& bloc);
-	bool sotaAigua(const vector<pair<glm::vec3, uint8_t>>& blocs) const;
 
 	// FUNCIONS SOBRE LA POSICIÓ
 	// Retorna la posició del jugador
@@ -49,22 +43,15 @@ public:
 
 private:
 	int mode = ESPECTADOR; // Veure adalt la llista de modes
-	const float velocitat = 10;
+	const float velocitat = 12;
 	vector<AABB> _blocs;
 
 	bool enTerra = false;
-
-	// Actualitza la posició de la càmera segons la velocitat actual
-	void actualitzaCamera(float deltaTime);
 
 	AABB aabb;
 
 	float velocitatAct = velocitat;
 	glm::vec3 vel;
-	glm::vec3 antPos;
-
-	vector<glm::vec3> anteriors;
-	bool ultimResultat = false;
 
 	Camera* camera = NULL;
 };

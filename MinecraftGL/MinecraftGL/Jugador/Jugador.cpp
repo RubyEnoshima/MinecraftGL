@@ -4,8 +4,7 @@ Jugador::Jugador(Camera* _camera, ShaderProgram* shader)
 {
 	camera = _camera;
 	inventari = new Inventari();
-	aabb.tamany = glm::vec3(1,2,1);
-	//aabb.shader = shader;
+	aabb.tamany = glm::vec3(1,1,1);
 }
 
 Jugador::~Jugador()
@@ -21,26 +20,15 @@ void Jugador::update(float deltaTime, const vector<AABB>& blocs)
 		aabb.vel = vel;
 		_blocs = blocs;
 		float nx, ny = 0, nz; bool sota = false;
-		//cout << vel << endl;
-		for (const auto& b : _blocs)
-		{
-			//if (aabb.AABBtoAABB(b)) {
-			//	cout << aabb.pos - b.pos << endl;
-			//	vel = glm::vec3(0);
-			//	camera->teletransporta(antPos);
-			//	//if ((aabb.pos - b.pos).y == 1) enTerra = true;
-			//}
 		
+		for (const auto& b : blocs)
+		{
 			float col = aabb.sweptAABB(b, nx, ny, nz);
-			float rem = 1 - col;
-			if (col < 1) {
-				//cout << nx << " " << ny << " " << nz << endl;
 
-				float dotprod = (aabb.vel.x * nz + aabb.vel.z * nx) * rem;
-				vel.x = dotprod * nz; vel.z = dotprod * nx;
-				/*vel.x *= col;
-				vel.z *= col;*/
-
+			if (col < 1) {				
+				if (nx != 0)vel.x = 0;
+				if (nz != 0)vel.z = 0;
+				
 				// Colisió en la y: mirem la normal per aplicar o no gravetat
 				if (ny != 0) {
 					vel.y = 0;
@@ -48,7 +36,9 @@ void Jugador::update(float deltaTime, const vector<AABB>& blocs)
 
 				}
 			}
-			if ((aabb.pos - b.pos).y == 1) { sota = true; }
+			if ((aabb.pos - b.pos).y == 1) { 
+ 				sota = true; 
+			}
 		}
 		if (!sota) enTerra = false;
 		if (!enTerra) {
@@ -57,20 +47,10 @@ void Jugador::update(float deltaTime, const vector<AABB>& blocs)
 
 	}
 
-	antPos = obtPos();
 	camera->teletransporta(obtPos() + vel * deltaTime);
 }
 
-void Jugador::render()
-{
-	//aabb.render();
-	/*for (const auto& b : _blocs)
-	{
-		b.render();
-	}*/
-}
-
-void Jugador::moure(float deltaTime, const map<int,bool>& tecles)
+void Jugador::moure(const map<int,bool>& tecles)
 {
 	glm::vec3 novaVelForw = velocitatAct * glm::normalize(glm::vec3(camera->obtDireccio().x, 0, camera->obtDireccio().z));
 	glm::vec3 novaVelRight = glm::vec3(camera->obtRight().x * velocitatAct, 0, camera->obtRight().z * velocitatAct);
@@ -128,36 +108,6 @@ void Jugador::caminar()
 	velocitatAct = velocitat;
 }
 
-bool Jugador::colisiona(const vector<pair<glm::vec3, uint8_t>>& blocs)
-{
-	
-	for (const auto &bloc : blocs)
-	{
-		if (colisiona(bloc.first)) return true;
-	}
-
-	return false;
-}
-
-bool Jugador::colisiona(const glm::vec3& bloc)
-{
-	if (bloc == obtPosBloc()) {
-		return true; 
-	}
-	return false;
-}
-
-bool Jugador::sotaAigua(const vector<pair<glm::vec3, uint8_t>>& blocs) const
-{
-	for (const auto& bloc : blocs)
-	{
-		if (bloc.first == obtPosBloc(false) && bloc.second == AIGUA) {
-			return true;
-		}
-	}
-	return false;
-}
-
 glm::vec3 Jugador::obtPos() const
 {
 	return camera->obtPos();
@@ -192,16 +142,4 @@ void Jugador::canviaMode(int _mode)
 	mode = _mode;
 	vel.y = 0;
 	enTerra = false;
-}
-
-void Jugador::actualitzaCamera(float deltaTime)
-{
-	if (vel.x > 0) camera->moureDreta(deltaTime, vel.x);
-	else if (vel.x < 0) camera->moureEsquerra(deltaTime, -vel.x);
-
-	if (vel.z > 0) camera->moureDavant(deltaTime, vel.z);
-	else if (vel.z < 0) camera->moureDarrera(deltaTime, -vel.z);
-
-	if (vel.y < 0) camera->moureAvall(deltaTime, -vel.y);
-	else if (vel.y > 0) camera->moureAmunt(deltaTime, vel.y);
 }

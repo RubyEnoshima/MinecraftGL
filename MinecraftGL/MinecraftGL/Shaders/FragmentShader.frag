@@ -68,11 +68,11 @@ void main()
 	if(sotaAigua) alfa = colorText.a;
 
 	// Ambient, per tal que la foscor no sigui tan fosca
-	float ambientStrength = 0.1;
+	float ambientStrength = 0.00001;
 	vec3 ambient = ambientStrength * lightColor;
 
 	// Iluminació
-	float gamma = 0.8 / 0.75;
+	float gamma = 1.2;
 
 	float resArtificial = pow(llumArtificial / 15f, gamma);
 

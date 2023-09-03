@@ -52,7 +52,7 @@ void TextRenderer::Load(std::string font, unsigned int fontSize)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // then for the first 128 ASCII characters, pre-load/compile their characters and store them
-    for (GLubyte c = 0; c < 128; c++) // lol see what I did there 
+    for (GLubyte c = 0; c < 254; c++)
     {
         // load character glyph 
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
@@ -169,9 +169,8 @@ void TextRenderer::RenderText(std::string text, float x, float y, float scale, b
         };
         shader->colocarInt("esBack", true);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
     }

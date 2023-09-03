@@ -1,11 +1,8 @@
 #include "SpriteRenderer.h"
 
-SpriteRenderer::SpriteRenderer(ShaderProgram* _shader, Renderer* _renderer)
+SpriteRenderer::SpriteRenderer()
 {
-    shader = _shader;
-    renderer = _renderer;
-    width = (float)renderer->obtenirTamany().first;
-    height = (float)renderer->obtenirTamany().second;
+    shader = new ShaderProgram("VertexSprite.vert", "FragmentSprite.frag");
     initRenderData();
 }
 

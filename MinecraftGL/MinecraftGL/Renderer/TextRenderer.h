@@ -33,7 +33,6 @@ public:
     void RenderText(std::string text, float x, float y, float scale, bool fons = false, glm::vec3 color = glm::vec3(1.0f), bool ombra = false, float indexZ = 0);
     void RenderText(std::string text, glm::vec2 pos, float scale, bool fons = false, glm::vec3 color = glm::vec3(1.0f), bool ombra = false, float indexZ = 0);
 private:
-    FT_Library ft;
     FT_Face face;
 
     // render state

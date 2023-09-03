@@ -4,7 +4,10 @@ Recursos::VecColors Recursos::COLORS = {
 	glm::vec3(255), // Blanc
 	glm::vec3(131, 187, 109), // Verd gespa
 	glm::vec3(99, 169, 72), // Verd fulles
-	glm::vec3(63, 118, 228) // Aigua
+	glm::vec3(63, 118, 228), // Aigua
+	glm::vec3(110, 170, 255), // Cel
+	glm::vec3(10, 31, 61), // Cel de nit
+
 };
 
 Recursos::NomTextures Recursos::texturesPrecarrega = { "icon.png","icons.png","items.png","inventari.png","minecraft_transp.png","nuvols.png","seleccio.png","creatiu.png", "caixeta.png"};

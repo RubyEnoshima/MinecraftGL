@@ -1,10 +1,9 @@
 #include "HUD.h"
 
-HUD::HUD(Renderer* _renderer, Inventari* _inventari)
+HUD::HUD(Inventari* _inventari)
 {
 	//glActiveTexture(GL_TEXTURE1);
-	ShaderProgram* shader = new ShaderProgram("VertexSprite.vert", "FragmentSprite.frag");
-	renderer = new SpriteRenderer(shader,_renderer);
+	renderer = new SpriteRenderer();
 	iniciaSprites();
 	textRenderer = new TextRenderer(Recursos::width,Recursos::height);
 	textRenderer->Load("Fonts/Minecraft.otf", 72*2);
@@ -37,7 +36,7 @@ void HUD::modeDebug()
 
 void HUD::iniciaSprites()
 {
-	Sprite* crosshair = new Sprite(Recursos::obtTextura("icons.png"), "Crosshair", glm::vec2(renderer->width / 2, renderer->height / 2), glm::vec2(0.4), true);
+	Sprite* crosshair = new Sprite(Recursos::obtTextura("icons.png"), "Crosshair", glm::vec2(Recursos::width / 2, Recursos::height / 2), glm::vec2(0.4), true);
 	crosshair->tamanyMapa = glm::vec2(16, 16);
 	crosshair->posicioMapa = glm::vec2(0, 0);
 	crosshair->color.a = 0.85;
@@ -47,7 +46,8 @@ void HUD::iniciaSprites()
 
 void HUD::renderDebug(const glm::vec3& posJug, const glm::vec3& posMira)
 {
-	textRenderer->RenderText("MinecraftGL - Ruben Lopez", 5, 5, 0.2, true, { 1,1,1 }, true);
+	textRenderer->RenderText("MinecraftGL - Rubén López", 5, 5, 0.2, true, { 1,1,1 }, true);
 	textRenderer->RenderText("Jugador - X: " + to_string((int)posJug.x) + ", Y: " + to_string((int)posJug.y) + ", Z: " + to_string((int)posJug.z), 5, 35, 0.2, true, { 1,1,1 }, true);
 	textRenderer->RenderText("Cub mira - X: "+to_string((int)posMira.x)+", Y: "+ to_string((int)posMira.y) +", Z: " + to_string((int)posMira.z), 5, 65, 0.2, true, {1,1,1}, true);
+
 }

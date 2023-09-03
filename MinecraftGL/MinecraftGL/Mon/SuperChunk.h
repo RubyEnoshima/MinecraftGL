@@ -45,8 +45,8 @@ public:
 	void comprovarChunks(const glm::vec2& chunkJugador);
 	void descarregarChunks();
 	void carregarChunks();
-	void eliminaCarregats();
-	void update(const glm::vec2& chunkJugador, const glm::mat4& mvp = glm::mat4());
+
+	void update(const glm::vec2& chunkJugador);
 	void render(Frustum* frustum, bool sotaAigua = false);
 
 	void generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets);
@@ -98,7 +98,6 @@ public:
 	vector<pair<glm::vec3,uint8_t>> obtenirColindants(const glm::vec3& pos, int transparents = 0, bool ellMateix = false) const;
 	vector<AABB> obtenirAABB(const glm::vec3& pos);
 
-	bool potGenerar = true;
 	bool carregat = false;
 
 	bool activaFrustum = true; // true: fem servir Frustum culling
@@ -132,7 +131,6 @@ private:
 	queue<glm::vec3> llums;
 	queue<glm::vec3> cuaLlum;
 	queue<pair<glm::vec3, uint8_t>> cuaLlumTreure;
-	list<glm::vec3> llistaLlums;
 
 	// Llum natural
 	queue<glm::vec3> cuaLlumNatural;
@@ -143,12 +141,10 @@ private:
 	glm::vec3 posicions[7] = { glm::vec3(-1,0,0),glm::vec3(0,-1,0),glm::vec3(0,0,-1),glm::vec3(1,0,0),glm::vec3(0,1,0),glm::vec3(0,0,1),glm::vec3(0,0,0) };
 	
 	// GESTIÓ DE CHUNKS
-	mutable std::recursive_mutex loadedChunksMutex;
 	mutable std::recursive_mutex descarregarMutex;
 	mutable std::recursive_mutex cuaMutex;
 	deque<Chunk*> chunksDescarregar;
 	deque<glm::vec2> chunksCarregar;
-	deque<pair<glm::vec2,Chunk*>> ChunksReady;
 
 	bool esCarregat(const glm::vec2& pos) const;
 	bool existeixCua(const deque<glm::vec2>& cua, const glm::vec2& e) const;

@@ -8,7 +8,7 @@
 #include "Mates.h"
 using namespace std;
 
-#define SEMILLA_RANDOM false // true: la llavor per generar el mapa serà escollida a l'atzar
+#define LLAVOR_RANDOM false // true: la llavor per generar el mapa serà escollida a l'atzar
 
 enum TIPUS_MON {
 	NORMAL,
@@ -31,22 +31,22 @@ public:
 	int obtTipus(int altura, int max) const; // Retorna el tipus de bloc que hi hauria d'haver en altura
 
 	const int tipusMon = NORMAL;
-	float nivellMar = 60;
+	int nivellMar = 60;
 	int aigua = AIGUA; // Quin tipus de bloc s'utilitzarà per l'aigua
-	float nivellNeu = 90;
+	int nivellNeu = 90;
 
 	// Probabilitats de generació: 1 == 100%
 	float probabilitatArbre = 0.015;
 	float probabilitatFlor = 0.10;
 private:
 
-	int semilla = 874;
+	int llavor = 874;
 	vector<Soroll> noises; // Conjunt de soroll que es pot barrejar.
 
 	// Tipus de flors que poden apareixer al món
 	const vector<int> flors = { ROSA,TULIPA_TARONJA,ARBUST }; //ESCLATASANG,XAMPINYO,DENT_DE_LLEO
 
-	// Llista de capes. Baixa, mitja, mitja-alta, platjes, alta, alta (altura neu)
+	// Llista de capes. Baixa, mitja, mitja-alta, platges, alta, alta (altura neu)
 	const vector<int> nivells = { BEDROCK, PEDRA, TERRA, SORRA, GESPA, NEU };
 
 	// Donat un segment [a,b], retorna el valor de y donat x

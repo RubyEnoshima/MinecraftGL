@@ -14,9 +14,6 @@ struct Pla {
     glm::vec3 pos = { 0,0,0 }, normal = { 0,1,0 };
     float d = 0;
 
-    float distancia(const glm::vec3& p) const{
-        return glm::dot(normal, p) - d;
-    }
 };
 
 struct Frustum {
@@ -38,27 +35,7 @@ struct AABB {
 	glm::vec3 pos; //cantonada esquerra superior
 	glm::vec3 tamany;
 	glm::vec3 vel;
-    //ShaderProgram* shader = NULL;
 
-    pair<glm::vec3,glm::vec3> MinMax() const{
-        return {pos - tamany * 0.5f, pos + tamany * 0.5f};
-    }
-
-    bool AABBtoAABB(const AABB& tBox2)
-    {
-        pair<glm::vec3, glm::vec3> minmax1 = MinMax(), minmax2 = tBox2.MinMax();
-
-        //Check if Box1's max is greater than Box2's min and Box1's min is less than Box2's max
-        return(minmax1.second.x > minmax2.first.x &&
-            minmax1.first.x < minmax2.second.x &&
-            minmax1.second.y > minmax2.first.y &&
-            minmax1.first.y < minmax2.second.y &&
-            minmax1.second.z > minmax2.first.z &&
-            minmax1.first.z < minmax2.second.z);
-
-        //If not, it will return false
-
-    }
 
     // Editat de https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
     float sweptAABB(const AABB& b2, float& normalx, float& normaly, float& normalz) {
@@ -138,7 +115,7 @@ struct AABB {
 
         // find the earliest/latest times of collisionfloat 
         float entryTime = std::max(xEntry, std::max(yEntry, zEntry));
-        float exitTime = std::min(xExit, std::max(yExit, zExit));
+        float exitTime = std::min(xExit, std::min(yExit, zExit));
 
         // if there was no collision
         if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f && zEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f || zEntry > 1.0f)

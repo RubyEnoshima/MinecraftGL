@@ -13,13 +13,12 @@
 using namespace std;
 #define ALTURA_JUG 1
 
-
 class Camera
 {
 public:
 	Camera(); 
 
-	void setProjection(float _fov, float _aspectRatio, float _near, float _far);
+	void setProjection(float _aspectRatio);
 	void setModel(const glm::mat4& _model);
 
 	glm::mat4 getProjection() const;
@@ -34,21 +33,13 @@ public:
 	glm::vec3 obtRight() const;
 
 	glm::mat4 lookAt();
-	glm::mat4 mvp() const;
 
 	void girar(GLFWwindow* window);
-
-	void moureDreta(float deltaTime, float vel);
-	void moureEsquerra(float deltaTime, float vel);
-	void moureDavant(float deltaTime, float vel);
-	void moureDarrera(float deltaTime, float vel);
-	void moureAmunt(float deltaTime, float vel);
-	void moureAvall(float deltaTime, float vel);
 
 	void teletransporta(const glm::vec3& posNova);
 	
 	void actualitzaPlans();
-	//vector<Pla> obtPlans() const;
+
 	Frustum frustum;
 
 private:
@@ -60,12 +51,9 @@ private:
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 
-	float altura = ALTURA_JUG;
-
 	bool primerCop = true;
 
 	glm::vec3 pos;
-	glm::vec3 objectiu;
 	glm::vec3 cameraUp;
 	glm::vec3 right;
 	glm::vec3 front;
@@ -74,8 +62,8 @@ private:
 	glm::mat4 projection;
 	glm::mat4 model;
 
-	float fov;
+	float fov = glm::radians(3000.0f);
+	float near=0.1f, far=1000;
 	float aspect;
-	float near, far;
 };
 

@@ -5,8 +5,6 @@
 #include "Textura.h"
 #include "Recursos.h"
 
-#define MAX_SHADERS 2
-
 class Renderer
 {
 public:
@@ -23,6 +21,7 @@ public:
 	void usarShader(int i = 0);
 	ShaderProgram* obtShader();
 
+	// Funcions dels shaders
 	unsigned int obtenirUniform(const char* uniform) const;
 
 	void colocarMat4(const string uniform, const glm::mat4 matriu);
@@ -50,7 +49,7 @@ private:
 	Textura* texturaMon;
 	unsigned int shaderActual;
 
-	ShaderProgram shaders[MAX_SHADERS];
+	ShaderProgram shaders[2];
 
 	Framebuffer framebuffer;
 

@@ -7,7 +7,7 @@ Renderer::~Renderer()
 
 int Renderer::crearFinestra()
 {
-	// Iniciem OpenGL
+	// Iniciem GLFW
 	glfwInit();
 
 	// Expressem la versió de GLFW que volem, 3.3
@@ -41,13 +41,11 @@ int Renderer::crearFinestra()
 	// Li diem la mida al viewport, i des d'on comença
 	glViewport(0, 0, WIDTH, HEIGHT);
 
-	// Assignem una funció per quan es redimensioni la finestra creada
-	//glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
 	framebuffer = Framebuffer(WIDTH, HEIGHT);
 
 	centrarFinestra();
 
+	// Podem posar una icona a la finestra
 	int iconwidth, iconheight, nrChannels;
 	string path = "Textures/icon.png";
 	unsigned char* img = stbi_load(path.c_str(), &iconwidth, &iconheight, &nrChannels, 4);
@@ -83,7 +81,7 @@ int Renderer::carregaShaders()
 	shaders[1] = ShaderProgram("VertexPla.vert", "FragmentPla.frag");
 
 	int totbe = 1, i=0;
-	while (totbe && i<MAX_SHADERS) {
+	while (totbe && i<2) {
 		totbe = shaders[i].carregaShaders();
 		i++;
 	}
@@ -92,11 +90,7 @@ int Renderer::carregaShaders()
 		usarShader();
 	}
 	
-	glActiveTexture(GL_TEXTURE0);
 	texturaMon = Recursos::obtTextura("minecraft_transp.png");
-	texturaMon->use();
-	glUniform1i(obtenirUniform("textura"), 0);
-
 	
 	return totbe;
 }

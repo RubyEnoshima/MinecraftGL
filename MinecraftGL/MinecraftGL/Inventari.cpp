@@ -16,6 +16,10 @@ Inventari::Inventari()
 	}
 	slotMouse = new Slot(mapaItems, -1);
 	initRenderData();
+
+	for (const string& item : itemsInicials) {
+		afegirItem(item);
+	}
 }
 
 Inventari::~Inventari()
@@ -42,16 +46,16 @@ void Inventari::iniciaSprites(SpriteRenderer* _renderer, TextRenderer* _text)
 	text = _text;
 	renderer = _renderer;
 	Sprite* spriteInventari = new Sprite(Recursos::obtTextura("inventari.png"), "Inventari", glm::vec2(), glm::vec2(7), true);
-	spriteInventari->teletransportar(glm::vec2(renderer->width / 2, renderer->height - spriteInventari->obtTamany().y * 1.7));
+	spriteInventari->teletransportar(glm::vec2(Recursos::width / 2, Recursos::height - spriteInventari->obtTamany().y * 1.7));
 	renderer->afegirSprite(spriteInventari);
 
 	spriteSlot = new Sprite(Recursos::obtTextura("seleccio.png"), "Seleccio", glm::vec2(), glm::vec2(7), true);
-	spriteSlot->teletransportar(glm::vec2(renderer->width / 2 - 80 * 3.5, renderer->height - spriteSlot->obtTamany().y * 1.7));
+	spriteSlot->teletransportar(glm::vec2(Recursos::width / 2 - 80 * 3.5, Recursos::height - spriteSlot->obtTamany().y * 1.7));
 	posInicial = spriteSlot->obtPos();
 	spriteSlot->indexZ = 3;
 	renderer->afegirSprite(spriteSlot);
 
-	Sprite* fons = new Sprite(Recursos::obtTextura("seleccio.png"), "Fons", glm::vec2(), glm::vec2(renderer->width, renderer->height));
+	Sprite* fons = new Sprite(Recursos::obtTextura("seleccio.png"), "Fons", glm::vec2(), glm::vec2(Recursos::width, Recursos::height));
 	fons->color = { 0.1,0.1,0.1,0.5 };
 	fons->posicioMapa = { 2, 0 };
 	fons->tamanyMapa = { 1,1 };
@@ -59,12 +63,12 @@ void Inventari::iniciaSprites(SpriteRenderer* _renderer, TextRenderer* _text)
 	fons->visible = false;
 	renderer->afegirSprite(fons);
 
-	Sprite* spriteCreatiu = new Sprite(Recursos::obtTextura("creatiu.png"), "Creatiu", glm::vec2(renderer->width / 2, renderer->height / 2), glm::vec2(7), true);
+	Sprite* spriteCreatiu = new Sprite(Recursos::obtTextura("creatiu.png"), "Creatiu", glm::vec2(Recursos::width / 2, Recursos::height / 2), glm::vec2(7), true);
 	spriteCreatiu->indexZ = 1;
 	spriteCreatiu->visible = false;
 	renderer->afegirSprite(spriteCreatiu);
 
-	Sprite* _caixeta = new Sprite(Recursos::obtTextura("caixeta.png"), "Caixeta", glm::vec2(renderer->width / 2, renderer->height / 2), glm::vec2(4.2,3), true);
+	Sprite* _caixeta = new Sprite(Recursos::obtTextura("caixeta.png"), "Caixeta", glm::vec2(Recursos::width / 2, Recursos::height / 2), glm::vec2(4.2,3), true);
 	_caixeta->indexZ = 50;
 	_caixeta->centrar(false);
 	//renderer->afegirSprite(_caixeta);
@@ -73,7 +77,7 @@ void Inventari::iniciaSprites(SpriteRenderer* _renderer, TextRenderer* _text)
 
 	for (auto slot : inventari)
 	{
-		slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70 * 4 + 70 * slot->id, renderer->height - 30 - 5));
+		slot->sprite->teletransportar(glm::vec2(Recursos::width / 2 - 70 * 4 + 70 * slot->id, Recursos::height - 30 - 5));
 		renderer->afegirSprite(slot->sprite);
 	}
 	int i = 1;
@@ -83,7 +87,7 @@ void Inventari::iniciaSprites(SpriteRenderer* _renderer, TextRenderer* _text)
 		for (auto slot : vector)
 		{
 			float q = (slot->id - 10 * i);
-			slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70.75 * 4 + 63 * (slot->id - 10 * i), renderer->height/2 - 19 - 191 + 64 * i*0.99));
+			slot->sprite->teletransportar(glm::vec2(Recursos::width / 2 - 70.75 * 4 + 63 * (slot->id - 10 * i), Recursos::height/2 - 19 - 191 + 64 * i*0.99));
 			renderer->afegirSprite(slot->sprite);
 			j++;
 		}
@@ -162,8 +166,8 @@ void Inventari::obrir()
 	for (auto slot : inventari)
 	{
 		if (slot->obtItem() == -1) continue;
-		if(dintre) slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70.75 * 4 + 63 * (slot->id), renderer->height / 2 - 18 - 191 + 64 * 6.125));
-		else slot->sprite->teletransportar(glm::vec2(renderer->width / 2 - 70 * 4 + 70 * slot->id, renderer->height - 32 - 5));
+		if(dintre) slot->sprite->teletransportar(glm::vec2(Recursos::width / 2 - 70.75 * 4 + 63 * (slot->id), Recursos::height / 2 - 18 - 191 + 64 * 6.125));
+		else slot->sprite->teletransportar(glm::vec2(Recursos::width / 2 - 70 * 4 + 70 * slot->id, Recursos::height - 32 - 5));
 	}
 	for (auto fila : inventariGran) {
 		for (auto slot : fila) {
@@ -298,7 +302,7 @@ void Inventari::render(const glm::vec2& mousePos)
 		}
 		
 
-		text->RenderText("Inventari creatiu", { renderer->width / 2 - 310,renderer->height / 2 - 215 }, 0.175, false, glm::vec3(1), true);
+		text->RenderText("Inventari creatiu", { Recursos::width / 2 - 310,Recursos::height / 2 - 215 }, 0.175, false, glm::vec3(1), true);
 		if (sobre && sobre->obtItem() != -1 && slotMouse->obtItem() == -1) text->RenderText(Recursos::getItem(sobre->obtItem())->nom, caixeta->obtPos() + glm::vec2(10, caixeta->tamanyMapa.y / 2 - 1), 0.15, false, glm::vec3(1), true, 1);
 
 	}

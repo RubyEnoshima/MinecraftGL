@@ -21,7 +21,6 @@ public:
 
 private:
 	unsigned int fbo;
-	unsigned int rbo;
 	unsigned int textura;
 };
 

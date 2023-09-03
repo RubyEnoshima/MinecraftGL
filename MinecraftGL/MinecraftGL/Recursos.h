@@ -20,6 +20,8 @@ public:
 		VERDGESPA,
 		VERDFULLES,
 		AIGUA,
+		CEL,
+		CEL_NIT
 	};
 	static glm::vec3* obtColor(int color) {
 		return &COLORS[color];
