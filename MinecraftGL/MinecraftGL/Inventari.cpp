@@ -177,9 +177,8 @@ void Inventari::obrir()
 			if (Recursos::getItem(item)->classe == BLOC && Recursos::getBloc(item)->vegetacio) slot->sprite->visible = dintre;
 		}
 	}
-	if (dintre) {
-	}
-	else if (!dintre) {
+	
+	if (!dintre) {
 		if (slotMouse->obtItem() != -1) {
 			ultim->setItem(slotMouse->obtItem());
 			ultim->quantitat = slotMouse->quantitat;
@@ -244,7 +243,6 @@ void Inventari::render(const glm::vec2& mousePos)
 
 		for (auto slot : inventari)
 		{
-			//if (!slot->visible || slot->obtItem() == -1) continue;
 			
 			if (!mouse && dintre && slot->mouseSobre(mousePos)) {
 				if (slot->obtItem() != -1) {
@@ -258,8 +256,6 @@ void Inventari::render(const glm::vec2& mousePos)
 		}
 		for (auto fila : inventariGran) {
 			for (auto slot : fila) {
-				//if (slot == agafat) continue;
-				//if (slot->obtItem() == -1) continue;
 
 				if (!mouse && slot->mouseSobre(mousePos)) {
 					if (slot->obtItem() != -1) {
@@ -279,7 +275,11 @@ void Inventari::render(const glm::vec2& mousePos)
 		if(slotMouse->obtItem() == -1) renderer->DrawSprite(caixeta);
 		else{
 			slotMouse->sprite->teletransportar(mousePos);
+			if (slotMouse->quantitat > 1) text->RenderText(to_string(slotMouse->quantitat), slotMouse->sprite->obtPos() + glm::vec2(10, 6), 0.16, false, glm::vec3(1), true);
+			mapaBlocs->use();
+
 			slotMouse->render(shader, VAO);
+
 		}
 
 		for (auto slot : inventari)
@@ -295,6 +295,7 @@ void Inventari::render(const glm::vec2& mousePos)
 		for (auto fila : inventariGran) {
 			for (auto slot : fila) {
 				if (slot->obtItem() == -1) continue;
+				if (slot->quantitat > 1) text->RenderText(to_string(slot->quantitat), slot->sprite->obtPos() + glm::vec2(10, 6), 0.16, false, glm::vec3(1), true);
 				mapaBlocs->use();
 
 				slot->render(shader,VAO);
@@ -385,7 +386,11 @@ void Slot::actualitzaSprite()
 	if (i->classe == BLOC) {
 		Bloc* b = Recursos::getBloc(item);
 		if (b->vegetacio) {
-			sprite->color = glm::vec4(1.0f);
+			if (i->id == ARBUST) {
+				glm::vec3* color = Recursos::obtColor(Recursos::VERDFULLES);
+				sprite->color = glm::vec4(color->r / 255, color->g / 255, color->b / 255, 1.0f);
+			}
+			else sprite->color = glm::vec4(1.0f);
 			sprite->textura = Recursos::obtTextura("minecraft_transp.png");
 			sprite->posicioMapa = glm::vec2(b->id * 16, (b->id/16 * 16));
 		}
