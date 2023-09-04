@@ -313,7 +313,7 @@ void SuperChunk::treureLlum(const glm::vec3 posLlum, uint8_t llumIni)
 void SuperChunk::canviarCub(int x, int y, int z, uint8_t tipus, bool reemplacar, bool jugador, int color)
 {
 	bool valid = esValid(x, y, z);
-	if (valid && (reemplacar || obtenirCub(x, y, z) == AIRE)) {
+	if (valid && (reemplacar || obtenirCub(x, y, z) == AIRE || obtenirCub(x, y, z) == AIGUA)) {
 		Chunk* chunk = Chunks[BlocChunk(x, z)];
 		uint8_t tipusBlocAbans = chunk->obtenirCub(Mon2Chunk(x, X), y, Mon2Chunk(z, Z));
 		chunk->canviarCub(Mon2Chunk(x, X), y, Mon2Chunk(z, Z), tipus, reemplacar, color);
@@ -470,7 +470,7 @@ bool SuperChunk::existeixCub(int x, int y, int z, uint8_t tipus) const
 	return false;
 }
 
-void SuperChunk::render(Frustum* frustum, bool sotaAigua)
+void SuperChunk::render(Frustum* frustum, bool semi, bool sotaAigua)
 {	
 	if (renderer) {
 
@@ -478,26 +478,33 @@ void SuperChunk::render(Frustum* frustum, bool sotaAigua)
 		renderer->usarTexturaMon();
 		glBindVertexArray(VAO);
 		
-		for (auto chunk : Chunks) {
-			if (chunk.second == NULL || chunk.second->descarregant || (activaFrustum && !chunk.second->esVisible(frustum))) continue;
+		if (!semi)
+		{
+			for (auto chunk : Chunks) {
+				if (chunk.second == NULL || chunk.second->descarregant || (activaFrustum && !chunk.second->esVisible(frustum))) continue;
 
-			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
-			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
-			renderer->colocarMat4("model", model);
-			chunk.second->render();
+				// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
+				glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
+				renderer->colocarMat4("model", model);
+				chunk.second->render();
+			}
+
 		}
 
-		if(sotaAigua) glDisable(GL_CULL_FACE);
-		// RENDERITZAR L'AIGUA
-		for (auto chunk : Chunks) {
-			if (chunk.second == NULL || chunk.second->descarregant || (activaFrustum && !chunk.second->esVisible(frustum))) continue;
+		if (semi) {
+			if(sotaAigua) glDisable(GL_CULL_FACE);
+			// RENDERITZAR L'AIGUA
+			for (auto chunk : Chunks) {
+				if (chunk.second == NULL || chunk.second->descarregant || (activaFrustum && !chunk.second->esVisible(frustum))) continue;
 
-			// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
-			glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
-			renderer->colocarMat4("model", model);
-			chunk.second->render(true);
+				// Hem de moure el chunk per tal que no estiguin tots al mateix lloc
+				glm::mat4 model = glm::translate(glm::mat4(1), glm::vec3(chunk.first.x * X, 0, chunk.first.y * Z));
+				renderer->colocarMat4("model", model);
+				chunk.second->render(true);
+			}
+			if (sotaAigua) glEnable(GL_CULL_FACE);
+
 		}
-		if (sotaAigua) glEnable(GL_CULL_FACE);
 
 		glBindVertexArray(0);
 	}

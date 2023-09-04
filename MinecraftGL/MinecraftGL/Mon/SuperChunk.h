@@ -47,7 +47,7 @@ public:
 	void carregarChunks();
 
 	void update(const glm::vec2& chunkJugador);
-	void render(Frustum* frustum, bool sotaAigua = false);
+	void render(Frustum* frustum, bool semi = false, bool sotaAigua = false);
 
 	void generarChunk(const glm::vec2& pos, vector<glm::vec3>&arbrets);
 

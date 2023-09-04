@@ -271,7 +271,7 @@ void Chunk::afegirVertexFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8
 
 void Chunk::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t z, uint8_t tipus) {
 	// Cara esq
-	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z].tipus)) {
+	if ((x == 0 and veiEsq and !veiEsq->obtenirCub(X - 1, y, z) or veiEsq->obtenirCub(X - 1, y, z)==AIGUA or (x == 0 and !veiEsq)) or (x != 0 and !chunk[x - 1][y][z].tipus)) {
 		afegirVertexFlat(vertices, x, y, z, 0);
 		afegirVertexFlat(vertices, x, y, z + 1, 0);
 		afegirVertexFlat(vertices, x, y + 1, z, 0);
@@ -282,7 +282,7 @@ void Chunk::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara dre
-	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) or (x == X - 1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z].tipus)) {
+	if ((x == X - 1 and veiDre and !veiDre->obtenirCub(0, y, z) or veiDre->obtenirCub(0, y, z)==AIGUA or (x == X - 1 and !veiDre)) or (x != X - 1 and !chunk[x + 1][y][z].tipus)) {
 		afegirVertexFlat(vertices, x + 1, y, z, 0, 0);
 		afegirVertexFlat(vertices, x + 1, y + 1, z, 0, 0);
 		afegirVertexFlat(vertices, x + 1, y, z + 1, 0, 0);
@@ -292,7 +292,7 @@ void Chunk::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara frontal
-	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1].tipus)) {
+	if ((z == Z - 1 and veiUp and !veiUp->obtenirCub(x, y, 0) or veiUp->obtenirCub(x, y, 0)==AIGUA or (z == Z - 1 and !veiUp)) or (z != Z - 1 and !chunk[x][y][z + 1].tipus)) {
 		afegirVertexFlat(vertices, x, y, z + 1, 1, 0, 0);
 		afegirVertexFlat(vertices, x + 1, y, z + 1, 1, 0, 0);
 		afegirVertexFlat(vertices, x, y + 1, z + 1, 1, 0, 0);
@@ -304,7 +304,7 @@ void Chunk::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara darrera
-	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1].tipus)) {
+	if ((z == 0 and veiBaix and !veiBaix->obtenirCub(x, y, Z - 1) or veiBaix->obtenirCub(x, y, Z - 1)==AIGUA or (z == 0 and !veiBaix)) or (z != 0 and !chunk[x][y][z - 1].tipus)) {
 		afegirVertexFlat(vertices, x, y, z, 1, 0, 1);
 		afegirVertexFlat(vertices, x, y + 1, z, 1, 0, 1);
 		afegirVertexFlat(vertices, x + 1, y, z, 1, 0, 1);
@@ -316,7 +316,7 @@ void Chunk::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara adalt
-	if (y == Y - 1 or !chunk[x][y + 1][z].tipus) {
+	if (y == Y - 1 or !chunk[x][y + 1][z].tipus or chunk[x][y + 1][z].tipus==AIGUA) {
 		afegirVertexFlat(vertices, x, y + 1, z, 0, 1, 0);
 		afegirVertexFlat(vertices, x, y + 1, z + 1, 0, 1, 0);
 		afegirVertexFlat(vertices, x + 1, y + 1, z, 0, 1, 0);
@@ -327,7 +327,7 @@ void Chunk::afegirCubFlat(vector<GLubyte>& vertices, int8_t x, int8_t y, int8_t 
 	}
 
 	// Cara sota
-	if (y == 0 or !chunk[x][y - 1][z].tipus) {
+	if (y == 0 or !chunk[x][y - 1][z].tipus or chunk[x][y - 1][z].tipus==AIGUA) {
 		afegirVertexFlat(vertices, x, y, z, 1, 1, 0);
 		afegirVertexFlat(vertices, x + 1, y, z, 1, 1, 0);
 		afegirVertexFlat(vertices, x, y, z + 1, 1, 1, 0);

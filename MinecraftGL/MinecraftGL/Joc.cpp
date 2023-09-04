@@ -232,7 +232,7 @@ void Joc::ObtenirCubMira() {
 	glm::vec3 wincoord = glm::vec3(ww / 2, wh / 2, depth);
 	glm::vec3 objcoord = glm::unProject(wincoord, jugador->obtCamera()->getView(), jugador->obtCamera()->getProjection(), viewport);
 	CubActual = glm::vec3(floorf(objcoord.x), floorf(objcoord.y), floorf(objcoord.z));
-	if((mon->obtenirCub(CubActual)) == AIGUA) CubActual = glm::vec3(-1, -1, -1);
+	//if((mon->obtenirCub(CubActual)) == AIGUA) CubActual = glm::vec3(-1, -1, -1);
 
 }
 
@@ -288,7 +288,7 @@ void Joc::PosarCub(uint8_t tipus) {
 	if (jugador->obtPosBloc() == posNova || jugador->obtPosBloc(false) == posNova) return;
 
 	// Canviem el cub
-	mon->canviarCub(posNova.x, posNova.y, posNova.z, tipus, false, true);
+	mon->canviarCub(posNova.x, posNova.y, posNova.z, tipus, true, true);
 
 }
 
@@ -384,8 +384,7 @@ void Joc::loop() {
 		nuvols->render(view);
 
 		bool sotaAigua = mon->obtenirCub(jugador->obtPosBloc(false)) == AIGUA;
-		if (mon->obtenirCub(jugador->obtPosBloc(false)) != AIRE) cout << "!!!!" << endl;
-		mon->render(&(jugador->obtCamera()->frustum), sotaAigua);
+		mon->render(&(jugador->obtCamera()->frustum));
 
 		glfwPollEvents(); // Processar events
 
@@ -397,6 +396,8 @@ void Joc::loop() {
 				mon->BoundingBox(CubActual.x, CubActual.y, CubActual.z);
 
 		}
+
+		mon->render(&(jugador->obtCamera()->frustum), true, sotaAigua);
 
 		renderer.activaAigua(sotaAigua);
 

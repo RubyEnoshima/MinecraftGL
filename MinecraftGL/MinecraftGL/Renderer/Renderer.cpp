@@ -16,7 +16,7 @@ int Renderer::crearFinestra()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Creem una nova finestra amb unes dimensions i un nom i que comenci en Windowed mode
-	window = glfwCreateWindow(WIDTH, HEIGHT, "MinecraftGL", NULL, NULL);
+	window = glfwCreateWindow(WIDTH, HEIGHT, "MinecraftGL", NULL, NULL); //glfwGetPrimaryMonitor()
 	Recursos::width = WIDTH;
 	Recursos::height = HEIGHT;
 
